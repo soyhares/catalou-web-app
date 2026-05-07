@@ -1,0 +1,65 @@
+name: CI — Web App (PWA)
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+env:
+  VITE_API_URL: http://localhost:3000
+  VITE_SUPABASE_URL: https://placeholder.supabase.co
+  VITE_SUPABASE_ANON_KEY: placeholder
+  VITE_CATALOU_DOMAIN: catalou.com
+  VITE_DEV_SLUG: ""
+
+jobs:
+  ci:
+    name: Lint, Type Check, Build
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          path: catalou-web-app
+
+      - name: Check out catalou-platform-core
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ github.repository_owner }}/catalou-platform-core
+          path: catalou-platform-core
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Set up pnpm
+        uses: pnpm/action-setup@v3
+        with:
+          version: '10'
+
+      - name: Install dependencies
+        working-directory: catalou-web-app
+        run: pnpm install --frozen-lockfile
+
+      - name: Generate OpenAPI types
+        working-directory: catalou-web-app
+        run: pnpm generate
+
+      - name: Type check
+        working-directory: catalou-web-app
+        run: pnpm typecheck
+
+      - name: Lint
+        working-directory: catalou-web-app
+        run: pnpm lint
+
+      - name: Build
+        working-directory: catalou-web-app
+        run: pnpm build
+
+      - name: Verify service worker in build output
+        run: |
+          ls catalou-web-app/dist/sw.js || ls catalou-web-app/dist/workbox-*.js || \
+          (echo "ERROR: No service worker found in dist/" && exit 1)
