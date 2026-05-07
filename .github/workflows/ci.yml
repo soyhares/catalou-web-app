@@ -7,6 +7,7 @@ on:
     branches: [main]
 
 env:
+  CONTRACTS_PATH: ${{ github.workspace }}/catalou-platform-core/contracts/openapi
   VITE_API_URL: http://localhost:3000
   VITE_SUPABASE_URL: https://placeholder.supabase.co
   VITE_SUPABASE_ANON_KEY: placeholder
@@ -26,7 +27,8 @@ jobs:
       - name: Check out catalou-platform-core
         uses: actions/checkout@v4
         with:
-          repository: ${{ github.repository_owner }}/catalou-platform-core
+          repository: soyhares/catalou-platform-core
+          token: ${{ secrets.PLATFORM_CORE_TOKEN }}
           path: catalou-platform-core
 
       - name: Set up Node.js

@@ -9,8 +9,8 @@
     "preview": "vite preview",
     "lint": "eslint src",
     "typecheck": "tsc --noEmit",
-    "generate:auth": "openapi-typescript ../catalou-platform-core/contracts/openapi/auth.yaml -o src/generated/auth.ts",
-    "generate:catalog": "openapi-typescript ../catalou-platform-core/contracts/openapi/catalog.yaml -o src/generated/catalog.ts",
+    "generate:auth": "openapi-typescript ${CONTRACTS_PATH:-../catalou-platform-core/contracts/openapi}/auth.yaml -o src/generated/auth.ts",
+    "generate:catalog": "openapi-typescript ${CONTRACTS_PATH:-../catalou-platform-core/contracts/openapi}/catalog.yaml -o src/generated/catalog.ts",
     "generate": "pnpm generate:auth && pnpm generate:catalog"
   },
   "keywords": [],
