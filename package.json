@@ -8,7 +8,10 @@
     "build": "tsc && vite build",
     "preview": "vite preview",
     "lint": "eslint src",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "generate:auth": "openapi-typescript ../catalou-platform-core/contracts/openapi/auth.yaml -o src/generated/auth.ts",
+    "generate:catalog": "openapi-typescript ../catalou-platform-core/contracts/openapi/catalog.yaml -o src/generated/catalog.ts",
+    "generate": "pnpm generate:auth && pnpm generate:catalog"
   },
   "keywords": [],
   "author": "",
@@ -32,6 +35,7 @@
     "@vitejs/plugin-react": "^6.0.1",
     "eslint": "^10.3.0",
     "eslint-plugin-react-hooks": "^7.1.1",
+    "openapi-typescript": "^7.13.0",
     "prettier": "^3.8.3",
     "typescript": "^6.0.3",
     "typescript-eslint": "^8.59.2",
