@@ -35,16 +35,16 @@ src/
 - App must be installable and work offline for catalog browsing
 
 ## Key rules
-- Never communicate directly with `catalou-admin-web`
+- Never communicate directly with `catalou-web-admin`
 - All API types come from `src/generated/` — never define API types manually
-- All API calls go to `catalou-core-api` exclusively
+- All API calls go to `catalou-api-core` exclusively
 - Input validation required on every user-facing field before submission
 - Never use inline styles — Tailwind classes only
 - Environment variables must be prefixed with `VITE_` and documented in `.env.example`
 
 ## What Claude must never do in this repo
 - Write backend logic or database queries
-- Import from `catalou-admin-web` or `catalou-core-api` source code
+- Import from `catalou-web-admin` or `catalou-api-core` source code
 - Edit files in `src/generated/`
 - Introduce CSS-in-JS or external component libraries (MUI, Chakra, Ant Design, etc.)
 - Hardcode API URLs — always use environment variables
