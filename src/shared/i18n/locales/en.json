@@ -1,10 +1,85 @@
 {
-  "common": {},
-  "catalog": {},
-  "product": {},
-  "cart": {},
-  "checkout": {},
-  "order": {},
-  "pwa": {},
-  "errors": {}
+  "common": {
+    "poweredBy": "Powered by Catalou",
+    "loading": "Loading...",
+    "retry": "Try again",
+    "back": "Back",
+    "save": "Save",
+    "cancel": "Cancel",
+    "close": "Close"
+  },
+  "catalog": {
+    "searchPlaceholder": "Search products...",
+    "noResults": "No products found",
+    "noResultsMessage": "Try a different search term",
+    "comingSoon": "Coming soon",
+    "comingSoonMessage": "We're preparing our catalog. Check back soon!",
+    "categories": "Categories",
+    "allCategories": "All categories",
+    "filter": "Filter",
+    "clearFilter": "Clear filter"
+  },
+  "product": {
+    "addToCart": "Add to cart",
+    "quantity": "Quantity",
+    "price": "Price",
+    "priceHidden": "Price available on request",
+    "technicalSpecs": "Technical specifications",
+    "notFound": "Product not found",
+    "notFoundMessage": "This product is no longer available.",
+    "offlineUnavailable": "This product isn't available offline. Connect to the internet and try again.",
+    "variants": "Options",
+    "selectVariant": "Select an option",
+    "noImage": "No image available"
+  },
+  "cart": {
+    "title": "Your cart",
+    "empty": "Your cart is empty",
+    "emptyMessage": "Add products to get started",
+    "remove": "Remove",
+    "subtotal": "Subtotal",
+    "total": "Total",
+    "checkout": "Proceed to checkout",
+    "continueShopping": "Continue shopping",
+    "added": "Added to cart",
+    "items_one": "{{count}} item",
+    "items_other": "{{count}} items"
+  },
+  "checkout": {
+    "title": "Checkout",
+    "name": "Full name",
+    "phone": "Phone",
+    "email": "Email address",
+    "orderType": "Order type",
+    "orderTypeDirect": "Direct purchase",
+    "orderTypeFinanced": "Financed through association",
+    "submit": "Place order",
+    "submitting": "Placing order...",
+    "summary": "Order summary",
+    "requiredField": "This field is required",
+    "invalidEmail": "Invalid email address"
+  },
+  "order": {
+    "confirmed": "Order confirmed!",
+    "confirmedMessage": "We've received your order and will be in touch shortly.",
+    "reference": "Reference",
+    "items": "Items",
+    "total": "Total",
+    "associationPending": "Your request has been sent to the association for approval.",
+    "associationConfirmed": "Your order has been confirmed by the association."
+  },
+  "pwa": {
+    "updateAvailable": "An update is available",
+    "reload": "Reload"
+  },
+  "errors": {
+    "storeNotFound": "Store not found",
+    "storeNotFoundMessage": "The address you visited does not correspond to any active store.",
+    "networkError": "Connection error",
+    "networkErrorMessage": "Could not load content. Please check your connection.",
+    "offline": "You are offline",
+    "offlineCart": "No connection. Your cart is saved — try again when you're back online.",
+    "offlineProduct": "This product is not available offline.",
+    "generic": "Something went wrong. Please try again."
+  }
 }

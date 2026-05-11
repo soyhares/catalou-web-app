@@ -1,10 +1,85 @@
 {
-  "common": {},
-  "catalog": {},
-  "product": {},
-  "cart": {},
-  "checkout": {},
-  "order": {},
-  "pwa": {},
-  "errors": {}
+  "common": {
+    "poweredBy": "Desarrollado con Catalou",
+    "loading": "Cargando...",
+    "retry": "Reintentar",
+    "back": "Volver",
+    "save": "Guardar",
+    "cancel": "Cancelar",
+    "close": "Cerrar"
+  },
+  "catalog": {
+    "searchPlaceholder": "Buscar productos...",
+    "noResults": "No se encontraron productos",
+    "noResultsMessage": "Intenta con otro término de búsqueda",
+    "comingSoon": "Próximamente",
+    "comingSoonMessage": "Estamos preparando nuestro catálogo. ¡Vuelve pronto!",
+    "categories": "Categorías",
+    "allCategories": "Todas las categorías",
+    "filter": "Filtrar",
+    "clearFilter": "Limpiar filtro"
+  },
+  "product": {
+    "addToCart": "Agregar al carrito",
+    "quantity": "Cantidad",
+    "price": "Precio",
+    "priceHidden": "Precio disponible al solicitar",
+    "technicalSpecs": "Especificaciones técnicas",
+    "notFound": "Producto no encontrado",
+    "notFoundMessage": "Este producto ya no está disponible.",
+    "offlineUnavailable": "Este producto no está disponible sin conexión. Conéctate a internet e inténtalo de nuevo.",
+    "variants": "Opciones",
+    "selectVariant": "Selecciona una opción",
+    "noImage": "Sin imagen disponible"
+  },
+  "cart": {
+    "title": "Tu carrito",
+    "empty": "Tu carrito está vacío",
+    "emptyMessage": "Agrega productos para comenzar",
+    "remove": "Eliminar",
+    "subtotal": "Subtotal",
+    "total": "Total",
+    "checkout": "Proceder al pago",
+    "continueShopping": "Continuar comprando",
+    "added": "Agregado al carrito",
+    "items_one": "{{count}} artículo",
+    "items_other": "{{count}} artículos"
+  },
+  "checkout": {
+    "title": "Finalizar pedido",
+    "name": "Nombre completo",
+    "phone": "Teléfono",
+    "email": "Correo electrónico",
+    "orderType": "Tipo de pedido",
+    "orderTypeDirect": "Compra directa",
+    "orderTypeFinanced": "Financiado por asociación",
+    "submit": "Realizar pedido",
+    "submitting": "Realizando pedido...",
+    "summary": "Resumen del pedido",
+    "requiredField": "Este campo es obligatorio",
+    "invalidEmail": "Correo electrónico inválido"
+  },
+  "order": {
+    "confirmed": "¡Pedido confirmado!",
+    "confirmedMessage": "Hemos recibido tu pedido y nos pondremos en contacto pronto.",
+    "reference": "Referencia",
+    "items": "Artículos",
+    "total": "Total",
+    "associationPending": "Tu solicitud ha sido enviada a la asociación para su aprobación.",
+    "associationConfirmed": "Tu pedido ha sido confirmado por la asociación."
+  },
+  "pwa": {
+    "updateAvailable": "Hay una actualización disponible",
+    "reload": "Recargar"
+  },
+  "errors": {
+    "storeNotFound": "Esta tienda no existe",
+    "storeNotFoundMessage": "La dirección que visitaste no corresponde a ninguna tienda activa.",
+    "networkError": "Error de conexión",
+    "networkErrorMessage": "No se pudo cargar el contenido. Verifica tu conexión.",
+    "offline": "Estás sin conexión",
+    "offlineCart": "Sin conexión. Tu carrito está guardado, intenta de nuevo cuando tengas internet.",
+    "offlineProduct": "Este producto no está disponible sin conexión.",
+    "generic": "Algo salió mal. Por favor intenta de nuevo."
+  }
 }
