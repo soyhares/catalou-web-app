@@ -1,8 +1,10 @@
 import { useState, useEffect, useCallback } from 'react';
+import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useBranding } from '@app/BrandingContext';
 import { fetchCatalog, type CatalogData, type PublicCategory } from '@entities/catalog/api';
 import { OfflineBanner } from '@shared/ui/OfflineBanner';
+import { CartIcon } from '@widgets/cart/CartIcon';
 
 export default function CatalogPage() {
   const { slug, branding } = useBranding();
@@ -33,7 +35,7 @@ export default function CatalogPage() {
   }, [slug, q, selectedCategoryId, selectedSubcategoryId]);
 
   useEffect(() => {
-    void load();
+    queueMicrotask(() => { void load(); });
   }, [load]);
 
   function selectCategory(id: string) {
@@ -111,15 +113,18 @@ export default function CatalogPage() {
       <OfflineBanner />
 
       <header className="bg-[var(--color-primary)] px-4 py-3 flex items-center gap-3">
-        {branding.logoUrl ? (
-          <img
-            src={branding.logoUrl}
-            alt={branding.companyName}
-            className="h-8 w-auto object-contain"
-          />
-        ) : (
-          <span className="text-white font-semibold text-sm">{branding.companyName}</span>
-        )}
+        <div className="flex-1 min-w-0">
+          {branding.logoUrl ? (
+            <img
+              src={branding.logoUrl}
+              alt={branding.companyName}
+              className="h-8 w-auto object-contain"
+            />
+          ) : (
+            <span className="text-white font-semibold text-sm">{branding.companyName}</span>
+          )}
+        </div>
+        <CartIcon slug={slug} />
       </header>
 
       <div className="px-4 py-3 bg-white border-b border-gray-100">
@@ -214,9 +219,10 @@ export default function CatalogPage() {
           ) : (
             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
               {catalog.products.map((product) => (
-                <div
+                <Link
                   key={product.id}
-                  className="bg-white border border-gray-100 rounded-lg overflow-hidden"
+                  to={`/products/${product.id}`}
+                  className="block bg-white border border-gray-100 rounded-lg overflow-hidden hover:shadow-md transition-shadow"
                 >
                   {product.mainImageUrl ? (
                     <img
@@ -240,7 +246,7 @@ export default function CatalogPage() {
                       </p>
                     )}
                   </div>
-                </div>
+                </Link>
               ))}
             </div>
           )}

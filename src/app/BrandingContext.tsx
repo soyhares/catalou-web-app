@@ -49,7 +49,7 @@ export function BrandingProvider({ children }: BrandingProviderProps) {
 
   useEffect(() => {
     if (!slug) {
-      setLoadState('not-found');
+      queueMicrotask(() => setLoadState('not-found'));
       return;
     }
 
