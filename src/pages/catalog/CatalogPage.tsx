@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useBranding } from '@app/BrandingContext';
 import { fetchCatalog, type CatalogData, type PublicCategory } from '@entities/catalog/api';
@@ -9,6 +9,7 @@ import { CartIcon } from '@widgets/cart/CartIcon';
 export default function CatalogPage() {
   const { slug, branding } = useBranding();
   const { t } = useTranslation();
+  const navigate = useNavigate();
 
   const [catalog, setCatalog] = useState<CatalogData | null>(null);
   const [loading, setLoading] = useState(true);
@@ -124,7 +125,7 @@ export default function CatalogPage() {
             <span className="text-white font-semibold text-sm">{branding.companyName}</span>
           )}
         </div>
-        <CartIcon slug={slug} />
+        <CartIcon slug={slug} onClick={() => navigate('/cart')} />
       </header>
 
       <div className="px-4 py-3 bg-white border-b border-gray-100">

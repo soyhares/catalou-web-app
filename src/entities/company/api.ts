@@ -8,6 +8,9 @@ export interface BrandingData {
   colorBackground: string;
   colorText: string;
   language: 'ES' | 'EN';
+  showPrices: boolean;
+  orderType: 'DIRECT' | 'FINANCED' | 'BOTH';
+  associationName?: string | null;
 }
 
 export async function getBranding(slug: string): Promise<BrandingData> {

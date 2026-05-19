@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useBranding } from '@app/BrandingContext';
 import { fetchProduct } from '@entities/product/api';
 import { fetchCatalog } from '@entities/catalog/api';
@@ -10,6 +10,7 @@ import type { ProductPublic, VariantValuePublic } from '@entities/product/api';
 export default function ProductDetailPage() {
   const { id } = useParams<{ id: string }>();
   const { slug, branding } = useBranding();
+  const navigate = useNavigate();
   const { add: addToCart } = useCart(slug);
 
   const [product, setProduct] = useState<ProductPublic | null>(null);
@@ -70,7 +71,7 @@ export default function ProductDetailPage() {
             </span>
           )}
         </Link>
-        <CartIcon slug={slug} />
+        <CartIcon slug={slug} onClick={() => navigate('/cart')} />
       </header>
 
       {loading && (
