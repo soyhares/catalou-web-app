@@ -1,15 +1,20 @@
 import { useState, useEffect, useCallback } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useBranding } from '@app/BrandingContext';
 import { fetchCatalog, type CatalogData, type PublicCategory } from '@entities/catalog/api';
 import { OfflineBanner } from '@shared/ui/OfflineBanner';
+import { ProductCard } from '@shared/ui/ProductCard';
+import { CategoryChip } from '@shared/ui/CategoryChip';
+import { BottomNav } from '@shared/ui/BottomNav';
 import { CartIcon } from '@widgets/cart/CartIcon';
+import { useCart } from '@shared/lib/use-cart';
 
 export default function CatalogPage() {
   const { slug, branding } = useBranding();
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const { add } = useCart(slug);
 
   const [catalog, setCatalog] = useState<CatalogData | null>(null);
   const [loading, setLoading] = useState(true);
@@ -49,6 +54,23 @@ export default function CatalogPage() {
     setSelectedSubcategoryId(null);
   }
 
+  function handleQuote(productId: string) {
+    const product = catalog?.products.find((p) => p.id === productId);
+    if (!product) return;
+    void add({
+      companySlug: slug,
+      productId: product.id,
+      productName: product.name,
+      variantTypeId: null,
+      variantTypeName: null,
+      variantValueId: null,
+      variantValueName: null,
+      quantity: 1,
+      unitPrice: parseFloat(product.basePrice) || 0,
+    });
+    void navigate('/cart');
+  }
+
   const activeCategory: PublicCategory | undefined = catalog?.categories.find(
     (c) => c.id === selectedCategoryId,
   );
@@ -60,14 +82,18 @@ export default function CatalogPage() {
 
   if (error) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[var(--color-background)]">
+      <div
+        className="min-h-screen flex items-center justify-center"
+        style={{ backgroundColor: 'var(--pwa-bg)' }}
+      >
         <div className="text-center max-w-sm px-4">
-          <p className="text-sm text-[var(--color-text)] opacity-70 mb-4">
+          <p className="text-sm mb-4" style={{ color: 'var(--pwa-text)', opacity: 0.7 }}>
             {t('errors.networkErrorMessage')}
           </p>
           <button
             onClick={() => void load()}
-            className="text-sm underline text-[var(--color-primary)]"
+            className="text-sm underline"
+            style={{ color: 'var(--pwa-accent)' }}
           >
             {t('common.retry')}
           </button>
@@ -87,7 +113,10 @@ export default function CatalogPage() {
 
   if (showComingSoon) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center bg-[var(--color-background)] px-4">
+      <div
+        className="min-h-screen flex flex-col items-center justify-center px-4 pb-16"
+        style={{ backgroundColor: 'var(--pwa-bg)' }}
+      >
         {branding.logoUrl && (
           <img
             src={branding.logoUrl}
@@ -95,25 +124,32 @@ export default function CatalogPage() {
             className="h-16 w-auto mb-6 object-contain"
           />
         )}
-        <h1 className="text-2xl font-bold text-[var(--color-text)] mb-2">
+        <h1 className="text-2xl font-bold mb-2" style={{ color: 'var(--pwa-text)' }}>
           {branding.companyName}
         </h1>
-        <p className="text-lg font-semibold text-[var(--color-primary)] mb-1">
+        <p className="text-lg font-semibold mb-1" style={{ color: 'var(--pwa-accent)' }}>
           {t('catalog.comingSoon')}
         </p>
-        <p className="text-sm text-[var(--color-text)] opacity-60">
+        <p className="text-sm" style={{ color: 'var(--pwa-text)', opacity: 0.6 }}>
           {t('catalog.comingSoonMessage')}
         </p>
-        <p className="mt-8 text-xs text-[var(--color-text)] opacity-30">{t('common.poweredBy')}</p>
+        <p className="mt-8 text-xs" style={{ color: 'var(--pwa-text)', opacity: 0.3 }}>
+          {t('common.poweredBy')}
+        </p>
+        <BottomNav />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-[var(--color-background)]">
+    <div className="min-h-screen pb-16" style={{ backgroundColor: 'var(--pwa-bg)' }}>
       <OfflineBanner />
 
-      <header className="bg-[var(--color-primary)] px-4 py-3 flex items-center gap-3">
+      {/* Header / topbar */}
+      <header
+        className="px-4 py-3 flex items-center gap-3"
+        style={{ backgroundColor: 'var(--pwa-accent)' }}
+      >
         <div className="flex-1 min-w-0">
           {branding.logoUrl ? (
             <img
@@ -128,45 +164,51 @@ export default function CatalogPage() {
         <CartIcon slug={slug} onClick={() => navigate('/cart')} />
       </header>
 
-      <div className="px-4 py-3 bg-white border-b border-gray-100">
+      {/* Search bar — catalog-search class enables Clarity sticky positioning via pwa-base.css */}
+      <div
+        className="catalog-search px-4 py-3 border-b"
+        style={{ backgroundColor: 'var(--pwa-surface)', borderColor: 'var(--pwa-border)' }}
+      >
         <input
           type="search"
           value={q}
           onChange={(e) => setQ(e.target.value)}
           placeholder={t('catalog.searchPlaceholder')}
-          className="w-full rounded-full border border-gray-200 px-4 py-2 text-sm focus:outline-none focus:border-[var(--color-primary)]"
+          className="w-full rounded-full px-4 py-2 text-sm focus:outline-none border"
+          style={{
+            borderColor: 'var(--pwa-border)',
+            backgroundColor: 'var(--pwa-bg)',
+            color: 'var(--pwa-text)',
+          }}
         />
       </div>
 
       {(selectedCategoryId || selectedSubcategoryId) && (
-        <div className="flex flex-wrap gap-2 px-4 py-2 bg-gray-50 border-b border-gray-100">
+        <div
+          className="flex flex-wrap gap-2 px-4 py-2 border-b"
+          style={{
+            backgroundColor: 'var(--pwa-surface-secondary)',
+            borderColor: 'var(--pwa-border)',
+          }}
+        >
           {activeCategoryName && (
-            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-[var(--color-primary)] text-white text-xs">
-              {activeCategoryName}
-              {!selectedSubcategoryId && (
-                <button
-                  onClick={clearAllFilters}
-                  className="ml-1 text-white opacity-80 hover:opacity-100"
-                >
-                  ×
-                </button>
-              )}
-            </span>
+            <CategoryChip
+              label={activeCategoryName}
+              active={!selectedSubcategoryId}
+              onClick={!selectedSubcategoryId ? clearAllFilters : () => setSelectedSubcategoryId(null)}
+            />
           )}
           {activeSubcategoryName && (
-            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-[var(--color-secondary)] text-white text-xs">
-              {activeSubcategoryName}
-              <button
-                onClick={() => setSelectedSubcategoryId(null)}
-                className="ml-1 text-white opacity-80 hover:opacity-100"
-              >
-                ×
-              </button>
-            </span>
+            <CategoryChip
+              label={activeSubcategoryName}
+              active
+              onClick={() => setSelectedSubcategoryId(null)}
+            />
           )}
           <button
             onClick={clearAllFilters}
-            className="text-xs text-gray-400 hover:text-gray-600 underline"
+            className="text-xs underline hover:opacity-80"
+            style={{ color: 'var(--pwa-text)', opacity: 0.5 }}
           >
             {t('catalog.clearFilter')}
           </button>
@@ -175,30 +217,34 @@ export default function CatalogPage() {
 
       <div className="flex">
         {!q && catalog && catalog.categories.length > 0 && (
-          <nav className="w-40 shrink-0 border-r border-gray-100 bg-white min-h-screen py-4">
-            <button
+          <nav
+            className="w-40 shrink-0 border-r min-h-screen py-4 flex flex-col gap-1 px-2"
+            style={{
+              backgroundColor: 'var(--pwa-surface)',
+              borderColor: 'var(--pwa-border)',
+            }}
+          >
+            <CategoryChip
+              label={t('catalog.allCategories')}
+              active={!selectedCategoryId}
               onClick={clearAllFilters}
-              className={`block w-full text-left px-3 py-2 text-xs font-medium ${!selectedCategoryId ? 'text-[var(--color-primary)] bg-gray-50' : 'text-gray-600 hover:bg-gray-50'}`}
-            >
-              {t('catalog.allCategories')}
-            </button>
+            />
             {catalog.categories.map((cat) => (
               <div key={cat.id}>
-                <button
+                <CategoryChip
+                  label={cat.name}
+                  active={selectedCategoryId === cat.id}
                   onClick={() => selectCategory(cat.id)}
-                  className={`block w-full text-left px-3 py-2 text-xs font-medium ${selectedCategoryId === cat.id ? 'text-[var(--color-primary)] bg-gray-50' : 'text-gray-600 hover:bg-gray-50'}`}
-                >
-                  {cat.name}
-                </button>
+                />
                 {selectedCategoryId === cat.id &&
                   cat.subcategories.map((sub) => (
-                    <button
-                      key={sub.id}
-                      onClick={() => setSelectedSubcategoryId(sub.id)}
-                      className={`block w-full text-left pl-6 pr-3 py-1.5 text-xs ${selectedSubcategoryId === sub.id ? 'text-[var(--color-primary)] font-medium' : 'text-gray-500 hover:text-gray-700'}`}
-                    >
-                      {sub.name}
-                    </button>
+                    <div key={sub.id} className="pl-3 mt-0.5">
+                      <CategoryChip
+                        label={sub.name}
+                        active={selectedSubcategoryId === sub.id}
+                        onClick={() => setSelectedSubcategoryId(sub.id)}
+                      />
+                    </div>
                   ))}
               </div>
             ))}
@@ -207,47 +253,30 @@ export default function CatalogPage() {
 
         <main className="flex-1 p-4">
           {loading ? (
-            <p className="text-sm text-gray-400">{t('common.loading')}</p>
+            <p className="text-sm" style={{ color: 'var(--pwa-text)', opacity: 0.5 }}>
+              {t('common.loading')}
+            </p>
           ) : !catalog || catalog.products.length === 0 ? (
             <div className="text-center py-16">
-              <p className="text-sm font-medium text-[var(--color-text)] opacity-70 mb-1">
+              <p className="text-sm font-medium mb-1" style={{ color: 'var(--pwa-text)', opacity: 0.7 }}>
                 {t('catalog.noResults')}
               </p>
-              <p className="text-xs text-[var(--color-text)] opacity-50">
+              <p className="text-xs" style={{ color: 'var(--pwa-text)', opacity: 0.5 }}>
                 {t('catalog.noResultsMessage')}
               </p>
             </div>
           ) : (
             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
               {catalog.products.map((product) => (
-                <Link
+                <ProductCard
                   key={product.id}
-                  to={`/products/${product.id}`}
-                  className="block bg-white border border-gray-100 rounded-lg overflow-hidden hover:shadow-md transition-shadow"
-                >
-                  {product.mainImageUrl ? (
-                    <img
-                      src={product.mainImageUrl}
-                      alt={product.name}
-                      loading="lazy"
-                      className="w-full aspect-square object-cover"
-                    />
-                  ) : (
-                    <div className="w-full aspect-square bg-gray-100 flex items-center justify-center">
-                      <span className="text-xs text-gray-400">{t('product.noImage')}</span>
-                    </div>
-                  )}
-                  <div className="p-2">
-                    <p className="text-xs font-medium text-[var(--color-text)] line-clamp-2">
-                      {product.name}
-                    </p>
-                    {catalog.showPrices && (
-                      <p className="text-xs text-[var(--color-primary)] font-semibold mt-1">
-                        ${product.basePrice}
-                      </p>
-                    )}
-                  </div>
-                </Link>
+                  id={product.id}
+                  name={product.name}
+                  imageUrl={product.mainImageUrl}
+                  price={product.basePrice !== null ? parseFloat(product.basePrice) : null}
+                  showPrices={catalog.showPrices}
+                  onQuote={handleQuote}
+                />
               ))}
             </div>
           )}
@@ -255,8 +284,12 @@ export default function CatalogPage() {
       </div>
 
       <footer className="py-6 text-center">
-        <p className="text-xs text-[var(--color-text)] opacity-30">{t('common.poweredBy')}</p>
+        <p className="text-xs" style={{ color: 'var(--pwa-text)', opacity: 0.3 }}>
+          {t('common.poweredBy')}
+        </p>
       </footer>
+
+      <BottomNav />
     </div>
   );
 }

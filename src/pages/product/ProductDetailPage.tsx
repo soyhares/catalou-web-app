@@ -55,9 +55,12 @@ export default function ProductDetailPage() {
   const galleryImages = product ? [...product.images].sort((a, b) => a.sortOrder - b.sortOrder) : [];
 
   return (
-    <div className="min-h-screen bg-[var(--color-background)]" style={{ color: 'var(--color-text)' }}>
+    <div className="min-h-screen" style={{ backgroundColor: 'var(--pwa-bg)', color: 'var(--pwa-text)' }}>
       {/* Header */}
-      <header className="bg-[var(--color-primary)] px-4 py-3 flex items-center gap-3">
+      <header
+        className="px-4 py-3 flex items-center gap-3"
+        style={{ backgroundColor: 'var(--pwa-accent)' }}
+      >
         <Link to="/" className="flex items-center gap-3 flex-1 min-w-0">
           {branding.logoUrl ? (
             <img
@@ -75,13 +78,15 @@ export default function ProductDetailPage() {
       </header>
 
       {loading && (
-        <div className="p-6 text-[var(--color-text)]">Cargando…</div>
+        <div className="p-6" style={{ color: 'var(--pwa-text)' }}>Cargando…</div>
       )}
 
       {!loading && (error || !product) && (
         <div className="p-6 text-center">
-          <p className="text-gray-500 mb-4">{error || 'Producto no encontrado'}</p>
-          <Link to="/" className="underline text-sm text-[var(--color-primary)]">
+          <p className="mb-4" style={{ color: 'var(--pwa-text)', opacity: 0.6 }}>
+            {error || 'Producto no encontrado'}
+          </p>
+          <Link to="/" className="underline text-sm" style={{ color: 'var(--pwa-accent)' }}>
             Volver al catálogo
           </Link>
         </div>
@@ -90,8 +95,8 @@ export default function ProductDetailPage() {
       {!loading && product && (
         <div className="max-w-4xl mx-auto p-4 md:p-6">
           {/* Breadcrumb */}
-          <nav className="text-sm text-gray-500 mb-4">
-            <Link to="/" className="hover:underline text-[var(--color-primary)]">
+          <nav className="text-sm mb-4" style={{ color: 'var(--pwa-text)', opacity: 0.6 }}>
+            <Link to="/" className="hover:underline" style={{ color: 'var(--pwa-accent)' }}>
               Catálogo
             </Link>
             <span className="mx-2">/</span>
@@ -101,7 +106,10 @@ export default function ProductDetailPage() {
           <div className="grid md:grid-cols-2 gap-8">
             {/* Image panel */}
             <div>
-              <div className="aspect-square bg-gray-100 rounded overflow-hidden mb-3">
+              <div
+                className="aspect-square rounded overflow-hidden mb-3"
+                style={{ backgroundColor: 'var(--pwa-surface-secondary)' }}
+              >
                 {activeImage ? (
                   <img
                     src={activeImage}
@@ -110,7 +118,10 @@ export default function ProductDetailPage() {
                     loading="lazy"
                   />
                 ) : (
-                  <div className="w-full h-full flex items-center justify-center text-gray-300 text-sm">
+                  <div
+                    className="w-full h-full flex items-center justify-center text-sm"
+                    style={{ color: 'var(--pwa-text)', opacity: 0.4 }}
+                  >
                     Sin imagen
                   </div>
                 )}
@@ -123,11 +134,12 @@ export default function ProductDetailPage() {
                     <button
                       type="button"
                       onClick={() => setActiveImage(product.mainImageUrl)}
-                      className={`h-16 w-16 rounded overflow-hidden border-2 ${
-                        activeImage === product.mainImageUrl
-                          ? 'border-[var(--color-primary)]'
-                          : 'border-transparent'
-                      }`}
+                      className="h-16 w-16 rounded overflow-hidden border-2"
+                      style={{
+                        borderColor: activeImage === product.mainImageUrl
+                          ? 'var(--pwa-accent)'
+                          : 'transparent',
+                      }}
                     >
                       <img
                         src={product.mainImageUrl}
@@ -142,11 +154,12 @@ export default function ProductDetailPage() {
                       key={img.id}
                       type="button"
                       onClick={() => setActiveImage(img.url)}
-                      className={`h-16 w-16 rounded overflow-hidden border-2 ${
-                        activeImage === img.url
-                          ? 'border-[var(--color-primary)]'
-                          : 'border-transparent'
-                      }`}
+                      className="h-16 w-16 rounded overflow-hidden border-2"
+                      style={{
+                        borderColor: activeImage === img.url
+                          ? 'var(--pwa-accent)'
+                          : 'transparent',
+                      }}
                     >
                       <img
                         src={img.url}
@@ -162,14 +175,19 @@ export default function ProductDetailPage() {
 
             {/* Info panel */}
             <div className="flex flex-col">
-              <h1 className="text-2xl font-bold mb-2">{product.name}</h1>
+              <h1 className="text-2xl font-bold mb-2" style={{ color: 'var(--pwa-text)' }}>
+                {product.name}
+              </h1>
 
               {/* Price */}
               {showPrices && (
-                <p className="text-xl font-semibold text-[var(--color-primary)] mb-4">
+                <p className="text-xl font-semibold mb-4" style={{ color: 'var(--pwa-accent)' }}>
                   ${computedPrice()}
                   {selectedVariant && parseFloat(selectedVariant.priceModifier) > 0 && (
-                    <span className="text-sm font-normal text-gray-500 ml-2">
+                    <span
+                      className="text-sm font-normal ml-2"
+                      style={{ color: 'var(--pwa-text)', opacity: 0.6 }}
+                    >
                       (precio base + variante)
                     </span>
                   )}
@@ -179,18 +197,26 @@ export default function ProductDetailPage() {
               {/* Variant selector */}
               {hasVariants && product.variantType && (
                 <div className="mb-4">
-                  <p className="text-sm font-medium mb-2">{product.variantType.name}</p>
+                  <p className="text-sm font-medium mb-2" style={{ color: 'var(--pwa-text)' }}>
+                    {product.variantType.name}
+                  </p>
                   <div className="flex flex-wrap gap-2">
                     {product.variantType.values.map((v) => (
                       <button
                         key={v.id}
                         type="button"
                         onClick={() => handleVariantSelect(v)}
-                        className={`px-3 py-1.5 rounded border text-sm ${
-                          selectedVariant?.id === v.id
-                            ? 'bg-[var(--color-primary)] text-white border-[var(--color-primary)]'
-                            : 'border-gray-300 hover:border-gray-500'
-                        }`}
+                        className="px-3 py-1.5 border text-sm transition-opacity"
+                        style={{
+                          backgroundColor: selectedVariant?.id === v.id
+                            ? 'var(--pwa-accent)'
+                            : 'var(--pwa-surface)',
+                          color: selectedVariant?.id === v.id ? '#fff' : 'var(--pwa-text)',
+                          borderColor: selectedVariant?.id === v.id
+                            ? 'var(--pwa-accent)'
+                            : 'var(--pwa-border)',
+                          borderRadius: 'var(--pwa-radius-chip)',
+                        }}
                       >
                         {v.value}
                         {showPrices && parseFloat(v.priceModifier) > 0 && (
@@ -209,20 +235,26 @@ export default function ProductDetailPage() {
 
               {/* Quantity selector */}
               <div className="flex items-center gap-3 mb-3">
-                <label className="text-sm font-medium">Cantidad</label>
-                <div className="flex items-center border rounded">
+                <label className="text-sm font-medium" style={{ color: 'var(--pwa-text)' }}>
+                  Cantidad
+                </label>
+                <div className="flex items-center border rounded" style={{ borderColor: 'var(--pwa-border)' }}>
                   <button
                     type="button"
                     onClick={() => setQuantity((q) => Math.max(1, q - 1))}
                     className="px-3 py-1 text-lg leading-none"
+                    style={{ color: 'var(--pwa-text)' }}
                   >
                     −
                   </button>
-                  <span className="px-4 py-1 text-sm">{quantity}</span>
+                  <span className="px-4 py-1 text-sm" style={{ color: 'var(--pwa-text)' }}>
+                    {quantity}
+                  </span>
                   <button
                     type="button"
                     onClick={() => setQuantity((q) => q + 1)}
                     className="px-3 py-1 text-lg leading-none"
+                    style={{ color: 'var(--pwa-text)' }}
                   >
                     +
                   </button>
@@ -251,7 +283,11 @@ export default function ProductDetailPage() {
                     setTimeout(() => setAddedFeedback(false), 2000);
                   });
                 }}
-                className="w-full py-3 rounded font-medium text-white bg-[var(--color-primary)] disabled:opacity-40 disabled:cursor-not-allowed transition-opacity"
+                className="w-full py-3 font-medium text-white disabled:opacity-40 disabled:cursor-not-allowed transition-opacity hover:opacity-90"
+                style={{
+                  backgroundColor: 'var(--pwa-accent)',
+                  borderRadius: 'var(--pwa-radius-button)',
+                }}
               >
                 {addedFeedback
                   ? '¡Añadido!'
@@ -263,8 +299,10 @@ export default function ProductDetailPage() {
               {/* Description */}
               {product.description && (
                 <div className="mt-6">
-                  <h2 className="font-semibold mb-2">Descripción</h2>
-                  <p className="text-gray-700 text-sm whitespace-pre-wrap">
+                  <h2 className="font-semibold mb-2" style={{ color: 'var(--pwa-text)' }}>
+                    Descripción
+                  </h2>
+                  <p className="text-sm whitespace-pre-wrap" style={{ color: 'var(--pwa-text)', opacity: 0.8 }}>
                     {product.description}
                   </p>
                 </div>
@@ -273,8 +311,10 @@ export default function ProductDetailPage() {
               {/* Technical specs */}
               {product.technicalSpecs && (
                 <div className="mt-4">
-                  <h2 className="font-semibold mb-2">Especificaciones técnicas</h2>
-                  <p className="text-gray-700 text-sm whitespace-pre-wrap">
+                  <h2 className="font-semibold mb-2" style={{ color: 'var(--pwa-text)' }}>
+                    Especificaciones técnicas
+                  </h2>
+                  <p className="text-sm whitespace-pre-wrap" style={{ color: 'var(--pwa-text)', opacity: 0.8 }}>
                     {product.technicalSpecs}
                   </p>
                 </div>
@@ -283,7 +323,9 @@ export default function ProductDetailPage() {
           </div>
 
           <footer className="mt-12 py-6 text-center">
-            <p className="text-xs opacity-30">Powered by Catalou</p>
+            <p className="text-xs" style={{ color: 'var(--pwa-text)', opacity: 0.3 }}>
+              Powered by Catalou
+            </p>
           </footer>
         </div>
       )}

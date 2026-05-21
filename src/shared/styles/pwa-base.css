@@ -1,0 +1,43 @@
+/* Applied globally — ThemeProvider sets --pwa-* vars on :root */
+body {
+  background-color: var(--pwa-bg);
+  color: var(--pwa-text);
+  font-family: var(--pwa-font-body);
+}
+
+/* Heading font per theme (Cormorant Garamond for Luxury, Poppins for Warm) */
+[data-pwa-theme="luxury"] h1,
+[data-pwa-theme="luxury"] h2,
+[data-pwa-theme="luxury"] h3 {
+  font-family: var(--pwa-font-heading);
+}
+
+[data-pwa-theme="warm"] h1,
+[data-pwa-theme="warm"] h2,
+[data-pwa-theme="warm"] h3 {
+  font-family: var(--pwa-font-heading);
+}
+
+/* Clarity: sticky search bar below topbar */
+[data-pwa-theme="clarity"] .catalog-search {
+  position: sticky;
+  top: 56px;
+  z-index: 10;
+  background-color: var(--pwa-surface);
+  padding: 8px 16px;
+}
+
+/* Clarity: hero section distinct background */
+[data-pwa-theme="clarity"] .hero-section {
+  background-color: var(--pwa-surface-secondary);
+}
+
+/* Warm: scale effect on product cards */
+[data-pwa-theme="warm"] .product-card {
+  transition: transform var(--pwa-motion, 200ms) ease;
+}
+
+[data-pwa-theme="warm"] .product-card:hover,
+[data-pwa-theme="warm"] .product-card:active {
+  transform: scale(1.02);
+}

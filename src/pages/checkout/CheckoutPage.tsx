@@ -17,7 +17,6 @@ export default function CheckoutPage() {
   const isOnline = useOnlineStatus();
 
   const [step, setStep] = useState<Step>(branding.orderType === 'BOTH' ? 'type' : 'form');
-  // Only tracked as state when BOTH; otherwise the company's configured type is used directly.
   const [selectedType, setSelectedType] = useState<OrderType>('DIRECT');
   const orderType: OrderType = branding.orderType === 'BOTH' ? selectedType : branding.orderType;
   const [visitorName, setVisitorName] = useState('');
@@ -30,13 +29,19 @@ export default function CheckoutPage() {
 
   if (items.length === 0) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-white">
+      <div
+        className="min-h-screen flex items-center justify-center"
+        style={{ backgroundColor: 'var(--pwa-bg)' }}
+      >
         <div className="text-center px-4">
-          <p className="text-gray-600 mb-4">{t('checkout.emptyCart')}</p>
+          <p className="mb-4" style={{ color: 'var(--pwa-text)', opacity: 0.7 }}>
+            {t('checkout.emptyCart')}
+          </p>
           <button
             type="button"
             onClick={() => navigate('/')}
-            className="text-sm underline text-gray-700"
+            className="text-sm underline"
+            style={{ color: 'var(--pwa-accent)' }}
           >
             {t('checkout.backToCatalog')}
           </button>
@@ -89,16 +94,22 @@ export default function CheckoutPage() {
 
   if (step === 'type') {
     return (
-      <div className="min-h-screen bg-white">
-        <header className="border-b px-4 py-4">
+      <div className="min-h-screen" style={{ backgroundColor: 'var(--pwa-bg)' }}>
+        <header
+          className="border-b px-4 py-4"
+          style={{ borderColor: 'var(--pwa-border)', backgroundColor: 'var(--pwa-surface)' }}
+        >
           <button
             type="button"
             onClick={() => navigate('/cart')}
-            className="text-sm text-gray-600"
+            className="text-sm hover:opacity-80"
+            style={{ color: 'var(--pwa-text)' }}
           >
             ← {t('checkout.backToCart')}
           </button>
-          <h1 className="mt-2 text-lg font-semibold">{t('checkout.paymentMethod')}</h1>
+          <h1 className="mt-2 text-lg font-semibold" style={{ color: 'var(--pwa-text)' }}>
+            {t('checkout.paymentMethod')}
+          </h1>
         </header>
         <main className="max-w-lg mx-auto px-4 py-6 space-y-4">
           <button
@@ -107,10 +118,15 @@ export default function CheckoutPage() {
               setSelectedType('DIRECT');
               setStep('form');
             }}
-            className="w-full border rounded-lg p-4 text-left hover:bg-gray-50"
+            className="w-full border rounded-lg p-4 text-left hover:opacity-80 transition-opacity"
+            style={{ borderColor: 'var(--pwa-border)', backgroundColor: 'var(--pwa-surface)' }}
           >
-            <p className="font-semibold">{t('checkout.direct')}</p>
-            <p className="text-sm text-gray-500 mt-1">{t('checkout.directDesc')}</p>
+            <p className="font-semibold" style={{ color: 'var(--pwa-text)' }}>
+              {t('checkout.direct')}
+            </p>
+            <p className="text-sm mt-1" style={{ color: 'var(--pwa-text)', opacity: 0.6 }}>
+              {t('checkout.directDesc')}
+            </p>
           </button>
           <button
             type="button"
@@ -118,13 +134,15 @@ export default function CheckoutPage() {
               setSelectedType('FINANCED');
               setStep('form');
             }}
-            className="w-full border rounded-lg p-4 text-left hover:bg-gray-50"
+            className="w-full border rounded-lg p-4 text-left hover:opacity-80 transition-opacity"
+            style={{ borderColor: 'var(--pwa-border)', backgroundColor: 'var(--pwa-surface)' }}
           >
-            <p className="font-semibold">
-              {t('checkout.financed')} —{' '}
-              {branding.associationName ?? t('checkout.association')}
+            <p className="font-semibold" style={{ color: 'var(--pwa-text)' }}>
+              {t('checkout.financed')} — {branding.associationName ?? t('checkout.association')}
             </p>
-            <p className="text-sm text-gray-500 mt-1">{t('checkout.financedDesc')}</p>
+            <p className="text-sm mt-1" style={{ color: 'var(--pwa-text)', opacity: 0.6 }}>
+              {t('checkout.financedDesc')}
+            </p>
           </button>
         </main>
       </div>
@@ -133,19 +151,27 @@ export default function CheckoutPage() {
 
   const subtotal = items.reduce((s, i) => s + i.unitPrice * i.quantity, 0);
 
+  const inputClass = "w-full border rounded px-3 py-2 text-sm focus:outline-none";
+
   return (
-    <div className="min-h-screen bg-white">
-      <header className="border-b px-4 py-4">
+    <div className="min-h-screen" style={{ backgroundColor: 'var(--pwa-bg)' }}>
+      <header
+        className="border-b px-4 py-4"
+        style={{ borderColor: 'var(--pwa-border)', backgroundColor: 'var(--pwa-surface)' }}
+      >
         <button
           type="button"
           onClick={() =>
             branding.orderType === 'BOTH' ? setStep('type') : navigate('/cart')
           }
-          className="text-sm text-gray-600"
+          className="text-sm hover:opacity-80"
+          style={{ color: 'var(--pwa-text)' }}
         >
           ← {t('checkout.back')}
         </button>
-        <h1 className="mt-2 text-lg font-semibold">{t('checkout.yourData')}</h1>
+        <h1 className="mt-2 text-lg font-semibold" style={{ color: 'var(--pwa-text)' }}>
+          {t('checkout.yourData')}
+        </h1>
       </header>
 
       <main className="max-w-lg mx-auto px-4 py-6">
@@ -155,24 +181,22 @@ export default function CheckoutPage() {
           </div>
         )}
 
-        <form
-          onSubmit={(e) => {
-            void handleSubmit(e);
-          }}
-          noValidate
-        >
+        <form onSubmit={(e) => { void handleSubmit(e); }} noValidate>
           <div className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-medium mb-1" style={{ color: 'var(--pwa-text)' }}>
                 {t('checkout.name')} *
               </label>
               <input
                 type="text"
                 value={visitorName}
                 onChange={(e) => setVisitorName(e.target.value)}
-                className={`w-full border rounded px-3 py-2 text-sm focus:outline-none focus:border-gray-500 ${
-                  errors.visitorName ? 'border-red-400' : 'border-gray-300'
-                }`}
+                className={inputClass}
+                style={{
+                  borderColor: errors.visitorName ? '#EF4444' : 'var(--pwa-border)',
+                  backgroundColor: 'var(--pwa-surface)',
+                  color: 'var(--pwa-text)',
+                }}
                 autoComplete="name"
               />
               {errors.visitorName && (
@@ -181,16 +205,19 @@ export default function CheckoutPage() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-medium mb-1" style={{ color: 'var(--pwa-text)' }}>
                 {t('checkout.phone')} *
               </label>
               <input
                 type="tel"
                 value={visitorPhone}
                 onChange={(e) => setVisitorPhone(e.target.value)}
-                className={`w-full border rounded px-3 py-2 text-sm focus:outline-none focus:border-gray-500 ${
-                  errors.visitorPhone ? 'border-red-400' : 'border-gray-300'
-                }`}
+                className={inputClass}
+                style={{
+                  borderColor: errors.visitorPhone ? '#EF4444' : 'var(--pwa-border)',
+                  backgroundColor: 'var(--pwa-surface)',
+                  color: 'var(--pwa-text)',
+                }}
                 autoComplete="tel"
               />
               {errors.visitorPhone && (
@@ -199,16 +226,19 @@ export default function CheckoutPage() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-medium mb-1" style={{ color: 'var(--pwa-text)' }}>
                 {t('checkout.email')} *
               </label>
               <input
                 type="email"
                 value={visitorEmail}
                 onChange={(e) => setVisitorEmail(e.target.value)}
-                className={`w-full border rounded px-3 py-2 text-sm focus:outline-none focus:border-gray-500 ${
-                  errors.visitorEmail ? 'border-red-400' : 'border-gray-300'
-                }`}
+                className={inputClass}
+                style={{
+                  borderColor: errors.visitorEmail ? '#EF4444' : 'var(--pwa-border)',
+                  backgroundColor: 'var(--pwa-surface)',
+                  color: 'var(--pwa-text)',
+                }}
                 autoComplete="email"
               />
               {errors.visitorEmail && (
@@ -217,16 +247,19 @@ export default function CheckoutPage() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-medium mb-1" style={{ color: 'var(--pwa-text)' }}>
                 {t('checkout.deliveryAddress')} *
               </label>
               <textarea
                 value={deliveryAddress}
                 onChange={(e) => setDeliveryAddress(e.target.value)}
                 rows={3}
-                className={`w-full border rounded px-3 py-2 text-sm focus:outline-none focus:border-gray-500 resize-none ${
-                  errors.deliveryAddress ? 'border-red-400' : 'border-gray-300'
-                }`}
+                className={`${inputClass} resize-none`}
+                style={{
+                  borderColor: errors.deliveryAddress ? '#EF4444' : 'var(--pwa-border)',
+                  backgroundColor: 'var(--pwa-surface)',
+                  color: 'var(--pwa-text)',
+                }}
                 autoComplete="street-address"
               />
               {errors.deliveryAddress && (
@@ -235,10 +268,19 @@ export default function CheckoutPage() {
             </div>
           </div>
 
-          <div className="mt-6 border rounded-lg p-4 space-y-2">
-            <p className="text-sm font-semibold text-gray-700">{t('checkout.orderSummary')}</p>
+          <div
+            className="mt-6 border rounded-lg p-4 space-y-2"
+            style={{ borderColor: 'var(--pwa-border)', backgroundColor: 'var(--pwa-surface)' }}
+          >
+            <p className="text-sm font-semibold" style={{ color: 'var(--pwa-text)' }}>
+              {t('checkout.orderSummary')}
+            </p>
             {items.map((item) => (
-              <div key={item.id} className="flex justify-between text-sm text-gray-600">
+              <div
+                key={item.id}
+                className="flex justify-between text-sm"
+                style={{ color: 'var(--pwa-text)', opacity: 0.8 }}
+              >
                 <span>
                   {item.productName}
                   {item.variantValueName ? ` (${item.variantValueName})` : ''} × {item.quantity}
@@ -249,7 +291,10 @@ export default function CheckoutPage() {
               </div>
             ))}
             {branding.showPrices && (
-              <div className="flex justify-between font-semibold border-t pt-2">
+              <div
+                className="flex justify-between font-semibold border-t pt-2"
+                style={{ borderColor: 'var(--pwa-border)', color: 'var(--pwa-text)' }}
+              >
                 <span>{t('checkout.total')}</span>
                 <span>₡{subtotal.toLocaleString('es-CR')}</span>
               </div>
@@ -261,7 +306,11 @@ export default function CheckoutPage() {
           <button
             type="submit"
             disabled={submitting || !isOnline}
-            className="mt-6 w-full py-3 rounded bg-gray-900 text-white font-medium hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="mt-6 w-full py-3 text-white font-medium disabled:opacity-50 disabled:cursor-not-allowed hover:opacity-90 transition-opacity"
+            style={{
+              backgroundColor: 'var(--pwa-accent)',
+              borderRadius: 'var(--pwa-radius-button)',
+            }}
           >
             {submitting ? t('checkout.submitting') : t('checkout.submit')}
           </button>

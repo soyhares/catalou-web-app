@@ -20,16 +20,22 @@ export default function CartPage() {
   }
 
   return (
-    <div className="min-h-screen bg-white">
-      <header className="border-b px-4 py-4 flex items-center justify-between">
+    <div className="min-h-screen" style={{ backgroundColor: 'var(--pwa-bg)' }}>
+      <header
+        className="border-b px-4 py-4 flex items-center justify-between"
+        style={{ borderColor: 'var(--pwa-border)', backgroundColor: 'var(--pwa-surface)' }}
+      >
         <button
           type="button"
           onClick={() => navigate(-1)}
-          className="text-sm text-gray-600 hover:text-gray-900"
+          className="text-sm hover:opacity-80"
+          style={{ color: 'var(--pwa-text)' }}
         >
           ← {t('cart.back')}
         </button>
-        <h1 className="text-lg font-semibold">{t('cart.title')}</h1>
+        <h1 className="text-lg font-semibold" style={{ color: 'var(--pwa-text)' }}>
+          {t('cart.title')}
+        </h1>
         {!isEmpty ? (
           <button
             type="button"
@@ -45,31 +51,36 @@ export default function CartPage() {
 
       <main className="max-w-lg mx-auto px-4 py-6">
         {isEmpty ? (
-          <div className="text-center py-16 text-gray-500">
+          <div className="text-center py-16">
             <p className="text-4xl mb-4">🛒</p>
-            <p className="text-lg font-medium">{t('cart.empty')}</p>
+            <p className="text-lg font-medium" style={{ color: 'var(--pwa-text)', opacity: 0.7 }}>
+              {t('cart.empty')}
+            </p>
             <button
               type="button"
               onClick={() => navigate('/')}
               className="mt-4 text-sm underline"
+              style={{ color: 'var(--pwa-accent)' }}
             >
               {t('cart.continueShopping')}
             </button>
           </div>
         ) : (
           <>
-            <ul className="divide-y">
+            <ul className="divide-y" style={{ borderColor: 'var(--pwa-border)' }}>
               {items.map((item) => (
                 <li key={item.id} className="py-4 flex gap-4">
                   <div className="flex-1 min-w-0">
-                    <p className="font-medium text-gray-900 truncate">{item.productName}</p>
+                    <p className="font-medium truncate" style={{ color: 'var(--pwa-text)' }}>
+                      {item.productName}
+                    </p>
                     {item.variantValueName && (
-                      <p className="text-sm text-gray-500">
+                      <p className="text-sm" style={{ color: 'var(--pwa-text)', opacity: 0.6 }}>
                         {item.variantTypeName}: {item.variantValueName}
                       </p>
                     )}
                     {branding.showPrices && (
-                      <p className="text-sm text-gray-700 mt-1">
+                      <p className="text-sm mt-1" style={{ color: 'var(--pwa-text)', opacity: 0.8 }}>
                         ₡{(item.unitPrice * item.quantity).toLocaleString('es-CR')}
                       </p>
                     )}
@@ -78,16 +89,26 @@ export default function CartPage() {
                     <button
                       type="button"
                       onClick={() => { void updateQuantity(item.id, item.quantity - 1); }}
-                      className="w-7 h-7 rounded border border-gray-300 flex items-center justify-center text-gray-700 hover:bg-gray-50"
+                      className="w-7 h-7 rounded border flex items-center justify-center hover:opacity-80"
+                      style={{
+                        borderColor: 'var(--pwa-border)',
+                        color: 'var(--pwa-text)',
+                      }}
                       aria-label={t('cart.decreaseQuantity')}
                     >
                       −
                     </button>
-                    <span className="w-6 text-center text-sm font-medium">{item.quantity}</span>
+                    <span className="w-6 text-center text-sm font-medium" style={{ color: 'var(--pwa-text)' }}>
+                      {item.quantity}
+                    </span>
                     <button
                       type="button"
                       onClick={() => { void updateQuantity(item.id, item.quantity + 1); }}
-                      className="w-7 h-7 rounded border border-gray-300 flex items-center justify-center text-gray-700 hover:bg-gray-50"
+                      className="w-7 h-7 rounded border flex items-center justify-center hover:opacity-80"
+                      style={{
+                        borderColor: 'var(--pwa-border)',
+                        color: 'var(--pwa-text)',
+                      }}
                       aria-label={t('cart.increaseQuantity')}
                     >
                       +
@@ -95,7 +116,7 @@ export default function CartPage() {
                     <button
                       type="button"
                       onClick={() => { void remove(item.id); }}
-                      className="ml-2 text-gray-400 hover:text-red-500 text-lg leading-none"
+                      className="ml-2 text-red-400 hover:text-red-600 text-lg leading-none"
                       aria-label={t('cart.remove')}
                     >
                       ×
@@ -106,7 +127,10 @@ export default function CartPage() {
             </ul>
 
             {branding.showPrices && (
-              <div className="mt-4 flex justify-between border-t pt-4 font-semibold text-gray-900">
+              <div
+                className="mt-4 flex justify-between border-t pt-4 font-semibold"
+                style={{ borderColor: 'var(--pwa-border)', color: 'var(--pwa-text)' }}
+              >
                 <span>{t('cart.total')}</span>
                 <span>₡{subtotal.toLocaleString('es-CR')}</span>
               </div>
@@ -115,7 +139,11 @@ export default function CartPage() {
             <button
               type="button"
               onClick={() => navigate('/checkout')}
-              className="mt-6 w-full py-3 rounded bg-gray-900 text-white font-medium hover:bg-gray-700"
+              className="mt-6 w-full py-3 text-white font-medium hover:opacity-90 transition-opacity"
+              style={{
+                backgroundColor: 'var(--pwa-accent)',
+                borderRadius: 'var(--pwa-radius-button)',
+              }}
             >
               {t('cart.checkout')}
             </button>

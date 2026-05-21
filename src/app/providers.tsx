@@ -1,5 +1,6 @@
-import { Suspense, type ReactNode } from 'react';
+import { type ReactNode, Suspense } from 'react';
 import { BrandingProvider } from './BrandingContext';
+import { ThemeProvider } from '@shared/ui/ThemeProvider';
 import './sw-registration';
 
 interface ProvidersProps {
@@ -9,9 +10,11 @@ interface ProvidersProps {
 export function Providers({ children }: ProvidersProps) {
   return (
     <BrandingProvider>
-      <Suspense fallback={<div className="min-h-screen bg-white" />}>
-        {children}
-      </Suspense>
+      <ThemeProvider>
+        <Suspense fallback={<div className="min-h-screen" />}>
+          {children}
+        </Suspense>
+      </ThemeProvider>
     </BrandingProvider>
   );
 }
