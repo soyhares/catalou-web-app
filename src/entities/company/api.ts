@@ -10,6 +10,7 @@ export interface BrandingData {
   language: 'ES' | 'EN';
   showPrices: boolean;
   orderType: 'DIRECT' | 'FINANCED' | 'BOTH';
+  servicePercentage: number;
   associationName?: string | null;
 }
 

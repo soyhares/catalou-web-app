@@ -1,6 +1,7 @@
 {
   "common": {
     "poweredBy": "Powered by Catalou",
+    "privacyPolicy": "Privacy Policy",
     "loading": "Loading...",
     "retry": "Try again",
     "back": "Back",
@@ -9,6 +10,7 @@
     "close": "Close"
   },
   "catalog": {
+    "navLabel": "Home",
     "searchPlaceholder": "Search products...",
     "noResults": "No products found",
     "noResultsMessage": "Try a different search term",
@@ -33,6 +35,7 @@
     "noImage": "No image available"
   },
   "cart": {
+    "navLabel": "Quote",
     "title": "Your cart",
     "back": "Back",
     "clear": "Clear",
@@ -42,6 +45,7 @@
     "decreaseQuantity": "Decrease quantity",
     "increaseQuantity": "Increase quantity",
     "subtotal": "Subtotal",
+    "serviceFee": "Service fee ({{pct}}%)",
     "total": "Total",
     "checkout": "Proceed to checkout",
     "continueShopping": "Continue shopping",
@@ -119,6 +123,13 @@
     "total": "Total",
     "associationPending": "Your request has been sent to the association for approval.",
     "associationConfirmed": "Your order has been confirmed by the association."
+  },
+  "about": {
+    "navLabel": "About",
+    "phone": "Phone",
+    "whatsapp": "WhatsApp",
+    "email": "Email",
+    "socialLinks": "Social links"
   },
   "pwa": {
     "updateAvailable": "An update is available",

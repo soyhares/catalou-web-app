@@ -3,10 +3,12 @@ import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useBranding } from '@app/BrandingContext';
 import { fetchCatalog, type CatalogData, type PublicCategory } from '@entities/catalog/api';
+import { getCatalogProfile } from '@entities/shopper-profile/api';
 import { OfflineBanner } from '@shared/ui/OfflineBanner';
 import { ProductCard } from '@shared/ui/ProductCard';
 import { CategoryChip } from '@shared/ui/CategoryChip';
 import { BottomNav } from '@shared/ui/BottomNav';
+import { CatalogFooter } from '@shared/ui/CatalogFooter';
 import { CartIcon } from '@widgets/cart/CartIcon';
 import { useCart } from '@shared/lib/use-cart';
 
@@ -18,6 +20,7 @@ export default function CatalogPage() {
 
   const [catalog, setCatalog] = useState<CatalogData | null>(null);
   const [loading, setLoading] = useState(true);
+  const [showAbout, setShowAbout] = useState(false);
   const [error, setError] = useState(false);
   const [q, setQ] = useState('');
   const [selectedCategoryId, setSelectedCategoryId] = useState<string | null>(null);
@@ -43,6 +46,12 @@ export default function CatalogPage() {
   useEffect(() => {
     queueMicrotask(() => { void load(); });
   }, [load]);
+
+  useEffect(() => {
+    getCatalogProfile(slug)
+      .then((p) => setShowAbout(p.hasAboutSection))
+      .catch(() => {});
+  }, [slug]);
 
   function selectCategory(id: string) {
     setSelectedCategoryId(id);
@@ -133,10 +142,8 @@ export default function CatalogPage() {
         <p className="text-sm" style={{ color: 'var(--pwa-text)', opacity: 0.6 }}>
           {t('catalog.comingSoonMessage')}
         </p>
-        <p className="mt-8 text-xs" style={{ color: 'var(--pwa-text)', opacity: 0.3 }}>
-          {t('common.poweredBy')}
-        </p>
-        <BottomNav />
+        <CatalogFooter className="mt-8" />
+        <BottomNav showAbout={showAbout} />
       </div>
     );
   }
@@ -183,9 +190,10 @@ export default function CatalogPage() {
         />
       </div>
 
+      {/* Active filter chips — desktop only (mobile uses the horizontal scroll row below) */}
       {(selectedCategoryId || selectedSubcategoryId) && (
         <div
-          className="flex flex-wrap gap-2 px-4 py-2 border-b"
+          className="hidden md:flex flex-wrap gap-2 px-4 py-2 border-b"
           style={{
             backgroundColor: 'var(--pwa-surface-secondary)',
             borderColor: 'var(--pwa-border)',
@@ -215,10 +223,47 @@ export default function CatalogPage() {
         </div>
       )}
 
+      {/* Mobile category row — scrollable chips, hidden on md+ */}
+      {!q && catalog && catalog.categories.length > 0 && (
+        <div
+          className="md:hidden border-b"
+          style={{ backgroundColor: 'var(--pwa-surface)', borderColor: 'var(--pwa-border)' }}
+        >
+          <div className="flex gap-2 overflow-x-auto px-4 py-2" style={{ scrollbarWidth: 'none' }}>
+            <CategoryChip
+              label={t('catalog.allCategories')}
+              active={!selectedCategoryId}
+              onClick={clearAllFilters}
+            />
+            {catalog.categories.map((cat) => (
+              <CategoryChip
+                key={cat.id}
+                label={cat.name}
+                active={selectedCategoryId === cat.id}
+                onClick={() => selectCategory(cat.id)}
+              />
+            ))}
+          </div>
+          {selectedCategoryId && activeCategory && activeCategory.subcategories.length > 0 && (
+            <div className="flex gap-2 overflow-x-auto px-4 pb-2" style={{ scrollbarWidth: 'none' }}>
+              {activeCategory.subcategories.map((sub) => (
+                <CategoryChip
+                  key={sub.id}
+                  label={sub.name}
+                  active={selectedSubcategoryId === sub.id}
+                  onClick={() => setSelectedSubcategoryId(sub.id)}
+                />
+              ))}
+            </div>
+          )}
+        </div>
+      )}
+
       <div className="flex">
+        {/* Desktop sidebar — hidden on mobile */}
         {!q && catalog && catalog.categories.length > 0 && (
           <nav
-            className="w-40 shrink-0 border-r min-h-screen py-4 flex flex-col gap-1 px-2"
+            className="hidden md:flex w-40 shrink-0 border-r py-4 flex-col gap-1 px-2"
             style={{
               backgroundColor: 'var(--pwa-surface)',
               borderColor: 'var(--pwa-border)',
@@ -283,13 +328,9 @@ export default function CatalogPage() {
         </main>
       </div>
 
-      <footer className="py-6 text-center">
-        <p className="text-xs" style={{ color: 'var(--pwa-text)', opacity: 0.3 }}>
-          {t('common.poweredBy')}
-        </p>
-      </footer>
+      <CatalogFooter />
 
-      <BottomNav />
+      <BottomNav showAbout={showAbout} />
     </div>
   );
 }

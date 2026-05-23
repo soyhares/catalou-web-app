@@ -1,6 +1,7 @@
 {
   "common": {
     "poweredBy": "Desarrollado con Catalou",
+    "privacyPolicy": "Política de privacidad",
     "loading": "Cargando...",
     "retry": "Reintentar",
     "back": "Volver",
@@ -9,6 +10,7 @@
     "close": "Cerrar"
   },
   "catalog": {
+    "navLabel": "Inicio",
     "searchPlaceholder": "Buscar productos...",
     "noResults": "No se encontraron productos",
     "noResultsMessage": "Intenta con otro término de búsqueda",
@@ -33,6 +35,7 @@
     "noImage": "Sin imagen disponible"
   },
   "cart": {
+    "navLabel": "Cotizar",
     "title": "Tu carrito",
     "back": "Atrás",
     "clear": "Vaciar",
@@ -42,6 +45,7 @@
     "decreaseQuantity": "Reducir cantidad",
     "increaseQuantity": "Aumentar cantidad",
     "subtotal": "Subtotal",
+    "serviceFee": "Servicio ({{pct}}%)",
     "total": "Total",
     "checkout": "Proceder al pago",
     "continueShopping": "Continuar comprando",
@@ -119,6 +123,13 @@
     "total": "Total",
     "associationPending": "Tu solicitud ha sido enviada a la asociación para su aprobación.",
     "associationConfirmed": "Tu pedido ha sido confirmado por la asociación."
+  },
+  "about": {
+    "navLabel": "Sobre mí",
+    "phone": "Teléfono",
+    "whatsapp": "WhatsApp",
+    "email": "Email",
+    "socialLinks": "Redes sociales"
   },
   "pwa": {
     "updateAvailable": "Hay una actualización disponible",

@@ -11,6 +11,9 @@ export default function CartPage() {
   const navigate = useNavigate();
 
   const subtotal = items.reduce((sum, item) => sum + item.unitPrice * item.quantity, 0);
+  const servicePercentage = branding.servicePercentage ?? 0;
+  const serviceAmount = (subtotal * servicePercentage) / 100;
+  const grandTotal = subtotal + serviceAmount;
   const isEmpty = items.length === 0;
 
   async function handleClear() {
@@ -127,12 +130,32 @@ export default function CartPage() {
             </ul>
 
             {branding.showPrices && (
-              <div
-                className="mt-4 flex justify-between border-t pt-4 font-semibold"
-                style={{ borderColor: 'var(--pwa-border)', color: 'var(--pwa-text)' }}
-              >
-                <span>{t('cart.total')}</span>
-                <span>₡{subtotal.toLocaleString('es-CR')}</span>
+              <div className="mt-4 border-t pt-4" style={{ borderColor: 'var(--pwa-border)' }}>
+                {servicePercentage > 0 && (
+                  <>
+                    <div
+                      className="flex justify-between text-sm mb-1"
+                      style={{ color: 'var(--pwa-text)', opacity: 0.7 }}
+                    >
+                      <span>{t('cart.subtotal')}</span>
+                      <span>₡{subtotal.toLocaleString('es-CR')}</span>
+                    </div>
+                    <div
+                      className="flex justify-between text-sm mb-2"
+                      style={{ color: 'var(--pwa-text)', opacity: 0.7 }}
+                    >
+                      <span>{t('cart.serviceFee', { pct: servicePercentage })}</span>
+                      <span>₡{serviceAmount.toLocaleString('es-CR')}</span>
+                    </div>
+                  </>
+                )}
+                <div
+                  className="flex justify-between font-semibold"
+                  style={{ color: 'var(--pwa-text)' }}
+                >
+                  <span>{t('cart.total')}</span>
+                  <span>₡{grandTotal.toLocaleString('es-CR')}</span>
+                </div>
               </div>
             )}
 

@@ -5,6 +5,7 @@ import { fetchProduct } from '@entities/product/api';
 import { fetchCatalog } from '@entities/catalog/api';
 import { useCart } from '@shared/lib/use-cart';
 import { CartIcon } from '@widgets/cart/CartIcon';
+import { CatalogFooter } from '@shared/ui/CatalogFooter';
 import type { ProductPublic, VariantValuePublic } from '@entities/product/api';
 
 export default function ProductDetailPage() {
@@ -322,11 +323,7 @@ export default function ProductDetailPage() {
             </div>
           </div>
 
-          <footer className="mt-12 py-6 text-center">
-            <p className="text-xs" style={{ color: 'var(--pwa-text)', opacity: 0.3 }}>
-              Powered by Catalou
-            </p>
-          </footer>
+          <CatalogFooter className="mt-12" />
         </div>
       )}
     </div>
