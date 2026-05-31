@@ -9,6 +9,96 @@ import { submitOrder, type OrderType } from '@entities/order/api';
 
 type Step = 'type' | 'form';
 
+function BackArrow() {
+  return (
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+      <path d="M10 12L6 8L10 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+    </svg>
+  );
+}
+
+function CheckIcon() {
+  return (
+    <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true">
+      <path d="M2 6L5 9L10 3" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/>
+    </svg>
+  );
+}
+
+interface StepIndicatorProps {
+  currentStep: Step;
+  hasBothOrderTypes: boolean;
+}
+
+function StepIndicator({ currentStep, hasBothOrderTypes }: StepIndicatorProps) {
+  const steps = hasBothOrderTypes
+    ? [{ id: 'type', label: 'Tipo' }, { id: 'form', label: 'Datos' }, { id: 'done', label: 'Listo' }]
+    : [{ id: 'form', label: 'Datos' }, { id: 'done', label: 'Listo' }];
+
+  const activeIndex = steps.findIndex((s) => s.id === currentStep);
+
+  return (
+    <div className="flex items-center gap-0 mb-8">
+      {steps.map((step, i) => {
+        const isDone = i < activeIndex;
+        const isActive = i === activeIndex;
+        return (
+          <div key={step.id} className="flex items-center flex-1">
+            <div className="flex flex-col items-center gap-1">
+              <div
+                className="h-7 w-7 rounded-full flex items-center justify-center text-xs font-bold transition-all duration-300"
+                style={{
+                  backgroundColor: isDone ? 'var(--pwa-accent)' : isActive ? 'var(--pwa-accent)' : 'var(--pwa-border)',
+                  color: isDone || isActive ? '#ffffff' : 'var(--pwa-text-secondary)',
+                  opacity: isDone || isActive ? 1 : 0.5,
+                }}
+              >
+                {isDone ? <CheckIcon /> : <span>{i + 1}</span>}
+              </div>
+              <span
+                className="text-[10px] font-medium"
+                style={{ color: isActive ? 'var(--pwa-accent)' : 'var(--pwa-text-secondary)', opacity: isActive ? 1 : 0.6 }}
+              >
+                {step.label}
+              </span>
+            </div>
+            {i < steps.length - 1 && (
+              <div
+                className={`checkout-step-connector${i < activeIndex ? ' checkout-step-connector--active' : ''}`}
+                style={{ marginTop: '-16px' }}
+              />
+            )}
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
+interface FormFieldProps {
+  label: string;
+  error?: string;
+  children: React.ReactNode;
+  required?: boolean;
+}
+
+function FormField({ label, error, children, required }: FormFieldProps) {
+  return (
+    <div className="flex flex-col gap-1.5">
+      <label className="text-sm font-medium" style={{ color: 'var(--pwa-text)' }}>
+        {label}{required && <span style={{ color: 'var(--pwa-accent)' }}> *</span>}
+      </label>
+      {children}
+      {error && (
+        <p className="text-xs flex items-center gap-1" style={{ color: '#EF4444' }}>
+          <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><circle cx="6" cy="6" r="5" stroke="currentColor" strokeWidth="1.2"/><path d="M6 4V6.5M6 8.5H6.01" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round"/></svg>
+          {error}
+        </p>
+      )}
+    </div>
+  );
+}
+
 export default function CheckoutPage() {
   const { t } = useTranslation();
   const { branding, slug } = useBranding();
@@ -27,22 +117,14 @@ export default function CheckoutPage() {
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState('');
 
+  const subtotal = items.reduce((s, i) => s + i.unitPrice * i.quantity, 0);
+
   if (items.length === 0) {
     return (
-      <div
-        className="min-h-screen flex items-center justify-center"
-        style={{ backgroundColor: 'var(--pwa-bg)' }}
-      >
+      <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: 'var(--pwa-bg)' }}>
         <div className="text-center px-4">
-          <p className="mb-4" style={{ color: 'var(--pwa-text)', opacity: 0.7 }}>
-            {t('checkout.emptyCart')}
-          </p>
-          <button
-            type="button"
-            onClick={() => navigate('/')}
-            className="text-sm underline"
-            style={{ color: 'var(--pwa-accent)' }}
-          >
+          <p className="mb-4" style={{ color: 'var(--pwa-text)', opacity: 0.7 }}>{t('checkout.emptyCart')}</p>
+          <button type="button" onClick={() => navigate('/')} className="text-sm underline" style={{ color: 'var(--pwa-accent)' }}>
             {t('checkout.backToCatalog')}
           </button>
         </div>
@@ -67,7 +149,6 @@ export default function CheckoutPage() {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!validateForm()) return;
-
     setSubmitting(true);
     setSubmitError('');
     try {
@@ -92,227 +173,196 @@ export default function CheckoutPage() {
     }
   }
 
+  /* ── Shared header ── */
+  const PageHeader = ({ onBack, title }: { onBack: () => void; title: string }) => (
+    <header
+      className="sticky top-0 z-10 px-4 h-14 flex items-center gap-3 border-b"
+      style={{ backgroundColor: 'var(--pwa-surface)', borderColor: 'var(--pwa-border)' }}
+    >
+      <button type="button" onClick={onBack} className="p-1.5 rounded-lg hover:opacity-80 transition-opacity" style={{ color: 'var(--pwa-text)' }}>
+        <BackArrow />
+      </button>
+      <h1 className="text-base font-semibold" style={{ color: 'var(--pwa-text)' }}>{title}</h1>
+    </header>
+  );
+
+  /* ── Step 1: order type ── */
   if (step === 'type') {
     return (
       <div className="min-h-screen" style={{ backgroundColor: 'var(--pwa-bg)' }}>
-        <header
-          className="border-b px-4 py-4"
-          style={{ borderColor: 'var(--pwa-border)', backgroundColor: 'var(--pwa-surface)' }}
-        >
-          <button
-            type="button"
-            onClick={() => navigate('/cart')}
-            className="text-sm hover:opacity-80"
-            style={{ color: 'var(--pwa-text)' }}
-          >
-            ← {t('checkout.backToCart')}
-          </button>
-          <h1 className="mt-2 text-lg font-semibold" style={{ color: 'var(--pwa-text)' }}>
-            {t('checkout.paymentMethod')}
-          </h1>
-        </header>
-        <main className="max-w-lg mx-auto px-4 py-6 space-y-4">
-          <button
-            type="button"
-            onClick={() => {
-              setSelectedType('DIRECT');
-              setStep('form');
-            }}
-            className="w-full border rounded-lg p-4 text-left hover:opacity-80 transition-opacity"
-            style={{ borderColor: 'var(--pwa-border)', backgroundColor: 'var(--pwa-surface)' }}
-          >
-            <p className="font-semibold" style={{ color: 'var(--pwa-text)' }}>
-              {t('checkout.direct')}
-            </p>
-            <p className="text-sm mt-1" style={{ color: 'var(--pwa-text)', opacity: 0.6 }}>
-              {t('checkout.directDesc')}
-            </p>
-          </button>
-          <button
-            type="button"
-            onClick={() => {
-              setSelectedType('FINANCED');
-              setStep('form');
-            }}
-            className="w-full border rounded-lg p-4 text-left hover:opacity-80 transition-opacity"
-            style={{ borderColor: 'var(--pwa-border)', backgroundColor: 'var(--pwa-surface)' }}
-          >
-            <p className="font-semibold" style={{ color: 'var(--pwa-text)' }}>
-              {t('checkout.financed')} — {branding.associationName ?? t('checkout.association')}
-            </p>
-            <p className="text-sm mt-1" style={{ color: 'var(--pwa-text)', opacity: 0.6 }}>
-              {t('checkout.financedDesc')}
-            </p>
-          </button>
+        <PageHeader onBack={() => navigate('/cart')} title={t('checkout.paymentMethod')} />
+        <main className="max-w-lg mx-auto px-4 py-6">
+          <StepIndicator currentStep="type" hasBothOrderTypes />
+          <p className="text-sm mb-4" style={{ color: 'var(--pwa-text-secondary)' }}>
+            ¿Cómo quieres realizar tu pedido?
+          </p>
+          <div className="flex flex-col gap-3">
+            {[
+              { type: 'DIRECT' as OrderType, title: t('checkout.direct'), desc: t('checkout.directDesc'), icon: '→' },
+              { type: 'FINANCED' as OrderType, title: `${t('checkout.financed')} — ${branding.associationName ?? t('checkout.association')}`, desc: t('checkout.financedDesc'), icon: '◇' },
+            ].map((opt) => (
+              <button
+                key={opt.type}
+                type="button"
+                onClick={() => { setSelectedType(opt.type); setStep('form'); }}
+                className="w-full text-left rounded-xl p-4 border-2 transition-all hover:opacity-90"
+                style={{
+                  borderColor: selectedType === opt.type ? 'var(--pwa-accent)' : 'var(--pwa-border)',
+                  backgroundColor: selectedType === opt.type ? 'color-mix(in srgb, var(--pwa-accent) 8%, transparent)' : 'var(--pwa-surface)',
+                }}
+              >
+                <div className="flex items-start gap-3">
+                  <span className="text-2xl">{opt.icon}</span>
+                  <div>
+                    <p className="font-semibold text-sm" style={{ color: 'var(--pwa-text)' }}>{opt.title}</p>
+                    <p className="text-xs mt-0.5" style={{ color: 'var(--pwa-text-secondary)' }}>{opt.desc}</p>
+                  </div>
+                </div>
+              </button>
+            ))}
+          </div>
         </main>
       </div>
     );
   }
 
-  const subtotal = items.reduce((s, i) => s + i.unitPrice * i.quantity, 0);
-
-  const inputClass = "w-full border rounded px-3 py-2 text-sm focus:outline-none";
-
+  /* ── Step 2: form ── */
   return (
     <div className="min-h-screen" style={{ backgroundColor: 'var(--pwa-bg)' }}>
-      <header
-        className="border-b px-4 py-4"
-        style={{ borderColor: 'var(--pwa-border)', backgroundColor: 'var(--pwa-surface)' }}
-      >
-        <button
-          type="button"
-          onClick={() =>
-            branding.orderType === 'BOTH' ? setStep('type') : navigate('/cart')
-          }
-          className="text-sm hover:opacity-80"
-          style={{ color: 'var(--pwa-text)' }}
-        >
-          ← {t('checkout.back')}
-        </button>
-        <h1 className="mt-2 text-lg font-semibold" style={{ color: 'var(--pwa-text)' }}>
-          {t('checkout.yourData')}
-        </h1>
-      </header>
+      <PageHeader
+        onBack={() => branding.orderType === 'BOTH' ? setStep('type') : navigate('/cart')}
+        title={t('checkout.yourData')}
+      />
 
       <main className="max-w-lg mx-auto px-4 py-6">
+        <StepIndicator currentStep="form" hasBothOrderTypes={branding.orderType === 'BOTH'} />
+
         {!isOnline && (
-          <div className="mb-4 p-3 bg-amber-50 border border-amber-200 rounded text-sm text-amber-800">
+          <div className="mb-5 px-4 py-3 rounded-xl border text-sm" style={{ backgroundColor: 'rgba(245,158,11,0.08)', borderColor: 'rgba(245,158,11,0.3)', color: '#92400E' }}>
             {t('checkout.offlineWarning')}
           </div>
         )}
 
         <form onSubmit={(e) => { void handleSubmit(e); }} noValidate>
-          <div className="space-y-4">
-            <div>
-              <label className="block text-sm font-medium mb-1" style={{ color: 'var(--pwa-text)' }}>
-                {t('checkout.name')} *
-              </label>
-              <input
-                type="text"
-                value={visitorName}
-                onChange={(e) => setVisitorName(e.target.value)}
-                className={inputClass}
-                style={{
-                  borderColor: errors.visitorName ? '#EF4444' : 'var(--pwa-border)',
-                  backgroundColor: 'var(--pwa-surface)',
-                  color: 'var(--pwa-text)',
-                }}
-                autoComplete="name"
-              />
-              {errors.visitorName && (
-                <p className="mt-1 text-xs text-red-500">{errors.visitorName}</p>
-              )}
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium mb-1" style={{ color: 'var(--pwa-text)' }}>
-                {t('checkout.phone')} *
-              </label>
-              <input
-                type="tel"
-                value={visitorPhone}
-                onChange={(e) => setVisitorPhone(e.target.value)}
-                className={inputClass}
-                style={{
-                  borderColor: errors.visitorPhone ? '#EF4444' : 'var(--pwa-border)',
-                  backgroundColor: 'var(--pwa-surface)',
-                  color: 'var(--pwa-text)',
-                }}
-                autoComplete="tel"
-              />
-              {errors.visitorPhone && (
-                <p className="mt-1 text-xs text-red-500">{errors.visitorPhone}</p>
-              )}
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium mb-1" style={{ color: 'var(--pwa-text)' }}>
-                {t('checkout.email')} *
-              </label>
-              <input
-                type="email"
-                value={visitorEmail}
-                onChange={(e) => setVisitorEmail(e.target.value)}
-                className={inputClass}
-                style={{
-                  borderColor: errors.visitorEmail ? '#EF4444' : 'var(--pwa-border)',
-                  backgroundColor: 'var(--pwa-surface)',
-                  color: 'var(--pwa-text)',
-                }}
-                autoComplete="email"
-              />
-              {errors.visitorEmail && (
-                <p className="mt-1 text-xs text-red-500">{errors.visitorEmail}</p>
-              )}
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium mb-1" style={{ color: 'var(--pwa-text)' }}>
-                {t('checkout.deliveryAddress')} *
-              </label>
-              <textarea
-                value={deliveryAddress}
-                onChange={(e) => setDeliveryAddress(e.target.value)}
-                rows={3}
-                className={`${inputClass} resize-none`}
-                style={{
-                  borderColor: errors.deliveryAddress ? '#EF4444' : 'var(--pwa-border)',
-                  backgroundColor: 'var(--pwa-surface)',
-                  color: 'var(--pwa-text)',
-                }}
-                autoComplete="street-address"
-              />
-              {errors.deliveryAddress && (
-                <p className="mt-1 text-xs text-red-500">{errors.deliveryAddress}</p>
-              )}
-            </div>
-          </div>
-
+          {/* Contact section */}
           <div
-            className="mt-6 border rounded-lg p-4 space-y-2"
+            className="rounded-xl border overflow-hidden mb-4"
             style={{ borderColor: 'var(--pwa-border)', backgroundColor: 'var(--pwa-surface)' }}
           >
-            <p className="text-sm font-semibold" style={{ color: 'var(--pwa-text)' }}>
-              {t('checkout.orderSummary')}
-            </p>
-            {items.map((item) => (
-              <div
-                key={item.id}
-                className="flex justify-between text-sm"
-                style={{ color: 'var(--pwa-text)', opacity: 0.8 }}
-              >
-                <span>
-                  {item.productName}
-                  {item.variantValueName ? ` (${item.variantValueName})` : ''} × {item.quantity}
-                </span>
-                {branding.showPrices && (
-                  <span>₡{(item.unitPrice * item.quantity).toLocaleString('es-CR')}</span>
-                )}
-              </div>
-            ))}
-            {branding.showPrices && (
-              <div
-                className="flex justify-between font-semibold border-t pt-2"
-                style={{ borderColor: 'var(--pwa-border)', color: 'var(--pwa-text)' }}
-              >
-                <span>{t('checkout.total')}</span>
-                <span>₡{subtotal.toLocaleString('es-CR')}</span>
-              </div>
-            )}
+            <div className="px-4 py-3 border-b" style={{ borderColor: 'var(--pwa-border)', backgroundColor: 'var(--pwa-surface-secondary)' }}>
+              <p className="text-xs font-semibold uppercase tracking-wider" style={{ color: 'var(--pwa-text-secondary)' }}>Datos de contacto</p>
+            </div>
+            <div className="p-4 flex flex-col gap-4">
+              <FormField label={t('checkout.name')} error={errors.visitorName} required>
+                <input
+                  type="text"
+                  value={visitorName}
+                  onChange={(e) => setVisitorName(e.target.value)}
+                  className={`pwa-input${errors.visitorName ? ' pwa-input--error' : ''}`}
+                  autoComplete="name"
+                  placeholder="Tu nombre completo"
+                />
+              </FormField>
+              <FormField label={t('checkout.phone')} error={errors.visitorPhone} required>
+                <input
+                  type="tel"
+                  value={visitorPhone}
+                  onChange={(e) => setVisitorPhone(e.target.value)}
+                  className={`pwa-input${errors.visitorPhone ? ' pwa-input--error' : ''}`}
+                  autoComplete="tel"
+                  placeholder="+506 8888 0000"
+                />
+              </FormField>
+              <FormField label={t('checkout.email')} error={errors.visitorEmail} required>
+                <input
+                  type="email"
+                  value={visitorEmail}
+                  onChange={(e) => setVisitorEmail(e.target.value)}
+                  className={`pwa-input${errors.visitorEmail ? ' pwa-input--error' : ''}`}
+                  autoComplete="email"
+                  placeholder="correo@ejemplo.com"
+                />
+              </FormField>
+            </div>
           </div>
 
-          {submitError && <p className="mt-4 text-sm text-red-600">{submitError}</p>}
+          {/* Delivery section */}
+          <div
+            className="rounded-xl border overflow-hidden mb-4"
+            style={{ borderColor: 'var(--pwa-border)', backgroundColor: 'var(--pwa-surface)' }}
+          >
+            <div className="px-4 py-3 border-b" style={{ borderColor: 'var(--pwa-border)', backgroundColor: 'var(--pwa-surface-secondary)' }}>
+              <p className="text-xs font-semibold uppercase tracking-wider" style={{ color: 'var(--pwa-text-secondary)' }}>Entrega</p>
+            </div>
+            <div className="p-4">
+              <FormField label={t('checkout.deliveryAddress')} error={errors.deliveryAddress} required>
+                <textarea
+                  value={deliveryAddress}
+                  onChange={(e) => setDeliveryAddress(e.target.value)}
+                  rows={3}
+                  className={`pwa-input${errors.deliveryAddress ? ' pwa-input--error' : ''}`}
+                  style={{ resize: 'none' }}
+                  autoComplete="street-address"
+                  placeholder="Dirección de entrega o indicaciones"
+                />
+              </FormField>
+            </div>
+          </div>
+
+          {/* Order summary */}
+          <div
+            className="rounded-xl border overflow-hidden mb-6"
+            style={{ borderColor: 'var(--pwa-border)', backgroundColor: 'var(--pwa-surface)' }}
+          >
+            <div className="px-4 py-3 border-b" style={{ borderColor: 'var(--pwa-border)', backgroundColor: 'var(--pwa-surface-secondary)' }}>
+              <p className="text-xs font-semibold uppercase tracking-wider" style={{ color: 'var(--pwa-text-secondary)' }}>{t('checkout.orderSummary')}</p>
+            </div>
+            <div className="p-4 flex flex-col gap-2">
+              {items.map((item) => (
+                <div key={item.id} className="flex justify-between text-sm gap-4">
+                  <span style={{ color: 'var(--pwa-text)' }} className="flex-1 min-w-0">
+                    <span className="font-medium">{item.productName}</span>
+                    {item.variantValueName ? <span style={{ color: 'var(--pwa-text-secondary)' }}> ({item.variantValueName})</span> : ''}
+                    <span style={{ color: 'var(--pwa-text-secondary)' }}> × {item.quantity}</span>
+                  </span>
+                  {branding.showPrices && (
+                    <span className="font-semibold shrink-0" style={{ color: 'var(--pwa-text)' }}>
+                      ₡{(item.unitPrice * item.quantity).toLocaleString('es-CR')}
+                    </span>
+                  )}
+                </div>
+              ))}
+              {branding.showPrices && (
+                <div className="flex justify-between font-bold text-base border-t pt-3 mt-1" style={{ borderColor: 'var(--pwa-border)', color: 'var(--pwa-text)' }}>
+                  <span>{t('checkout.total')}</span>
+                  <span style={{ color: 'var(--pwa-accent)' }}>₡{subtotal.toLocaleString('es-CR')}</span>
+                </div>
+              )}
+            </div>
+          </div>
+
+          {submitError && (
+            <p className="mb-4 text-sm text-red-600">{submitError}</p>
+          )}
 
           <button
             type="submit"
             disabled={submitting || !isOnline}
-            className="mt-6 w-full py-3 text-white font-medium disabled:opacity-50 disabled:cursor-not-allowed hover:opacity-90 transition-opacity"
+            className="w-full py-4 text-white font-semibold text-base disabled:opacity-50 disabled:cursor-not-allowed transition-opacity hover:opacity-90 active:scale-[0.98]"
             style={{
               backgroundColor: 'var(--pwa-accent)',
               borderRadius: 'var(--pwa-radius-button)',
             }}
           >
-            {submitting ? t('checkout.submitting') : t('checkout.submit')}
+            {submitting ? (
+              <span className="flex items-center justify-center gap-2">
+                <svg className="animate-spin h-4 w-4" viewBox="0 0 24 24" fill="none">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/>
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/>
+                </svg>
+                {t('checkout.submitting')}
+              </span>
+            ) : t('checkout.submit')}
           </button>
         </form>
       </main>

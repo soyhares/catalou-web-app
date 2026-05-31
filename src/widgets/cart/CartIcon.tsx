@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { AnimatePresence, motion } from 'framer-motion';
 import { cartItemCount } from '@shared/lib/cart-store';
 
 interface CartIconProps {
@@ -42,11 +43,20 @@ export function CartIcon({ slug, onClick }: CartIconProps) {
           d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2 9m12-9l2 9m-9-4h4"
         />
       </svg>
-      {count > 0 && (
-        <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-medium">
-          {count > 99 ? '99+' : count}
-        </span>
-      )}
+      <AnimatePresence>
+        {count > 0 && (
+          <motion.span
+            key={count}
+            className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-medium"
+            initial={{ scale: 0.5, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            exit={{ scale: 0.5, opacity: 0 }}
+            transition={{ type: 'spring', stiffness: 500, damping: 30 }}
+          >
+            {count > 99 ? '99+' : count}
+          </motion.span>
+        )}
+      </AnimatePresence>
     </button>
   );
 }

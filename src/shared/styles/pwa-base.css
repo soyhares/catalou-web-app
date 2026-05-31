@@ -5,39 +5,140 @@ body {
   font-family: var(--pwa-font-body);
 }
 
-/* Heading font per theme (Cormorant Garamond for Luxury, Poppins for Warm) */
+/* Heading font per theme */
 [data-pwa-theme="luxury"] h1,
 [data-pwa-theme="luxury"] h2,
-[data-pwa-theme="luxury"] h3 {
+[data-pwa-theme="luxury"] h3,
+[data-pwa-theme="luxury"] .heading {
   font-family: var(--pwa-font-heading);
 }
-
 [data-pwa-theme="warm"] h1,
 [data-pwa-theme="warm"] h2,
-[data-pwa-theme="warm"] h3 {
+[data-pwa-theme="warm"] h3,
+[data-pwa-theme="warm"] .heading {
   font-family: var(--pwa-font-heading);
 }
 
-/* Clarity: sticky search bar below topbar */
+/* Clarity: sticky search inside header */
 [data-pwa-theme="clarity"] .catalog-search {
   position: sticky;
   top: 56px;
   z-index: 10;
-  background-color: var(--pwa-surface);
-  padding: 8px 16px;
 }
-
-/* Clarity: hero section distinct background */
 [data-pwa-theme="clarity"] .hero-section {
   background-color: var(--pwa-surface-secondary);
 }
 
-/* Warm: scale effect on product cards */
-[data-pwa-theme="warm"] .product-card {
-  transition: transform var(--pwa-motion, 200ms) ease;
+/* ── Product card — editorial portrait ─────────────────────────────────── */
+
+.product-card {
+  transition:
+    box-shadow var(--pwa-motion, 200ms) ease,
+    transform var(--pwa-motion, 200ms) ease;
 }
 
-[data-pwa-theme="warm"] .product-card:hover,
-[data-pwa-theme="warm"] .product-card:active {
+/* Image zoom */
+.product-card .product-card__image {
+  transition: transform 600ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+.product-card:hover .product-card__image {
+  transform: scale(1.06);
+}
+
+/* Hover overlay button (desktop only) */
+.product-card__cta {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 12px;
+  background: linear-gradient(to top, rgba(0,0,0,0.65) 0%, transparent 100%);
+  transform: translateY(101%);
+  transition: transform var(--pwa-motion, 200ms) ease;
+  display: flex;
+  align-items: flex-end;
+}
+
+@media (hover: hover) {
+  .product-card:hover .product-card__cta {
+    transform: translateY(0);
+  }
+}
+/* Touch devices: always show CTA */
+@media (hover: none) {
+  .product-card__cta {
+    transform: translateY(0) !important;
+    background: linear-gradient(to top, rgba(0,0,0,0.55) 0%, transparent 100%);
+  }
+}
+
+/* Per-theme card effects */
+[data-pwa-theme="luxury"] .product-card:hover {
+  box-shadow: var(--pwa-shadow-lg);
+}
+[data-pwa-theme="clarity"] .product-card:hover {
+  box-shadow: var(--pwa-shadow-md);
+  transform: translateY(-2px);
+}
+[data-pwa-theme="warm"] .product-card:hover {
   transform: scale(1.02);
+  box-shadow: var(--pwa-shadow-lg);
+}
+
+/* ── TopBar glassmorphism ───────────────────────────────────────────────── */
+
+.pwa-topbar {
+  transition: background 250ms ease, border-color 250ms ease, box-shadow 250ms ease;
+}
+.pwa-topbar--glass {
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  background: var(--pwa-glass-bg) !important;
+  border-bottom-color: var(--pwa-glass-border) !important;
+  box-shadow: var(--pwa-shadow-sm);
+}
+
+/* ── Catalog header ─────────────────────────────────────────────────────── */
+.catalog-header {
+  transition: padding 200ms ease;
+}
+
+/* ── Checkout steps ─────────────────────────────────────────────────────── */
+.checkout-step-connector {
+  flex: 1;
+  height: 1px;
+  background: var(--pwa-border);
+  margin: 0 4px;
+  transition: background 300ms ease;
+}
+.checkout-step-connector--active {
+  background: var(--pwa-accent);
+}
+
+/* ── Form input premium ─────────────────────────────────────────────────── */
+.pwa-input {
+  background: var(--pwa-surface);
+  border: 1.5px solid var(--pwa-border);
+  color: var(--pwa-text);
+  border-radius: var(--pwa-radius-sm, 8px);
+  padding: 10px 14px;
+  font-size: 0.9375rem;
+  width: 100%;
+  transition: border-color 150ms ease, box-shadow 150ms ease;
+  outline: none;
+  font-family: var(--pwa-font-body);
+}
+.pwa-input:focus {
+  border-color: var(--pwa-accent);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--pwa-accent) 15%, transparent);
+}
+.pwa-input::placeholder {
+  color: var(--pwa-text-secondary);
+  opacity: 0.5;
+}
+.pwa-input--error {
+  border-color: #EF4444;
+}
+.pwa-input--error:focus {
+  box-shadow: 0 0 0 3px rgba(239,68,68,0.15);
 }

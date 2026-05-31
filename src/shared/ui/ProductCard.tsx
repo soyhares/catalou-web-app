@@ -1,3 +1,5 @@
+import { useNavigate } from 'react-router-dom';
+
 interface ProductCardProps {
   id: string;
   name: string;
@@ -8,57 +10,109 @@ interface ProductCardProps {
 }
 
 export function ProductCard({ id, name, imageUrl, price, showPrices, onQuote }: ProductCardProps) {
+  const navigate = useNavigate();
+
+  function handleCardClick() {
+    navigate(`/products/${id}`);
+  }
+
+  function handleQuoteClick(e: React.MouseEvent) {
+    e.stopPropagation();
+    onQuote(id);
+  }
+
   return (
-    <div
-      className="product-card"
-      style={{
-        backgroundColor: 'var(--pwa-card)',
-        border: '1px solid var(--pwa-text)15',
-        borderRadius: 'var(--pwa-radius-md, 12px)',
-        boxShadow: 'var(--pwa-shadow)',
-        transition: 'transform var(--pwa-motion, 200ms) ease',
-        overflow: 'hidden',
-      }}
+    <article
+      className="product-card group cursor-pointer"
+      style={{ backgroundColor: 'transparent' }}
+      onClick={handleCardClick}
     >
-      {imageUrl ? (
-        <img
-          src={imageUrl}
-          alt={name}
-          loading="lazy"
-          className="w-full aspect-square object-cover"
-        />
-      ) : (
-        <div
-          style={{ backgroundColor: 'var(--pwa-accent)15' }}
-          className="w-full aspect-square flex items-center justify-center"
-        >
-          <span className="text-3xl">📦</span>
+      {/* Portrait image — 3:4 aspect */}
+      <div
+        className="overflow-hidden w-full mb-3 relative"
+        style={{ aspectRatio: '3/4', backgroundColor: 'var(--pwa-surface-secondary)' }}
+      >
+        {imageUrl ? (
+          <img
+            src={imageUrl}
+            alt={name}
+            loading="lazy"
+            className="product-card__image w-full h-full object-cover"
+          />
+        ) : (
+          <div
+            className="product-card__image w-full h-full flex items-center justify-center"
+            style={{ backgroundColor: 'var(--pwa-surface-secondary)' }}
+          >
+            <svg
+              width="28" height="28" viewBox="0 0 28 28" fill="none"
+              style={{ color: 'var(--pwa-accent)', opacity: 0.25 }}
+            >
+              <rect x="2" y="2" width="24" height="24" stroke="currentColor" strokeWidth="1"/>
+              <path d="M2 20L9 13L13 17L18 11L26 20" stroke="currentColor" strokeWidth="1" strokeLinejoin="round"/>
+              <circle cx="9" cy="9" r="2.5" stroke="currentColor" strokeWidth="1"/>
+            </svg>
+          </div>
+        )}
+
+        {/* Price badge overlay */}
+        {showPrices && price !== null && (
+          <div
+            className="absolute bottom-2 left-2 px-2 py-0.5 text-xs font-bold text-white"
+            style={{
+              backgroundColor: 'var(--pwa-accent)',
+              borderRadius: 'var(--pwa-radius-sm, 4px)',
+              letterSpacing: '-0.01em',
+            }}
+          >
+            ₡{price.toLocaleString('es-CR')}
+          </div>
+        )}
+
+        {/* Hover CTA — adds to cart (stops card navigation) */}
+        <div className="product-card__cta">
+          <button
+            type="button"
+            onClick={handleQuoteClick}
+            className="tracking-[0.2em] uppercase text-white w-full text-center transition-opacity hover:opacity-90"
+            style={{ fontSize: '10px', fontFamily: 'var(--pwa-font-body)', fontWeight: 600 }}
+          >
+            Cotizar
+          </button>
         </div>
-      )}
-      <div className="p-2 flex flex-col gap-1.5">
+      </div>
+
+      {/* Name in Cormorant Garamond italic */}
+      <div className="px-0.5">
         <p
-          style={{ color: 'var(--pwa-text)' }}
-          className="text-xs font-medium line-clamp-2 leading-snug"
+          className="line-clamp-2 leading-snug mb-1"
+          style={{
+            fontFamily: 'var(--pwa-font-heading)',
+            fontStyle: 'italic',
+            fontSize: 'clamp(0.95rem, 2.5vw, 1.1rem)',
+            fontWeight: 400,
+            color: 'var(--pwa-text)',
+            letterSpacing: '0.01em',
+          }}
         >
           {name}
         </p>
+
         {showPrices && price !== null && (
           <p
-            style={{ color: 'var(--pwa-accent)' }}
-            className="text-xs font-semibold"
+            className="tracking-wider"
+            style={{
+              fontSize: '11px',
+              fontFamily: 'var(--pwa-font-body)',
+              fontWeight: 500,
+              color: 'var(--pwa-accent)',
+              letterSpacing: '0.08em',
+            }}
           >
-            ${price}
+            ₡{price.toLocaleString('es-CR')}
           </p>
         )}
-        <button
-          type="button"
-          onClick={() => onQuote(id)}
-          style={{ backgroundColor: 'var(--pwa-accent)', color: '#FFFFFF', borderRadius: 'var(--pwa-radius-button)' }}
-          className="w-full py-1.5 text-xs font-semibold transition-opacity hover:opacity-90 mt-0.5"
-        >
-          Cotizar
-        </button>
       </div>
-    </div>
+    </article>
   );
 }

@@ -19,6 +19,7 @@
   "packageManager": "pnpm@10.27.0",
   "dependencies": {
     "autoprefixer": "^10.5.0",
+    "framer-motion": "^12.40.0",
     "i18next": "^26.0.8",
     "idb": "^8.0.3",
     "postcss": "^8.5.14",

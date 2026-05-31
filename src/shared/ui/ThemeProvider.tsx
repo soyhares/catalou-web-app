@@ -48,6 +48,11 @@ function applyThemeTokens(payload: AppearancePayload): void {
   root.style.setProperty('--pwa-radius-chip',   base.radiusChip);
   root.style.setProperty('--pwa-shadow',        base.shadow);
   root.style.setProperty('--pwa-motion',        base.motionDuration);
+  root.style.setProperty('--pwa-shadow-sm',     base.shadowSm);
+  root.style.setProperty('--pwa-shadow-md',     base.shadowMd);
+  root.style.setProperty('--pwa-shadow-lg',     base.shadowLg);
+  root.style.setProperty('--pwa-glass-bg',      base.glassBg);
+  root.style.setProperty('--pwa-glass-border',  base.glassBorder);
   root.setAttribute('data-pwa-theme', payload.catalogTheme);
 }
 

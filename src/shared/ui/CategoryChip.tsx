@@ -9,18 +9,29 @@ export function CategoryChip({ label, active, onClick }: CategoryChipProps) {
     <button
       type="button"
       onClick={onClick}
-      style={
-        active
-          ? { backgroundColor: 'var(--pwa-accent)', color: '#FFFFFF', border: 'none' }
-          : {
-              backgroundColor: 'var(--pwa-card)',
-              color: 'var(--pwa-text)',
-              border: '1px solid var(--pwa-text)30',
-            }
-      }
-      className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium transition-opacity hover:opacity-80 whitespace-nowrap"
+      className="relative inline-flex items-center whitespace-nowrap transition-all duration-200 group"
+      style={{
+        fontFamily: 'var(--pwa-font-body)',
+        fontSize: '10px',
+        fontWeight: 600,
+        letterSpacing: '0.14em',
+        textTransform: 'uppercase',
+        color: active ? 'var(--pwa-accent)' : 'var(--pwa-text-secondary)',
+        padding: '6px 0',
+        opacity: active ? 1 : 0.55,
+        background: 'none',
+        border: 'none',
+      }}
     >
       {label}
+      {/* Animated underline — only gold when active */}
+      <span
+        className="absolute bottom-0 left-0 h-[1px] transition-all duration-300"
+        style={{
+          backgroundColor: 'var(--pwa-accent)',
+          width: active ? '100%' : '0%',
+        }}
+      />
     </button>
   );
 }

@@ -1,6 +1,8 @@
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { lazy, Suspense } from 'react';
+import { AnimatePresence } from 'framer-motion';
 import { WhatsAppFloatingButton } from '@shared/ui/WhatsAppFloatingButton';
+import { PageTransition } from '@shared/ui/PageTransition';
 
 const CatalogPage = lazy(() => import('@pages/catalog/CatalogPage'));
 const ProductDetailPage = lazy(() => import('@pages/product/ProductDetailPage'));
@@ -13,23 +15,32 @@ const ConfirmAssociationPage = lazy(
 const AboutPage = lazy(() => import('@pages/about/AboutPage'));
 const PrivacyPolicyPage = lazy(() => import('@pages/privacy-policy/PrivacyPolicyPage'));
 
+function AnimatedRoutes() {
+  const location = useLocation();
+  return (
+    <Suspense fallback={<div className="min-h-screen" style={{ backgroundColor: 'var(--pwa-bg)' }} />}>
+      <AnimatePresence mode="wait">
+        <Routes location={location} key={location.pathname}>
+          <Route path="/" element={<PageTransition><CatalogPage /></PageTransition>} />
+          <Route path="/products/:id" element={<PageTransition><ProductDetailPage /></PageTransition>} />
+          <Route path="/cart" element={<PageTransition><CartPage /></PageTransition>} />
+          <Route path="/checkout" element={<PageTransition><CheckoutPage /></PageTransition>} />
+          <Route path="/order-confirmed" element={<PageTransition><OrderConfirmedPage /></PageTransition>} />
+          <Route path="/confirm-association" element={<PageTransition><ConfirmAssociationPage /></PageTransition>} />
+          <Route path="/about" element={<PageTransition><AboutPage /></PageTransition>} />
+          <Route path="/privacy-policy" element={<PageTransition><PrivacyPolicyPage /></PageTransition>} />
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
+      </AnimatePresence>
+    </Suspense>
+  );
+}
+
 export function AppRouter() {
   return (
     <BrowserRouter>
       <WhatsAppFloatingButton />
-      <Suspense fallback={<div className="min-h-screen bg-white" />}>
-        <Routes>
-          <Route path="/" element={<CatalogPage />} />
-          <Route path="/products/:id" element={<ProductDetailPage />} />
-          <Route path="/cart" element={<CartPage />} />
-          <Route path="/checkout" element={<CheckoutPage />} />
-          <Route path="/order-confirmed" element={<OrderConfirmedPage />} />
-          <Route path="/confirm-association" element={<ConfirmAssociationPage />} />
-          <Route path="/about" element={<AboutPage />} />
-          <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
-          <Route path="*" element={<Navigate to="/" replace />} />
-        </Routes>
-      </Suspense>
+      <AnimatedRoutes />
     </BrowserRouter>
   );
 }
