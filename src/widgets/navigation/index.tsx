@@ -32,7 +32,7 @@ const SKINS: Record<CatalogTheme, SkinSet> = {
 
 export default function Navigation() {
   const { theme, isMobile } = useTheme();
-  const props = useNavigation(isMobile);
+  const props = useNavigation();
   const skins = SKINS[theme] ?? SKINS['modern-minimalism'];
 
   if (isMobile) {

@@ -8,6 +8,8 @@ const LuxuryTopBar: React.FC<NavigationProps> = ({
   cartCount,
   links,
   onNavigate,
+  onToggleDrawer,
+  isDrawerOpen,
 }) => {
   return (
     <header style={{
@@ -80,8 +82,8 @@ const LuxuryTopBar: React.FC<NavigationProps> = ({
         })}
       </nav>
 
-      {/* Cart count right */}
-      <div style={{ flex: '0 0 auto', minWidth: '120px', display: 'flex', justifyContent: 'flex-end' }}>
+      {/* Right: Cart + Hamburger */}
+      <div style={{ flex: '0 0 auto', minWidth: '120px', display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: '20px' }}>
         <button
           type="button"
           onClick={() => onNavigate('/cart')}
@@ -113,6 +115,35 @@ const LuxuryTopBar: React.FC<NavigationProps> = ({
               ({cartCount})
             </span>
           )}
+        </button>
+
+        {/* Hamburger button */}
+        <button
+          type="button"
+          onClick={onToggleDrawer}
+          aria-label="Abrir menú"
+          aria-expanded={isDrawerOpen}
+          style={{
+            background: 'none',
+            border: 'none',
+            cursor: 'pointer',
+            padding: '4px',
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'center',
+            gap: '5px',
+          }}
+        >
+          {[0, 1, 2].map((i) => (
+            <div
+              key={i}
+              style={{
+                width: '20px',
+                height: '1px',
+                backgroundColor: 'var(--pwa-accent)',
+              }}
+            />
+          ))}
         </button>
       </div>
     </header>

@@ -18,9 +18,22 @@ const PLATFORM_LABELS: Record<string, string> = {
 const NeoLuxuryAboutSkin: React.FC<AboutPageProps> = ({
   profile,
   isLoading,
+  error,
   companyName,
   onBack,
+  onGoHome,
 }) => {
+  if (error) {
+    return (
+      <div style={{ minHeight: '100vh', background: 'var(--pwa-bg)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '16px' }}>
+        <p style={{ color: 'var(--pwa-error)', fontFamily: 'var(--pwa-font-body)' }}>No se pudo cargar el perfil</p>
+        <button onClick={onGoHome} style={{ color: 'var(--pwa-accent)', background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'var(--pwa-font-body)' }}>
+          Volver al inicio
+        </button>
+      </div>
+    )
+  }
+
   if (isLoading) {
     return (
       <div style={{ minHeight: '100vh', backgroundColor: 'var(--pwa-bg)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>

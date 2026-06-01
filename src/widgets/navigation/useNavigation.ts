@@ -9,7 +9,6 @@ export interface NavLink {
 }
 
 export interface NavigationProps {
-  isMobile: boolean;
   activeRoute: string;
   cartCount: number;
   companyName: string;
@@ -27,7 +26,7 @@ const LINKS: NavLink[] = [
   { label: 'Nosotros', path: '/about' },
 ];
 
-export function useNavigation(isMobile: boolean): NavigationProps {
+export function useNavigation(): NavigationProps {
   const { slug, branding } = useBranding();
   const { items: cartItems } = useCart(slug);
   const location = useLocation();
@@ -53,7 +52,6 @@ export function useNavigation(isMobile: boolean): NavigationProps {
   );
 
   return {
-    isMobile,
     activeRoute: location.pathname,
     cartCount,
     companyName: branding.companyName,

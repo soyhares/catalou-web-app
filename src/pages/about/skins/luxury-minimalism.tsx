@@ -11,9 +11,22 @@ const PLATFORM_LABELS: Record<string, string> = {
 const LuxuryMinimalismAboutSkin: React.FC<AboutPageProps> = ({
   profile,
   isLoading,
+  error,
   companyName,
   onBack,
+  onGoHome,
 }) => {
+  if (error) {
+    return (
+      <div style={{ minHeight: '100vh', background: 'var(--pwa-bg)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '16px' }}>
+        <p style={{ color: 'var(--pwa-error)', fontFamily: 'var(--pwa-font-body)' }}>No se pudo cargar el perfil</p>
+        <button onClick={onGoHome} style={{ color: 'var(--pwa-accent)', background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'var(--pwa-font-body)' }}>
+          Volver al inicio
+        </button>
+      </div>
+    )
+  }
+
   if (isLoading) {
     return (
       <div style={{ minHeight: '100vh', backgroundColor: 'var(--pwa-bg)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -28,6 +41,28 @@ const LuxuryMinimalismAboutSkin: React.FC<AboutPageProps> = ({
 
   return (
     <div style={{ minHeight: '100vh', backgroundColor: 'var(--pwa-bg)', paddingBottom: '64px' }}>
+
+      {/* Back link — top */}
+      <div style={{ padding: '20px 32px 0' }}>
+        <button
+          type="button"
+          onClick={onBack}
+          style={{
+            background: 'none',
+            border: 'none',
+            cursor: 'pointer',
+            fontFamily: 'var(--pwa-font-body)',
+            fontSize: '9px',
+            textTransform: 'uppercase',
+            letterSpacing: '0.16em',
+            color: 'var(--pwa-accent)',
+            fontWeight: 600,
+            padding: 0,
+          }}
+        >
+          ← Volver
+        </button>
+      </div>
 
       {/* Large hero photo or blank accent bar */}
       {p?.photoUrl ? (
