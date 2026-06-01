@@ -1,26 +1,22 @@
 import { createContext, useContext, useEffect, useState, type ReactNode } from 'react';
 import { useBranding } from '@app/BrandingContext';
-import { PWA_THEMES, type CatalogTheme } from '@shared/styles/pwa-themes';
+import { PWA_THEMES, defaultTheme, type CatalogTheme, type AppearancePayload } from '@shared/styles/pwa-themes';
 import { loadThemeFont } from '@shared/lib/font-loader';
 
 export type { CatalogTheme };
 
 interface ThemeContextValue {
   theme: CatalogTheme;
+  isMobile: boolean;
 }
 
-const ThemeContext = createContext<ThemeContextValue>({ theme: 'clarity' });
+const ThemeContext = createContext<ThemeContextValue>({
+  theme: 'modern-minimalism',
+  isMobile: false,
+});
 
 export function useTheme(): ThemeContextValue {
   return useContext(ThemeContext);
-}
-
-interface AppearancePayload {
-  catalogTheme: CatalogTheme;
-  catalogColorBg: string;
-  catalogColorAccent: string;
-  catalogColorText: string;
-  catalogColorCard: string;
 }
 
 function applyThemeTokens(payload: AppearancePayload): void {
@@ -58,7 +54,17 @@ function applyThemeTokens(payload: AppearancePayload): void {
 
 export function ThemeProvider({ children }: { children: ReactNode }) {
   const { slug } = useBranding();
-  const [theme, setTheme] = useState<CatalogTheme>('clarity');
+  const [theme, setTheme] = useState<CatalogTheme>(defaultTheme);
+  const [isMobile, setIsMobile] = useState<boolean>(
+    () => window.matchMedia('(max-width: 768px)').matches
+  );
+
+  useEffect(() => {
+    const mql = window.matchMedia('(max-width: 768px)');
+    const handler = (e: MediaQueryListEvent) => setIsMobile(e.matches);
+    mql.addEventListener('change', handler);
+    return () => mql.removeEventListener('change', handler);
+  }, []);
 
   useEffect(() => {
     if (!slug) return;
@@ -71,11 +77,11 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
         setTheme(data.catalogTheme);
       })
       .catch(() => {
-        // Fallback to clarity defaults — endpoint not yet available (TASK-070/071 pending)
-        applyThemeTokens({ catalogTheme: 'clarity', catalogColorBg: '', catalogColorAccent: '', catalogColorText: '', catalogColorCard: '' });
-        loadThemeFont('clarity');
+        // Fallback to modern-minimalism defaults
+        applyThemeTokens({ catalogTheme: defaultTheme, catalogColorBg: '', catalogColorAccent: '', catalogColorText: '', catalogColorCard: '' });
+        loadThemeFont(defaultTheme);
       });
   }, [slug]);
 
-  return <ThemeContext.Provider value={{ theme }}>{children}</ThemeContext.Provider>;
+  return <ThemeContext.Provider value={{ theme, isMobile }}>{children}</ThemeContext.Provider>;
 }

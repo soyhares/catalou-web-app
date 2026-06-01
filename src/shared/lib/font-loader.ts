@@ -1,9 +1,11 @@
 import type { CatalogTheme } from '@shared/styles/pwa-themes';
 
+const GOOGLE_FONTS_BASE = 'https://fonts.googleapis.com/css2?';
+
 const THEME_FONT_URLS: Record<CatalogTheme, string | null> = {
-  luxury:  'https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400&display=swap',
-  clarity: null,
-  warm:    'https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap',
+  'luxury-minimalism': `${GOOGLE_FONTS_BASE}family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,400&family=Lato:wght@300;400&display=swap`,
+  'neo-luxury':        `${GOOGLE_FONTS_BASE}family=Space+Grotesk:wght@400;500;700&display=swap`,
+  'modern-minimalism': `${GOOGLE_FONTS_BASE}family=Inter:wght@400;500;600&display=swap`,
 };
 
 export function loadThemeFont(theme: CatalogTheme): void {

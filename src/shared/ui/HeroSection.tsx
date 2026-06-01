@@ -21,7 +21,7 @@ export function HeroSection({ title, eyebrow, subtitle }: HeroSectionProps) {
   const navigate = useNavigate();
   const { theme } = useTheme();
 
-  if (theme === 'luxury') {
+  if (theme === 'luxury-minimalism') {
     return (
       <section
         className="hero-section px-6 py-16 text-center relative overflow-hidden"
@@ -99,7 +99,7 @@ export function HeroSection({ title, eyebrow, subtitle }: HeroSectionProps) {
     );
   }
 
-  if (theme === 'clarity') {
+  if (theme === 'modern-minimalism') {
     return (
       <section
         className="hero-section px-6 py-12"
@@ -186,7 +186,7 @@ export function HeroSection({ title, eyebrow, subtitle }: HeroSectionProps) {
     );
   }
 
-  // warm (default)
+  // neo-luxury (default fallback)
   return (
     <section
       className="hero-section px-6 py-14 text-center"

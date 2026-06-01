@@ -6,26 +6,26 @@ body {
 }
 
 /* Heading font per theme */
-[data-pwa-theme="luxury"] h1,
-[data-pwa-theme="luxury"] h2,
-[data-pwa-theme="luxury"] h3,
-[data-pwa-theme="luxury"] .heading {
+[data-pwa-theme="luxury-minimalism"] h1,
+[data-pwa-theme="luxury-minimalism"] h2,
+[data-pwa-theme="luxury-minimalism"] h3,
+[data-pwa-theme="luxury-minimalism"] .heading {
   font-family: var(--pwa-font-heading);
 }
-[data-pwa-theme="warm"] h1,
-[data-pwa-theme="warm"] h2,
-[data-pwa-theme="warm"] h3,
-[data-pwa-theme="warm"] .heading {
+[data-pwa-theme="neo-luxury"] h1,
+[data-pwa-theme="neo-luxury"] h2,
+[data-pwa-theme="neo-luxury"] h3,
+[data-pwa-theme="neo-luxury"] .heading {
   font-family: var(--pwa-font-heading);
 }
 
-/* Clarity: sticky search inside header */
-[data-pwa-theme="clarity"] .catalog-search {
+/* modern-minimalism: sticky search inside header */
+[data-pwa-theme="modern-minimalism"] .catalog-search {
   position: sticky;
   top: 56px;
   z-index: 10;
 }
-[data-pwa-theme="clarity"] .hero-section {
+[data-pwa-theme="modern-minimalism"] .hero-section {
   background-color: var(--pwa-surface-secondary);
 }
 
@@ -73,14 +73,14 @@ body {
 }
 
 /* Per-theme card effects */
-[data-pwa-theme="luxury"] .product-card:hover {
+[data-pwa-theme="luxury-minimalism"] .product-card:hover {
   box-shadow: var(--pwa-shadow-lg);
 }
-[data-pwa-theme="clarity"] .product-card:hover {
+[data-pwa-theme="modern-minimalism"] .product-card:hover {
   box-shadow: var(--pwa-shadow-md);
   transform: translateY(-2px);
 }
-[data-pwa-theme="warm"] .product-card:hover {
+[data-pwa-theme="neo-luxury"] .product-card:hover {
   transform: scale(1.02);
   box-shadow: var(--pwa-shadow-lg);
 }
