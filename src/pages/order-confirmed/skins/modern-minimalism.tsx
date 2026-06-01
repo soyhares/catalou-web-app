@@ -34,7 +34,7 @@ const ModernMinimalismOrderConfirmedSkin: React.FC<OrderConfirmedPageProps> = ({
           display: 'flex',
           justifyContent: 'center',
           marginBottom: '24px',
-          color: '#22C55E',
+          color: 'var(--pwa-success)',
         }}>
           <IconCheck />
         </div>
@@ -84,7 +84,7 @@ const ModernMinimalismOrderConfirmedSkin: React.FC<OrderConfirmedPageProps> = ({
             style={{
               padding: '12px 28px',
               backgroundColor: 'var(--pwa-accent)',
-              color: '#ffffff',
+              color: 'var(--pwa-on-accent)',
               fontSize: '14px',
               fontWeight: 600,
               fontFamily: 'var(--pwa-font-body)',

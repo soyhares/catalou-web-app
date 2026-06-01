@@ -29,9 +29,9 @@ export interface CheckoutPageProps {
   orderType: OrderType;
   hasBothOrderTypes: boolean;
   onFieldChange: (field: keyof CheckoutForm, value: string) => void;
+  onOrderTypeChange: (type: OrderType) => void;
   onSubmit: () => void;
   onBack: () => void;
-  companyName: string;
 }
 
 export function useCheckoutPage(): CheckoutPageProps {
@@ -40,8 +40,9 @@ export function useCheckoutPage(): CheckoutPageProps {
   const { items } = useCart(slug);
   const isOnline = useOnlineStatus();
 
-  const orderType: OrderType =
-    branding.orderType === 'BOTH' ? 'DIRECT' : (branding.orderType as OrderType) ?? 'DIRECT';
+  const [orderType, setOrderType] = useState<OrderType>(
+    branding.orderType === 'BOTH' ? 'DIRECT' : (branding.orderType as OrderType) ?? 'DIRECT'
+  );
 
   const [form, setForm] = useState<CheckoutForm>({
     name: '',
@@ -55,6 +56,10 @@ export function useCheckoutPage(): CheckoutPageProps {
   const [submitError, setSubmitError] = useState<string | null>(null);
 
   const subtotalNum = items.reduce((sum, item) => sum + item.unitPrice * item.quantity, 0);
+
+  function onOrderTypeChange(type: OrderType) {
+    setOrderType(type);
+  }
 
   function onFieldChange(field: keyof CheckoutForm, value: string) {
     setForm((prev) => ({ ...prev, [field]: value }));
@@ -121,8 +126,8 @@ export function useCheckoutPage(): CheckoutPageProps {
     orderType,
     hasBothOrderTypes: branding.orderType === 'BOTH',
     onFieldChange,
+    onOrderTypeChange,
     onSubmit,
     onBack,
-    companyName: branding.companyName,
   };
 }

@@ -12,7 +12,10 @@ const NeoLuxuryCheckoutSkin: React.FC<CheckoutPageProps> = ({
   submitError,
   showPrices,
   isOnline,
+  orderType,
+  hasBothOrderTypes,
   onFieldChange,
+  onOrderTypeChange,
   onSubmit,
   onBack,
 }) => {
@@ -99,8 +102,40 @@ const NeoLuxuryCheckoutSkin: React.FC<CheckoutPageProps> = ({
       <main style={{ maxWidth: '512px', margin: '0 auto', padding: '24px 20px 48px' }}>
 
         {!isOnline && (
-          <div style={{ marginBottom: '20px', padding: '12px 16px', borderRadius: 'var(--pwa-radius-sm)', backgroundColor: 'rgba(245,158,11,0.08)', border: '1px solid rgba(245,158,11,0.3)', fontSize: '13px', color: '#F59E0B' }}>
+          <div style={{ marginBottom: '20px', padding: '12px 16px', borderRadius: 'var(--pwa-radius-sm)', backgroundColor: 'var(--pwa-warning-bg)', border: '1px solid var(--pwa-warning-text)', fontSize: '13px', color: 'var(--pwa-warning-text)' }}>
             Sin conexión — tu pedido no puede enviarse.
+          </div>
+        )}
+
+        {/* Order type selector */}
+        {hasBothOrderTypes && (
+          <div style={{ marginBottom: '16px', display: 'flex', gap: '8px' }}>
+            {(['DIRECT', 'FINANCED'] as const).map((type) => (
+              <button
+                key={type}
+                type="button"
+                onClick={() => onOrderTypeChange(type)}
+                style={{
+                  flex: 1,
+                  padding: '10px 8px',
+                  backgroundColor: orderType === type ? 'var(--pwa-accent)' : 'var(--pwa-surface)',
+                  color: orderType === type ? 'var(--pwa-on-accent)' : 'var(--pwa-text-secondary)',
+                  border: '1px solid',
+                  borderColor: orderType === type ? 'var(--pwa-accent)' : 'var(--pwa-border)',
+                  borderRadius: 'var(--pwa-radius-sm)',
+                  fontFamily: 'var(--pwa-font-body)',
+                  fontSize: '11px',
+                  fontWeight: 700,
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.1em',
+                  cursor: 'pointer',
+                  boxShadow: orderType === type ? '0 0 12px var(--pwa-accent)' : 'none',
+                  transition: 'all var(--pwa-motion)',
+                }}
+              >
+                {type === 'DIRECT' ? 'Pedido directo' : 'Pedido por envío'}
+              </button>
+            ))}
           </div>
         )}
 
@@ -118,9 +153,9 @@ const NeoLuxuryCheckoutSkin: React.FC<CheckoutPageProps> = ({
               onChange={(e) => onFieldChange('name', e.target.value)}
               autoComplete="name"
               placeholder="Tu nombre"
-              style={{ ...inputStyle, borderColor: errors.name ? '#EF4444' : 'var(--pwa-border)' }}
+              style={{ ...inputStyle, borderColor: errors.name ? 'var(--pwa-error)' : 'var(--pwa-border)' }}
             />
-            {errors.name && <p style={{ fontSize: '11px', color: '#EF4444', marginTop: '4px' }}>{errors.name}</p>}
+            {errors.name && <p style={{ fontSize: '11px', color: 'var(--pwa-error)', marginTop: '4px' }}>{errors.name}</p>}
           </div>
 
           {/* Phone */}
@@ -132,9 +167,9 @@ const NeoLuxuryCheckoutSkin: React.FC<CheckoutPageProps> = ({
               onChange={(e) => onFieldChange('phone', e.target.value)}
               autoComplete="tel"
               placeholder="+506 8888 0000"
-              style={{ ...inputStyle, borderColor: errors.phone ? '#EF4444' : 'var(--pwa-border)' }}
+              style={{ ...inputStyle, borderColor: errors.phone ? 'var(--pwa-error)' : 'var(--pwa-border)' }}
             />
-            {errors.phone && <p style={{ fontSize: '11px', color: '#EF4444', marginTop: '4px' }}>{errors.phone}</p>}
+            {errors.phone && <p style={{ fontSize: '11px', color: 'var(--pwa-error)', marginTop: '4px' }}>{errors.phone}</p>}
           </div>
 
           {/* Email */}
@@ -146,9 +181,9 @@ const NeoLuxuryCheckoutSkin: React.FC<CheckoutPageProps> = ({
               onChange={(e) => onFieldChange('email', e.target.value)}
               autoComplete="email"
               placeholder="correo@ejemplo.com"
-              style={{ ...inputStyle, borderColor: errors.email ? '#EF4444' : 'var(--pwa-border)' }}
+              style={{ ...inputStyle, borderColor: errors.email ? 'var(--pwa-error)' : 'var(--pwa-border)' }}
             />
-            {errors.email && <p style={{ fontSize: '11px', color: '#EF4444', marginTop: '4px' }}>{errors.email}</p>}
+            {errors.email && <p style={{ fontSize: '11px', color: 'var(--pwa-error)', marginTop: '4px' }}>{errors.email}</p>}
           </div>
 
           {/* Delivery address */}
@@ -159,9 +194,9 @@ const NeoLuxuryCheckoutSkin: React.FC<CheckoutPageProps> = ({
               onChange={(e) => onFieldChange('deliveryAddress', e.target.value)}
               rows={3}
               placeholder="Dirección o indicaciones"
-              style={{ ...inputStyle, resize: 'none', borderColor: errors.deliveryAddress ? '#EF4444' : 'var(--pwa-border)' }}
+              style={{ ...inputStyle, resize: 'none', borderColor: errors.deliveryAddress ? 'var(--pwa-error)' : 'var(--pwa-border)' }}
             />
-            {errors.deliveryAddress && <p style={{ fontSize: '11px', color: '#EF4444', marginTop: '4px' }}>{errors.deliveryAddress}</p>}
+            {errors.deliveryAddress && <p style={{ fontSize: '11px', color: 'var(--pwa-error)', marginTop: '4px' }}>{errors.deliveryAddress}</p>}
           </div>
 
           {/* Notes */}
@@ -206,7 +241,7 @@ const NeoLuxuryCheckoutSkin: React.FC<CheckoutPageProps> = ({
           )}
 
           {submitError && (
-            <p style={{ fontSize: '13px', color: '#EF4444' }}>{submitError}</p>
+            <p style={{ fontSize: '13px', color: 'var(--pwa-error)' }}>{submitError}</p>
           )}
 
           {/* Futuristic CTA with glow */}
@@ -218,7 +253,7 @@ const NeoLuxuryCheckoutSkin: React.FC<CheckoutPageProps> = ({
               width: '100%',
               padding: '16px',
               backgroundColor: 'var(--pwa-accent)',
-              color: '#0D0718',
+              color: 'var(--pwa-on-accent)',
               fontSize: '12px',
               fontWeight: 700,
               fontFamily: 'var(--pwa-font-body)',

@@ -274,7 +274,7 @@ const NeoLuxuryCartSkin: React.FC<CartPageProps> = ({
                 width: '100%',
                 padding: '16px',
                 backgroundColor: 'var(--pwa-accent)',
-                color: '#0D0718',
+                color: 'var(--pwa-on-accent)',
                 fontSize: '12px',
                 fontWeight: 700,
                 fontFamily: 'var(--pwa-font-body)',

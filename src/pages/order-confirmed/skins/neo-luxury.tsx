@@ -79,7 +79,7 @@ const NeoLuxuryOrderConfirmedSkin: React.FC<OrderConfirmedPageProps> = ({
           style={{
             padding: '14px 32px',
             backgroundColor: 'var(--pwa-accent)',
-            color: '#0D0718',
+            color: 'var(--pwa-on-accent)',
             fontSize: '12px',
             fontWeight: 700,
             fontFamily: 'var(--pwa-font-body)',

@@ -96,7 +96,7 @@ const ModernMinimalismCartSkin: React.FC<CartPageProps> = ({
               style={{
                 padding: '10px 24px',
                 backgroundColor: 'var(--pwa-accent)',
-                color: '#ffffff',
+                color: 'var(--pwa-on-accent)',
                 fontSize: '14px',
                 fontWeight: 600,
                 borderRadius: 'var(--pwa-radius-button)',
@@ -259,7 +259,7 @@ const ModernMinimalismCartSkin: React.FC<CartPageProps> = ({
                 width: '100%',
                 padding: '14px',
                 backgroundColor: 'var(--pwa-accent)',
-                color: '#ffffff',
+                color: 'var(--pwa-on-accent)',
                 fontSize: '14px',
                 fontWeight: 600,
                 fontFamily: 'var(--pwa-font-body)',

@@ -49,6 +49,12 @@ function applyThemeTokens(payload: AppearancePayload): void {
   root.style.setProperty('--pwa-shadow-lg',     base.shadowLg);
   root.style.setProperty('--pwa-glass-bg',      base.glassBg);
   root.style.setProperty('--pwa-glass-border',  base.glassBorder);
+  // Semantic state tokens
+  root.style.setProperty('--pwa-on-accent',     base.onAccent);
+  root.style.setProperty('--pwa-error',         base.error);
+  root.style.setProperty('--pwa-success',       base.success);
+  root.style.setProperty('--pwa-warning-bg',    base.warningBg);
+  root.style.setProperty('--pwa-warning-text',  base.warningText);
   root.setAttribute('data-pwa-theme', payload.catalogTheme);
 }
 

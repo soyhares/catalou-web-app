@@ -19,6 +19,11 @@ export interface ThemeTokens {
   shadow: string; shadowSm: string; shadowMd: string; shadowLg: string;
   motionDuration: string;
   isMobileBreakpoint: number;
+  onAccent: string;
+  error: string;
+  success: string;
+  warningBg: string;
+  warningText: string;
 }
 
 export const PWA_THEMES: Record<CatalogTheme, ThemeTokens> = {
@@ -36,6 +41,11 @@ export const PWA_THEMES: Record<CatalogTheme, ThemeTokens> = {
     shadowLg: '0 8px 32px rgba(60,40,20,0.10)',
     motionDuration: '300ms',
     isMobileBreakpoint: 768,
+    onAccent: '#3D2E1E',
+    error: '#8B3A3A',
+    success: '#4A7A5A',
+    warningBg: 'rgba(201,169,110,0.12)',
+    warningText: '#8B7355',
   },
   'neo-luxury': {
     bg: '#0D0718', surface: '#150B2A', surfaceSecondary: '#1E0A35',
@@ -51,6 +61,11 @@ export const PWA_THEMES: Record<CatalogTheme, ThemeTokens> = {
     shadowLg: '0 16px 48px rgba(232,121,249,0.15)',
     motionDuration: '200ms',
     isMobileBreakpoint: 768,
+    onAccent: '#0D0718',
+    error: '#FF6B6B',
+    success: '#34D399',
+    warningBg: 'rgba(232,121,249,0.08)',
+    warningText: 'rgba(232,121,249,0.8)',
   },
   'modern-minimalism': {
     bg: '#FFFFFF', surface: '#FFFFFF', surfaceSecondary: '#F9FAFB',
@@ -66,6 +81,11 @@ export const PWA_THEMES: Record<CatalogTheme, ThemeTokens> = {
     shadowLg: '0 8px 24px rgba(0,0,0,0.10)',
     motionDuration: '150ms',
     isMobileBreakpoint: 768,
+    onAccent: '#FFFFFF',
+    error: '#EF4444',
+    success: '#22C55E',
+    warningBg: '#FEF3C7',
+    warningText: '#92400E',
   },
 };
 

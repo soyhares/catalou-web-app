@@ -269,7 +269,7 @@ const LuxuryMinimalismCartSkin: React.FC<CartPageProps> = ({
                 width: '100%',
                 padding: '16px',
                 backgroundColor: 'var(--pwa-accent)',
-                color: '#ffffff',
+                color: 'var(--pwa-on-accent)',
                 fontSize: '11px',
                 fontWeight: 600,
                 fontFamily: 'var(--pwa-font-body)',

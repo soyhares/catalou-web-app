@@ -46,10 +46,12 @@ export function useCartPage(): CartPageProps {
   }
 
   const onClear = useCallback(() => {
-    void clearCart(slug).then(() => {
-      void refresh();
-      window.dispatchEvent(new Event('cart-updated'));
-    });
+    void clearCart(slug)
+      .then(() => {
+        void refresh();
+        window.dispatchEvent(new Event('cart-updated'));
+      })
+      .catch((err: unknown) => console.error('[useCartPage] clearCart failed:', err));
   }, [slug, refresh]);
 
   function onCheckout() {
