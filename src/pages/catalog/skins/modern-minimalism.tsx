@@ -104,7 +104,7 @@ const ModernMinimalismSkin: React.FC<CatalogPageProps> = ({
               fontFamily: 'var(--pwa-font-body)',
               fontSize: '13px',
               fontWeight: 600,
-              color: '#fff',
+              color: 'var(--pwa-bg)',
               backgroundColor: 'var(--pwa-accent)',
               border: 'none',
               borderRadius: 'var(--pwa-radius-button)',
@@ -178,7 +178,7 @@ const ModernMinimalismSkin: React.FC<CatalogPageProps> = ({
               backgroundColor: selectedCategory ? 'var(--pwa-accent)' : 'var(--pwa-surface-secondary)',
               borderRadius: 'var(--pwa-radius-md)',
               border: 'none',
-              color: selectedCategory ? '#fff' : 'var(--pwa-text-secondary)',
+              color: selectedCategory ? 'var(--pwa-bg)' : 'var(--pwa-text-secondary)',
               cursor: 'pointer',
             }}
             onClick={() => onCategorySelect(null)}
@@ -202,7 +202,7 @@ const ModernMinimalismSkin: React.FC<CatalogPageProps> = ({
                   borderRadius: 'var(--pwa-radius-chip)',
                   border: `1.5px solid ${!selectedCategory ? 'var(--pwa-accent)' : 'var(--pwa-border)'}`,
                   backgroundColor: !selectedCategory ? 'var(--pwa-accent)' : 'transparent',
-                  color: !selectedCategory ? '#fff' : 'var(--pwa-text-secondary)',
+                  color: !selectedCategory ? 'var(--pwa-bg)' : 'var(--pwa-text-secondary)',
                   cursor: 'pointer',
                   flexShrink: 0,
                 }}
@@ -222,7 +222,7 @@ const ModernMinimalismSkin: React.FC<CatalogPageProps> = ({
                     borderRadius: 'var(--pwa-radius-chip)',
                     border: `1.5px solid ${selectedCategory?.id === cat.id ? 'var(--pwa-accent)' : 'var(--pwa-border)'}`,
                     backgroundColor: selectedCategory?.id === cat.id ? 'var(--pwa-accent)' : 'transparent',
-                    color: selectedCategory?.id === cat.id ? '#fff' : 'var(--pwa-text-secondary)',
+                    color: selectedCategory?.id === cat.id ? 'var(--pwa-bg)' : 'var(--pwa-text-secondary)',
                     cursor: 'pointer',
                     flexShrink: 0,
                   }}
@@ -250,7 +250,7 @@ const ModernMinimalismSkin: React.FC<CatalogPageProps> = ({
                   borderRadius: 'var(--pwa-radius-chip)',
                   border: `1px solid ${selectedSubcategoryId === sub.id ? 'var(--pwa-text)' : 'var(--pwa-border)'}`,
                   backgroundColor: selectedSubcategoryId === sub.id ? 'var(--pwa-text)' : 'transparent',
-                  color: selectedSubcategoryId === sub.id ? '#fff' : 'var(--pwa-text-secondary)',
+                  color: selectedSubcategoryId === sub.id ? 'var(--pwa-bg)' : 'var(--pwa-text-secondary)',
                   cursor: 'pointer',
                   flexShrink: 0,
                   whiteSpace: 'nowrap' as const,
@@ -349,7 +349,7 @@ const ModernMinimalismSkin: React.FC<CatalogPageProps> = ({
                       alignItems: 'center',
                       justifyContent: 'center',
                       cursor: 'pointer',
-                      color: wishlisted.has(product.id) ? '#EF4444' : 'var(--pwa-text-secondary)',
+                      color: wishlisted.has(product.id) ? 'var(--pwa-accent)' : 'var(--pwa-text-secondary)',
                       boxShadow: 'var(--pwa-shadow-sm)',
                     }}
                   >
@@ -403,7 +403,7 @@ const ModernMinimalismSkin: React.FC<CatalogPageProps> = ({
                       fontSize: '11px',
                       fontWeight: 600,
                       letterSpacing: '0.04em',
-                      color: '#fff',
+                      color: 'var(--pwa-bg)',
                       backgroundColor: 'var(--pwa-accent)',
                       border: 'none',
                       borderRadius: 'var(--pwa-radius-sm)',

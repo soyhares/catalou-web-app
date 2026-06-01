@@ -111,7 +111,7 @@ const LuxuryMinimalismSkin: React.FC<CatalogPageProps> = ({
                 top: '-2px',
                 right: '-2px',
                 backgroundColor: 'var(--pwa-accent)',
-                color: '#fff',
+                color: 'var(--pwa-bg)',
                 fontSize: '9px',
                 fontWeight: 600,
                 minWidth: '14px',

@@ -150,7 +150,7 @@ const NeoLuxurySkin: React.FC<CatalogPageProps> = ({
                 top: '-2px',
                 right: '-2px',
                 backgroundColor: 'var(--pwa-accent)',
-                color: '#0D0718',
+                color: 'var(--pwa-bg)',
                 fontSize: '9px',
                 fontWeight: 700,
                 minWidth: '15px',
@@ -364,23 +364,6 @@ const NeoLuxurySkin: React.FC<CatalogPageProps> = ({
                       </svg>
                     </div>
                   )}
-                  {/* Nuevo badge */}
-                  <span style={{
-                    position: 'absolute' as const,
-                    top: '8px',
-                    left: '8px',
-                    backgroundColor: 'var(--pwa-accent)',
-                    color: '#0D0718',
-                    fontSize: '9px',
-                    fontWeight: 700,
-                    letterSpacing: '0.08em',
-                    padding: '2px 8px',
-                    borderRadius: '4px',
-                    textTransform: 'uppercase' as const,
-                    fontFamily: 'var(--pwa-font-body)',
-                  }}>
-                    Nuevo
-                  </span>
                 </div>
 
                 {/* Text area */}
@@ -405,7 +388,7 @@ const NeoLuxurySkin: React.FC<CatalogPageProps> = ({
                         fontFamily: 'var(--pwa-font-body)',
                         fontSize: '0.95rem',
                         fontWeight: 700,
-                        color: '#FFFFFF',
+                        color: 'var(--pwa-text)',
                       }}>
                         ₡{parseFloat(product.basePrice).toLocaleString('es-CR')}
                       </p>
@@ -420,7 +403,7 @@ const NeoLuxurySkin: React.FC<CatalogPageProps> = ({
                         border: 'none',
                         borderRadius: 'var(--pwa-radius-sm)',
                         padding: '6px 10px',
-                        color: '#0D0718',
+                        color: 'var(--pwa-bg)',
                         fontSize: '9px',
                         fontWeight: 700,
                         letterSpacing: '0.08em',
