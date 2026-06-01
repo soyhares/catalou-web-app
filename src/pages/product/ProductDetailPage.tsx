@@ -388,7 +388,8 @@ export default function ProductDetailPage() {
                     quantity,
                     unitPrice: parseFloat(computedPrice() ?? '0'),
                   }).then(() => {
-                    window.dispatchEvent(new Event('cart-updated'));
+                    // 'cart-updated' is dispatched automatically by useCart.add()
+                    window.dispatchEvent(new CustomEvent('cart-item-added', { detail: { name: product.name } }));
                     setAddedFeedback(true);
                     setTimeout(() => setAddedFeedback(false), 2000);
                   });

@@ -3,6 +3,7 @@ import { lazy, Suspense } from 'react';
 import { AnimatePresence } from 'framer-motion';
 import { WhatsAppFloatingButton } from '@shared/ui/WhatsAppFloatingButton';
 import { PageTransition } from '@shared/ui/PageTransition';
+import { AddedToCartToast } from '@shared/ui/AddedToCartToast';
 
 const CatalogPage = lazy(() => import('@pages/catalog/CatalogPage'));
 const ProductDetailPage = lazy(() => import('@pages/product/ProductDetailPage'));
@@ -41,6 +42,7 @@ export function AppRouter() {
     <BrowserRouter>
       <WhatsAppFloatingButton />
       <AnimatedRoutes />
+      <AddedToCartToast />
     </BrowserRouter>
   );
 }

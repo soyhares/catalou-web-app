@@ -98,20 +98,6 @@ export function ProductCard({ id, name, imageUrl, price, showPrices, onQuote }: 
           {name}
         </p>
 
-        {showPrices && price !== null && (
-          <p
-            className="tracking-wider"
-            style={{
-              fontSize: '11px',
-              fontFamily: 'var(--pwa-font-body)',
-              fontWeight: 500,
-              color: 'var(--pwa-accent)',
-              letterSpacing: '0.08em',
-            }}
-          >
-            ₡{price.toLocaleString('es-CR')}
-          </p>
-        )}
       </div>
     </article>
   );

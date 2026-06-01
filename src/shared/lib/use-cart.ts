@@ -21,13 +21,22 @@ export function useCart(slug: string) {
     setCount(total);
   }, [slug]);
 
+  // Initial load
   useEffect(() => {
     queueMicrotask(() => { void refresh(); });
+  }, [refresh]);
+
+  // Sync across all hook instances — any mutation from any component updates everyone
+  useEffect(() => {
+    function onExternalUpdate() { void refresh(); }
+    window.addEventListener('cart-updated', onExternalUpdate);
+    return () => window.removeEventListener('cart-updated', onExternalUpdate);
   }, [refresh]);
 
   async function add(item: Omit<CartItem, 'id'>) {
     await addCartItem(item);
     await refresh();
+    window.dispatchEvent(new Event('cart-updated'));
   }
 
   async function updateQuantity(id: string, quantity: number) {
@@ -37,11 +46,13 @@ export function useCart(slug: string) {
       await updateCartItemQuantity(id, quantity);
     }
     await refresh();
+    window.dispatchEvent(new Event('cart-updated'));
   }
 
   async function remove(id: string) {
     await removeCartItem(id);
     await refresh();
+    window.dispatchEvent(new Event('cart-updated'));
   }
 
   return { items, count, add, updateQuantity, remove, refresh };

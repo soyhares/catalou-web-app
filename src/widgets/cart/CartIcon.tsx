@@ -47,11 +47,12 @@ export function CartIcon({ slug, onClick }: CartIconProps) {
         {count > 0 && (
           <motion.span
             key={count}
-            className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-medium"
-            initial={{ scale: 0.5, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            exit={{ scale: 0.5, opacity: 0 }}
-            transition={{ type: 'spring', stiffness: 500, damping: 30 }}
+            className="absolute -top-1 -right-1 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-semibold"
+            style={{ backgroundColor: 'var(--pwa-accent)' }}
+            initial={{ scale: 0.4, opacity: 0 }}
+            animate={{ scale: [1.4, 0.85, 1], opacity: 1 }}
+            exit={{ scale: 0.4, opacity: 0 }}
+            transition={{ duration: 0.32, times: [0, 0.55, 1] }}
           >
             {count > 99 ? '99+' : count}
           </motion.span>

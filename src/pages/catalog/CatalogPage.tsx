@@ -98,8 +98,10 @@ export default function CatalogPage() {
       companySlug: slug, productId: product.id, productName: product.name,
       variantTypeId: null, variantTypeName: null, variantValueId: null, variantValueName: null,
       quantity: 1, unitPrice: parseFloat(product.basePrice) || 0,
+    }).then(() => {
+      // 'cart-updated' is dispatched automatically by useCart.add()
+      window.dispatchEvent(new CustomEvent('cart-item-added', { detail: { name: product.name } }));
     });
-    void navigate('/cart');
   }
 
   const activeCategory: PublicCategory | undefined = catalog?.categories.find((c) => c.id === selectedCategoryId);

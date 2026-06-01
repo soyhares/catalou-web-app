@@ -148,10 +148,10 @@ export function BottomNav({ showAbout = false }: BottomNavProps) {
                         lineHeight: 1,
                         padding: '0 3px',
                       }}
-                      initial={{ scale: 0 }}
-                      animate={{ scale: 1 }}
-                      exit={{ scale: 0 }}
-                      transition={{ type: 'spring', stiffness: 500, damping: 25 }}
+                      initial={{ scale: 0.3, opacity: 0 }}
+                      animate={{ scale: [1.5, 0.85, 1], opacity: 1 }}
+                      exit={{ scale: 0.3, opacity: 0 }}
+                      transition={{ duration: 0.32, times: [0, 0.55, 1] }}
                     >
                       {cartCount > 9 ? '9+' : cartCount}
                     </motion.span>
