@@ -1,0 +1,128 @@
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useBranding } from '@app/BrandingContext';
+import { useCart } from '@shared/lib/use-cart';
+import { clearCart } from '@shared/lib/cart-store';
+import { useOnlineStatus } from '@shared/hooks/useOnlineStatus';
+import { submitOrder, type OrderType } from '@entities/order/api';
+import type { CartItem } from '@shared/lib/cart-store';
+
+export type { CartItem };
+
+export interface CheckoutForm {
+  name: string;
+  phone: string;
+  email: string;
+  deliveryAddress: string;
+  notes: string;
+}
+
+export interface CheckoutPageProps {
+  items: CartItem[];
+  total: string;
+  form: CheckoutForm;
+  errors: Partial<Record<keyof CheckoutForm, string>>;
+  isSubmitting: boolean;
+  submitError: string | null;
+  showPrices: boolean;
+  isOnline: boolean;
+  orderType: OrderType;
+  hasBothOrderTypes: boolean;
+  onFieldChange: (field: keyof CheckoutForm, value: string) => void;
+  onSubmit: () => void;
+  onBack: () => void;
+  companyName: string;
+}
+
+export function useCheckoutPage(): CheckoutPageProps {
+  const { slug, branding } = useBranding();
+  const navigate = useNavigate();
+  const { items } = useCart(slug);
+  const isOnline = useOnlineStatus();
+
+  const orderType: OrderType =
+    branding.orderType === 'BOTH' ? 'DIRECT' : (branding.orderType as OrderType) ?? 'DIRECT';
+
+  const [form, setForm] = useState<CheckoutForm>({
+    name: '',
+    phone: '',
+    email: '',
+    deliveryAddress: '',
+    notes: '',
+  });
+  const [errors, setErrors] = useState<Partial<Record<keyof CheckoutForm, string>>>({});
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
+
+  const subtotalNum = items.reduce((sum, item) => sum + item.unitPrice * item.quantity, 0);
+
+  function onFieldChange(field: keyof CheckoutForm, value: string) {
+    setForm((prev) => ({ ...prev, [field]: value }));
+    if (errors[field]) {
+      setErrors((prev) => ({ ...prev, [field]: undefined }));
+    }
+  }
+
+  function validate(): boolean {
+    const errs: Partial<Record<keyof CheckoutForm, string>> = {};
+    if (!form.name.trim()) errs.name = 'Campo requerido';
+    if (!form.phone.trim()) errs.phone = 'Campo requerido';
+    if (!form.email.trim()) {
+      errs.email = 'Campo requerido';
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) {
+      errs.email = 'Correo inválido';
+    }
+    if (!form.deliveryAddress.trim()) errs.deliveryAddress = 'Campo requerido';
+    setErrors(errs);
+    return Object.keys(errs).length === 0;
+  }
+
+  function onSubmit() {
+    if (!validate()) return;
+    setIsSubmitting(true);
+    setSubmitError(null);
+    submitOrder(slug, {
+      orderType,
+      visitorName: form.name.trim(),
+      visitorPhone: form.phone.trim(),
+      visitorEmail: form.email.trim(),
+      deliveryAddress: form.deliveryAddress.trim(),
+      items: items.map((item) => ({
+        productId: item.productId,
+        variantValueId: item.variantValueId,
+        quantity: item.quantity,
+      })),
+    })
+      .then(() => clearCart(slug))
+      .then(() => {
+        void navigate('/order-confirmed', { replace: true });
+      })
+      .catch(() => {
+        setSubmitError('No se pudo enviar el pedido. Intenta nuevamente.');
+      })
+      .finally(() => {
+        setIsSubmitting(false);
+      });
+  }
+
+  function onBack() {
+    navigate(-1);
+  }
+
+  return {
+    items,
+    total: `₡${subtotalNum.toLocaleString('es-CR')}`,
+    form,
+    errors,
+    isSubmitting,
+    submitError,
+    showPrices: branding.showPrices ?? false,
+    isOnline,
+    orderType,
+    hasBothOrderTypes: branding.orderType === 'BOTH',
+    onFieldChange,
+    onSubmit,
+    onBack,
+    companyName: branding.companyName,
+  };
+}

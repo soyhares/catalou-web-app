@@ -7,9 +7,9 @@ import { AddedToCartToast } from '@shared/ui/AddedToCartToast';
 
 const CatalogPage = lazy(() => import('@pages/catalog'));
 const ProductDetailPage = lazy(() => import('@pages/product'));
-const CartPage = lazy(() => import('@pages/cart/CartPage'));
-const CheckoutPage = lazy(() => import('@pages/checkout/CheckoutPage'));
-const OrderConfirmedPage = lazy(() => import('@pages/order-confirmed/OrderConfirmedPage'));
+const CartPage = lazy(() => import('@pages/cart'));
+const CheckoutPage = lazy(() => import('@pages/checkout'));
+const OrderConfirmedPage = lazy(() => import('@pages/order-confirmed'));
 const ConfirmAssociationPage = lazy(
   () => import('@pages/confirm-association/ConfirmAssociationPage'),
 );
