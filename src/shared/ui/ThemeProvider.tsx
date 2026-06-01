@@ -55,16 +55,18 @@ function applyThemeTokens(payload: AppearancePayload): void {
 export function ThemeProvider({ children }: { children: ReactNode }) {
   const { slug } = useBranding();
   const [theme, setTheme] = useState<CatalogTheme>(defaultTheme);
+  const mobileBp = PWA_THEMES[defaultTheme].isMobileBreakpoint;
+  const mobileQuery = `(max-width: ${mobileBp}px)`;
   const [isMobile, setIsMobile] = useState<boolean>(
-    () => window.matchMedia('(max-width: 768px)').matches
+    () => window.matchMedia(mobileQuery).matches
   );
 
   useEffect(() => {
-    const mql = window.matchMedia('(max-width: 768px)');
+    const mql = window.matchMedia(mobileQuery);
     const handler = (e: MediaQueryListEvent) => setIsMobile(e.matches);
     mql.addEventListener('change', handler);
     return () => mql.removeEventListener('change', handler);
-  }, []);
+  }, [mobileQuery]);
 
   useEffect(() => {
     if (!slug) return;
