@@ -13,7 +13,6 @@ export interface CatalogPageProps {
   selectedCategory: PublicCategory | null;
   selectedSubcategoryId: string | null;
   searchQuery: string;
-  searchOpen: boolean;
   isLoading: boolean;
   error: boolean;
   showAbout: boolean;
@@ -25,7 +24,6 @@ export interface CatalogPageProps {
   onCategorySelect: (id: string | null) => void;
   onSubcategorySelect: (id: string | null) => void;
   onSearchChange: (q: string) => void;
-  onSearchOpen: (open: boolean) => void;
   onCartClick: () => void;
   onQuote: (productId: string) => void;
   onRetry: () => void;
@@ -41,7 +39,6 @@ export function useCatalogPage(): CatalogPageProps {
   const [showAbout, setShowAbout] = useState(false);
   const [error, setError] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
-  const [searchOpen, setSearchOpen] = useState(false);
   const [selectedCategoryId, setSelectedCategoryId] = useState<string | null>(null);
   const [selectedSubcategoryId, setSelectedSubcategoryId] = useState<string | null>(null);
 
@@ -65,7 +62,7 @@ export function useCatalogPage(): CatalogPageProps {
   }, [slug, searchQuery, selectedCategoryId, selectedSubcategoryId]);
 
   useEffect(() => {
-    queueMicrotask(() => { void load(); });
+    void load();
   }, [load]);
 
   useEffect(() => {
@@ -85,11 +82,6 @@ export function useCatalogPage(): CatalogPageProps {
 
   function onSearchChange(q: string) {
     setSearchQuery(q);
-  }
-
-  function onSearchOpen(open: boolean) {
-    setSearchOpen(open);
-    if (!open) setSearchQuery('');
   }
 
   function onCartClick() {
@@ -125,7 +117,6 @@ export function useCatalogPage(): CatalogPageProps {
     selectedCategory: activeCategory,
     selectedSubcategoryId,
     searchQuery,
-    searchOpen,
     isLoading: loading,
     error,
     showAbout,
@@ -135,7 +126,6 @@ export function useCatalogPage(): CatalogPageProps {
     onCategorySelect,
     onSubcategorySelect,
     onSearchChange,
-    onSearchOpen,
     onCartClick,
     onQuote,
     onRetry: () => void load(),

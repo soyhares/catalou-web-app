@@ -16,15 +16,6 @@ function IconSearch() {
   );
 }
 
-function IconFilter() {
-  return (
-    <svg width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden="true">
-      <line x1="2" y1="5" x2="16" y2="5" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" />
-      <line x1="4" y1="9" x2="14" y2="9" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" />
-      <line x1="6" y1="13" x2="12" y2="13" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" />
-    </svg>
-  );
-}
 
 function IconHeart({ filled }: { filled?: boolean }) {
   return (
@@ -39,20 +30,6 @@ function IconHeart({ filled }: { filled?: boolean }) {
   );
 }
 
-function StarRow({ count = 4 }: { count?: number }) {
-  return (
-    <div style={{ display: 'flex', gap: '1px' }}>
-      {Array.from({ length: 5 }).map((_, i) => (
-        <svg key={i} width="10" height="10" viewBox="0 0 10 10" fill="none">
-          <path
-            d="M5 1L6.18 3.5L9 3.93L6.99 5.9L7.47 8.7L5 7.35L2.53 8.7L3.01 5.9L1 3.93L3.82 3.5L5 1Z"
-            fill={i < count ? 'var(--pwa-accent)' : 'var(--pwa-border)'}
-          />
-        </svg>
-      ))}
-    </div>
-  );
-}
 
 /* ── Skin ───────────────────────────────────────────────────────────────── */
 
@@ -164,10 +141,10 @@ const ModernMinimalismSkin: React.FC<CatalogPageProps> = ({
             />
           </label>
 
-          {/* Filter button */}
+          {/* Clear filters button — only visually prominent when a filter is active */}
           <button
             type="button"
-            aria-label="Filtros"
+            aria-label="Limpiar filtros"
             style={{
               flexShrink: 0,
               width: '40px',
@@ -180,10 +157,13 @@ const ModernMinimalismSkin: React.FC<CatalogPageProps> = ({
               border: 'none',
               color: selectedCategory ? 'var(--pwa-bg)' : 'var(--pwa-text-secondary)',
               cursor: 'pointer',
+              fontSize: '16px',
+              fontWeight: 400,
+              lineHeight: 1,
             }}
             onClick={() => onCategorySelect(null)}
           >
-            <IconFilter />
+            ✕
           </button>
         </div>
 
@@ -332,6 +312,7 @@ const ModernMinimalismSkin: React.FC<CatalogPageProps> = ({
                   )}
 
                   {/* Wishlist heart — top right of image */}
+                  {/* wishlist state is local-only until a persistent wishlist feature is implemented */}
                   <button
                     type="button"
                     aria-label={wishlisted.has(product.id) ? 'Quitar de favoritos' : 'Agregar a favoritos'}
@@ -343,7 +324,7 @@ const ModernMinimalismSkin: React.FC<CatalogPageProps> = ({
                       width: '28px',
                       height: '28px',
                       borderRadius: '50%',
-                      backgroundColor: 'rgba(255,255,255,0.9)',
+                      backgroundColor: 'var(--pwa-glass-bg)',
                       border: 'none',
                       display: 'flex',
                       alignItems: 'center',
@@ -359,11 +340,6 @@ const ModernMinimalismSkin: React.FC<CatalogPageProps> = ({
 
                 {/* Product info */}
                 <div style={{ padding: '10px 10px 12px' }}>
-                  {/* Star rating row */}
-                  <div style={{ marginBottom: '4px' }}>
-                    <StarRow count={4} />
-                  </div>
-
                   {/* Product name */}
                   <p style={{
                     fontFamily: 'var(--pwa-font-body)',

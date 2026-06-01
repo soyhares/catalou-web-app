@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { OfflineBanner } from '@shared/ui/OfflineBanner';
 import { BottomNav } from '@shared/ui/BottomNav';
@@ -48,12 +48,6 @@ const NeoLuxurySkin: React.FC<CatalogPageProps> = ({
   onRetry,
 }) => {
   const navigate = useNavigate();
-  const [localSearch, setLocalSearch] = useState(searchQuery);
-
-  function handleSearchSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    onSearchChange(localSearch);
-  }
 
   /* ── Error ────────────────────────────────────────────────────────────── */
   if (error) {
@@ -168,7 +162,7 @@ const NeoLuxurySkin: React.FC<CatalogPageProps> = ({
         </div>
 
         {/* Search bar */}
-        <form onSubmit={handleSearchSubmit} style={{ padding: '0 20px 14px' }}>
+        <div style={{ padding: '0 20px 14px' }}>
           <div style={{
             display: 'flex',
             alignItems: 'center',
@@ -181,11 +175,8 @@ const NeoLuxurySkin: React.FC<CatalogPageProps> = ({
             <span style={{ color: 'var(--pwa-text-secondary)', flexShrink: 0 }}><IconSearch /></span>
             <input
               type="search"
-              value={localSearch}
-              onChange={(e) => {
-                setLocalSearch(e.target.value);
-                onSearchChange(e.target.value);
-              }}
+              value={searchQuery}
+              onChange={(e) => onSearchChange(e.target.value)}
               placeholder="Buscar productos..."
               style={{
                 flex: 1,
@@ -198,7 +189,7 @@ const NeoLuxurySkin: React.FC<CatalogPageProps> = ({
               }}
             />
           </div>
-        </form>
+        </div>
 
         {/* Category chips */}
         {categories.length > 0 && (
@@ -260,7 +251,7 @@ const NeoLuxurySkin: React.FC<CatalogPageProps> = ({
             marginBottom: '16px',
             letterSpacing: '0.02em',
           }}>
-            <span style={{ color: 'var(--pwa-accent)' }}>✦</span>{' '}
+            <span style={{ color: 'var(--pwa-accent)' }} aria-hidden="true">✦</span>{' '}
             {selectedCategory ? selectedCategory.name : 'Destacados'}
           </h2>
         )}
