@@ -4,6 +4,7 @@ import { AnimatePresence } from 'framer-motion';
 import { WhatsAppFloatingButton } from '@shared/ui/WhatsAppFloatingButton';
 import { PageTransition } from '@shared/ui/PageTransition';
 import { AddedToCartToast } from '@shared/ui/AddedToCartToast';
+import Navigation from '@widgets/navigation';
 
 const CatalogPage = lazy(() => import('@pages/catalog'));
 const ProductDetailPage = lazy(() => import('@pages/product'));
@@ -13,7 +14,7 @@ const OrderConfirmedPage = lazy(() => import('@pages/order-confirmed'));
 const ConfirmAssociationPage = lazy(
   () => import('@pages/confirm-association/ConfirmAssociationPage'),
 );
-const AboutPage = lazy(() => import('@pages/about/AboutPage'));
+const AboutPage = lazy(() => import('@pages/about'));
 const PrivacyPolicyPage = lazy(() => import('@pages/privacy-policy/PrivacyPolicyPage'));
 
 function AnimatedRoutes() {
@@ -40,6 +41,7 @@ function AnimatedRoutes() {
 export function AppRouter() {
   return (
     <BrowserRouter>
+      <Navigation />
       <WhatsAppFloatingButton />
       <AnimatedRoutes />
       <AddedToCartToast />
