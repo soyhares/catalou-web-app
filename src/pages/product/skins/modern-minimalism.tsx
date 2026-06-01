@@ -1,5 +1,4 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
 import { BottomNav } from '@shared/ui/BottomNav';
 import { CatalogFooter } from '@shared/ui/CatalogFooter';
 import type { ProductPageProps } from '../useProductPage';
@@ -32,12 +31,12 @@ const ModernMinimalismProductSkin: React.FC<ProductPageProps> = (props) => {
     onQuantityChange,
     onAddToCart,
     onBack,
+    onGoHome,
     onImageSelect,
     showPrices,
     companyName,
   } = props;
 
-  const navigate = useNavigate();
   const galleryImages = product ? [...product.images].sort((a, b) => a.sortOrder - b.sortOrder) : [];
 
   /* ── Loading ──────────────────────────────────────────────────────────── */
@@ -60,7 +59,7 @@ const ModernMinimalismProductSkin: React.FC<ProductPageProps> = (props) => {
         </p>
         <button
           type="button"
-          onClick={() => navigate('/')}
+          onClick={onGoHome}
           style={{ fontFamily: 'var(--pwa-font-body)', fontSize: '13px', color: 'var(--pwa-text-secondary)', background: 'none', border: 'none', cursor: 'pointer', textDecoration: 'underline' }}
         >
           Volver al catálogo
@@ -105,7 +104,7 @@ const ModernMinimalismProductSkin: React.FC<ProductPageProps> = (props) => {
         <nav style={{ padding: '10px 20px', display: 'flex', alignItems: 'center', gap: '6px', borderBottom: '1px solid var(--pwa-border)' }}>
           <button
             type="button"
-            onClick={() => navigate('/')}
+            onClick={onGoHome}
             style={{ fontFamily: 'var(--pwa-font-body)', fontSize: '12px', color: 'var(--pwa-text-secondary)', background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}
           >
             Catálogo
@@ -291,54 +290,29 @@ const ModernMinimalismProductSkin: React.FC<ProductPageProps> = (props) => {
               </div>
             </div>
 
-            {/* TWO CTA buttons: "Agregar al carrito" (outline) + "Cotizar ahora" (filled, dark) */}
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '24px' }}>
-              {/* Outline button — Agregar al carrito */}
-              <button
-                type="button"
-                disabled={!canAddToCart}
-                onClick={onAddToCart}
-                style={{
-                  fontFamily: 'var(--pwa-font-body)',
-                  fontSize: '13px',
-                  fontWeight: 600,
-                  color: 'var(--pwa-text)',
-                  backgroundColor: 'transparent',
-                  border: `1.5px solid ${canAddToCart ? 'var(--pwa-accent)' : 'var(--pwa-border)'}`,
-                  borderRadius: 'var(--pwa-radius-button)',
-                  padding: '13px 24px',
-                  width: '100%',
-                  cursor: canAddToCart ? 'pointer' : 'not-allowed',
-                  opacity: canAddToCart ? 1 : 0.4,
-                  transition: 'all 0.15s',
-                }}
-              >
-                {addedFeedback ? '¡Añadido al carrito!' : 'Agregar al carrito'}
-              </button>
-
-              {/* Filled button — Cotizar ahora */}
-              <button
-                type="button"
-                disabled={!canAddToCart}
-                onClick={onAddToCart}
-                style={{
-                  fontFamily: 'var(--pwa-font-body)',
-                  fontSize: '13px',
-                  fontWeight: 600,
-                  color: 'var(--pwa-bg)',
-                  backgroundColor: canAddToCart ? 'var(--pwa-accent)' : 'var(--pwa-text-secondary)',
-                  border: 'none',
-                  borderRadius: 'var(--pwa-radius-button)',
-                  padding: '13px 24px',
-                  width: '100%',
-                  cursor: canAddToCart ? 'pointer' : 'not-allowed',
-                  opacity: canAddToCart ? 1 : 0.4,
-                  transition: 'all 0.15s',
-                }}
-              >
-                Cotizar ahora
-              </button>
-            </div>
+            {/* CTA — "Agregar al carrito" (filled, dark) */}
+            <button
+              type="button"
+              disabled={!canAddToCart}
+              onClick={onAddToCart}
+              style={{
+                fontFamily: 'var(--pwa-font-body)',
+                fontSize: '13px',
+                fontWeight: 600,
+                color: 'var(--pwa-bg)',
+                backgroundColor: canAddToCart ? 'var(--pwa-accent)' : 'var(--pwa-text-secondary)',
+                border: 'none',
+                borderRadius: 'var(--pwa-radius-button)',
+                padding: '13px 24px',
+                width: '100%',
+                cursor: canAddToCart ? 'pointer' : 'not-allowed',
+                opacity: canAddToCart ? 1 : 0.4,
+                transition: 'all 0.15s',
+                marginBottom: '24px',
+              }}
+            >
+              {addedFeedback ? '¡Añadido al carrito!' : canAddToCart ? 'Agregar al carrito' : 'Selecciona una opción'}
+            </button>
 
             {/* Description — regular weight, readable, compact */}
             {product.description && (

@@ -1,5 +1,4 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
 import { BottomNav } from '@shared/ui/BottomNav';
 import { CatalogFooter } from '@shared/ui/CatalogFooter';
 import type { ProductPageProps } from '../useProductPage';
@@ -32,12 +31,12 @@ const NeoLuxuryProductSkin: React.FC<ProductPageProps> = (props) => {
     onQuantityChange,
     onAddToCart,
     onBack,
+    onGoHome,
     onImageSelect,
     showPrices,
     companyName,
   } = props;
 
-  const navigate = useNavigate();
   const galleryImages = product ? [...product.images].sort((a, b) => a.sortOrder - b.sortOrder) : [];
 
   /* ── Loading ──────────────────────────────────────────────────────────── */
@@ -60,7 +59,7 @@ const NeoLuxuryProductSkin: React.FC<ProductPageProps> = (props) => {
         </p>
         <button
           type="button"
-          onClick={() => navigate('/')}
+          onClick={onGoHome}
           style={{ fontFamily: 'var(--pwa-font-body)', fontSize: '11px', letterSpacing: '0.12em', textTransform: 'uppercase', color: 'var(--pwa-accent)', fontWeight: 600, background: 'none', border: 'none', cursor: 'pointer' }}
         >
           ← Volver al catálogo
@@ -305,7 +304,7 @@ const NeoLuxuryProductSkin: React.FC<ProductPageProps> = (props) => {
                 width: '100%',
                 cursor: canAddToCart ? 'pointer' : 'not-allowed',
                 opacity: canAddToCart ? 1 : 0.4,
-                boxShadow: canAddToCart ? '0 0 20px var(--pwa-accent), 0 4px 16px rgba(0,0,0,0.4)' : 'none',
+                boxShadow: canAddToCart ? `0 0 20px var(--pwa-accent), var(--pwa-shadow-lg)` : 'none',
                 transition: 'all 0.2s',
                 marginBottom: '28px',
               }}

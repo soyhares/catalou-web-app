@@ -9,18 +9,17 @@ export interface ProductPageProps {
   product: ProductPublic | null;
   isLoading: boolean;
   error: string | null;
-  selectedVariants: Record<string, string>;   // variantName → selectedValue
   selectedVariant: VariantValuePublic | null; // the selected VariantValuePublic object
   activeImage: string | null;
   quantity: number;
   computedPrice: string | null;
   canAddToCart: boolean;
   addedFeedback: boolean;
-  onVariantChange: (variantName: string, value: string) => void;
   onVariantSelect: (variant: VariantValuePublic) => void;
   onQuantityChange: (qty: number) => void;
   onAddToCart: () => void;
   onBack: () => void;
+  onGoHome: () => void;
   onImageSelect: (url: string) => void;
   showPrices: boolean;
   companyName: string;
@@ -43,18 +42,21 @@ export function useProductPage(): ProductPageProps {
 
   useEffect(() => {
     if (!id || !slug) return;
-    queueMicrotask(() => {
+    const load = async () => {
       setLoading(true);
       setError(null);
-      Promise.all([fetchProduct(slug, id), fetchCatalog(slug)])
-        .then(([p, catalog]) => {
-          setProduct(p);
-          setShowPrices(catalog.showPrices);
-          setActiveImage(p.mainImageUrl);
-        })
-        .catch(() => setError('Producto no encontrado'))
-        .finally(() => setLoading(false));
-    });
+      try {
+        const [p, catalog] = await Promise.all([fetchProduct(slug, id), fetchCatalog(slug)]);
+        setProduct(p);
+        setShowPrices(catalog.showPrices);
+        setActiveImage(p.mainImageUrl);
+      } catch {
+        setError('Producto no encontrado');
+      } finally {
+        setLoading(false);
+      }
+    };
+    void load();
   }, [id, slug]);
 
   const computePrice = useCallback((): string | null => {
@@ -69,15 +71,6 @@ export function useProductPage(): ProductPageProps {
     setActiveImage(variant.imageUrl ?? product?.mainImageUrl ?? null);
   }
 
-  function onVariantChange(_variantName: string, value: string) {
-    if (!product?.variantType) return;
-    const found = product.variantType.values.find((v) => v.value === value) ?? null;
-    setSelectedVariant(found);
-    if (found) {
-      setActiveImage(found.imageUrl ?? product.mainImageUrl ?? null);
-    }
-  }
-
   function onQuantityChange(qty: number) {
     setQuantity(Math.max(1, qty));
   }
@@ -86,9 +79,16 @@ export function useProductPage(): ProductPageProps {
     navigate(-1);
   }
 
+  function onGoHome() {
+    navigate('/');
+  }
+
   function onImageSelect(url: string) {
     setActiveImage(url);
   }
+
+  const hasVariants = !!product?.variantType;
+  const canAddToCart = !hasVariants || selectedVariant !== null;
 
   function onAddToCart() {
     const price = computePrice();
@@ -107,34 +107,26 @@ export function useProductPage(): ProductPageProps {
       window.dispatchEvent(new CustomEvent('cart-item-added', { detail: { name: product.name } }));
       setAddedFeedback(true);
       setTimeout(() => setAddedFeedback(false), 2000);
+    }).catch((err: unknown) => {
+      console.error('[useProductPage] addToCart failed:', err);
     });
-  }
-
-  const hasVariants = !!product?.variantType;
-  const canAddToCart = !hasVariants || selectedVariant !== null;
-
-  // Build selectedVariants map (variantName → selectedValue)
-  const selectedVariants: Record<string, string> = {};
-  if (product?.variantType && selectedVariant) {
-    selectedVariants[product.variantType.name] = selectedVariant.value;
   }
 
   return {
     product,
     isLoading: loading,
     error,
-    selectedVariants,
     selectedVariant,
     activeImage,
     quantity,
     computedPrice: computePrice(),
     canAddToCart,
     addedFeedback,
-    onVariantChange,
     onVariantSelect,
     onQuantityChange,
     onAddToCart,
     onBack,
+    onGoHome,
     onImageSelect,
     showPrices,
     companyName: branding.companyName,

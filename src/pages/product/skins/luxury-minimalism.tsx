@@ -1,5 +1,4 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
 import { BottomNav } from '@shared/ui/BottomNav';
 import { CatalogFooter } from '@shared/ui/CatalogFooter';
 import type { ProductPageProps } from '../useProductPage';
@@ -32,12 +31,12 @@ const LuxuryMinimalismProductSkin: React.FC<ProductPageProps> = (props) => {
     onQuantityChange,
     onAddToCart,
     onBack,
+    onGoHome,
     onImageSelect,
     showPrices,
     companyName,
   } = props;
 
-  const navigate = useNavigate();
   const galleryImages = product ? [...product.images].sort((a, b) => a.sortOrder - b.sortOrder) : [];
 
   /* ── Loading ──────────────────────────────────────────────────────────── */
@@ -60,7 +59,7 @@ const LuxuryMinimalismProductSkin: React.FC<ProductPageProps> = (props) => {
         </p>
         <button
           type="button"
-          onClick={() => navigate('/')}
+          onClick={onGoHome}
           style={{ fontFamily: 'var(--pwa-font-body)', fontSize: '10px', letterSpacing: '0.14em', textTransform: 'uppercase', color: 'var(--pwa-accent)', fontWeight: 600, background: 'none', border: 'none', cursor: 'pointer' }}
         >
           Volver al catálogo
@@ -105,7 +104,7 @@ const LuxuryMinimalismProductSkin: React.FC<ProductPageProps> = (props) => {
         <nav style={{ padding: '12px 20px', display: 'flex', alignItems: 'center', gap: '8px' }}>
           <button
             type="button"
-            onClick={() => navigate('/')}
+            onClick={onGoHome}
             style={{ fontFamily: 'var(--pwa-font-body)', fontSize: '9px', letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--pwa-accent)', fontWeight: 600, opacity: 0.7, background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}
           >
             Catálogo
