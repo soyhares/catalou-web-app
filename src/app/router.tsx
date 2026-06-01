@@ -5,7 +5,7 @@ import { WhatsAppFloatingButton } from '@shared/ui/WhatsAppFloatingButton';
 import { PageTransition } from '@shared/ui/PageTransition';
 import { AddedToCartToast } from '@shared/ui/AddedToCartToast';
 
-const CatalogPage = lazy(() => import('@pages/catalog/CatalogPage'));
+const CatalogPage = lazy(() => import('@pages/catalog'));
 const ProductDetailPage = lazy(() => import('@pages/product/ProductDetailPage'));
 const CartPage = lazy(() => import('@pages/cart/CartPage'));
 const CheckoutPage = lazy(() => import('@pages/checkout/CheckoutPage'));

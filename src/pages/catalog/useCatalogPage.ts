@@ -1,0 +1,143 @@
+import { useState, useEffect, useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useBranding } from '@app/BrandingContext';
+import { fetchCatalog, type CatalogData, type PublicProduct, type PublicCategory } from '@entities/catalog/api';
+import { getCatalogProfile } from '@entities/shopper-profile/api';
+import { useCart } from '@shared/lib/use-cart';
+
+export interface CatalogPageProps {
+  // Data
+  products: PublicProduct[];
+  categories: PublicCategory[];
+  showPrices: boolean;
+  selectedCategory: PublicCategory | null;
+  selectedSubcategoryId: string | null;
+  searchQuery: string;
+  searchOpen: boolean;
+  isLoading: boolean;
+  error: boolean;
+  showAbout: boolean;
+  cartCount: number;
+  companyName: string;
+  logoUrl: string | null;
+
+  // Actions
+  onCategorySelect: (id: string | null) => void;
+  onSubcategorySelect: (id: string | null) => void;
+  onSearchChange: (q: string) => void;
+  onSearchOpen: (open: boolean) => void;
+  onCartClick: () => void;
+  onQuote: (productId: string) => void;
+  onRetry: () => void;
+}
+
+export function useCatalogPage(): CatalogPageProps {
+  const { slug, branding } = useBranding();
+  const navigate = useNavigate();
+  const { add, items: cartItems } = useCart(slug);
+
+  const [catalog, setCatalog] = useState<CatalogData | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [showAbout, setShowAbout] = useState(false);
+  const [error, setError] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [searchOpen, setSearchOpen] = useState(false);
+  const [selectedCategoryId, setSelectedCategoryId] = useState<string | null>(null);
+  const [selectedSubcategoryId, setSelectedSubcategoryId] = useState<string | null>(null);
+
+  const cartCount = cartItems.reduce((s, i) => s + i.quantity, 0);
+
+  const load = useCallback(async () => {
+    setLoading(true);
+    setError(false);
+    try {
+      const data = await fetchCatalog(slug, {
+        q: searchQuery || undefined,
+        categoryId: selectedCategoryId ?? undefined,
+        subcategoryId: selectedSubcategoryId ?? undefined,
+      });
+      setCatalog(data);
+    } catch {
+      setError(true);
+    } finally {
+      setLoading(false);
+    }
+  }, [slug, searchQuery, selectedCategoryId, selectedSubcategoryId]);
+
+  useEffect(() => {
+    queueMicrotask(() => { void load(); });
+  }, [load]);
+
+  useEffect(() => {
+    getCatalogProfile(slug)
+      .then((p) => setShowAbout(p.hasAboutSection))
+      .catch(() => {});
+  }, [slug]);
+
+  function onCategorySelect(id: string | null) {
+    setSelectedCategoryId(id);
+    setSelectedSubcategoryId(null);
+  }
+
+  function onSubcategorySelect(id: string | null) {
+    setSelectedSubcategoryId(id);
+  }
+
+  function onSearchChange(q: string) {
+    setSearchQuery(q);
+  }
+
+  function onSearchOpen(open: boolean) {
+    setSearchOpen(open);
+    if (!open) setSearchQuery('');
+  }
+
+  function onCartClick() {
+    void navigate('/cart');
+  }
+
+  function onQuote(productId: string) {
+    const product = catalog?.products.find((p) => p.id === productId);
+    if (!product) return;
+    void add({
+      companySlug: slug,
+      productId: product.id,
+      productName: product.name,
+      variantTypeId: null,
+      variantTypeName: null,
+      variantValueId: null,
+      variantValueName: null,
+      quantity: 1,
+      unitPrice: parseFloat(product.basePrice) || 0,
+    }).then(() => {
+      window.dispatchEvent(
+        new CustomEvent('cart-item-added', { detail: { name: product.name } }),
+      );
+    });
+  }
+
+  const activeCategory = catalog?.categories.find((c) => c.id === selectedCategoryId) ?? null;
+
+  return {
+    products: catalog?.products ?? [],
+    categories: catalog?.categories ?? [],
+    showPrices: catalog?.showPrices ?? false,
+    selectedCategory: activeCategory,
+    selectedSubcategoryId,
+    searchQuery,
+    searchOpen,
+    isLoading: loading,
+    error,
+    showAbout,
+    cartCount,
+    companyName: branding.companyName,
+    logoUrl: branding.logoUrl,
+    onCategorySelect,
+    onSubcategorySelect,
+    onSearchChange,
+    onSearchOpen,
+    onCartClick,
+    onQuote,
+    onRetry: () => void load(),
+  };
+}
