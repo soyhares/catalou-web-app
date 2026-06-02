@@ -3,7 +3,6 @@ import { useTranslation } from 'react-i18next';
 import { useBranding } from '@app/BrandingContext';
 import { getPrivacyPolicy, type PrivacyPolicyDto } from '@entities/shopper-profile/api';
 import { CatalogFooter } from '@shared/ui/CatalogFooter';
-import { BottomNav } from '@shared/ui/BottomNav';
 
 export default function PrivacyPolicyPage() {
   const { slug } = useBranding();
@@ -85,7 +84,6 @@ export default function PrivacyPolicyPage() {
       </div>
 
       <CatalogFooter />
-      <BottomNav />
     </div>
   );
 }

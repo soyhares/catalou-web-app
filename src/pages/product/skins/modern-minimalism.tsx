@@ -1,5 +1,4 @@
 import React from 'react';
-import { BottomNav } from '@shared/ui/BottomNav';
 import { CatalogFooter } from '@shared/ui/CatalogFooter';
 import { useTheme } from '@shared/ui/ThemeProvider';
 import { formatPrice } from '@shared/lib/formatPrice';
@@ -360,8 +359,6 @@ const ModernMinimalismProductSkin: React.FC<ProductPageProps> = (props) => {
 
         <CatalogFooter className="mt-4 px-4" />
       </div>
-
-      <BottomNav />
     </div>
   );
 };

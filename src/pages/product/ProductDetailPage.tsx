@@ -6,7 +6,6 @@ import { fetchProduct } from '@entities/product/api';
 import { fetchCatalog } from '@entities/catalog/api';
 import { useCart } from '@shared/lib/use-cart';
 import { CatalogFooter } from '@shared/ui/CatalogFooter';
-import { BottomNav } from '@shared/ui/BottomNav';
 import { formatPrice } from '@shared/lib/formatPrice';
 import type { ProductPublic, VariantValuePublic } from '@entities/product/api';
 
@@ -456,8 +455,6 @@ export default function ProductDetailPage() {
           <CatalogFooter className="mt-4 px-4" />
         </motion.div>
       )}
-
-      <BottomNav />
     </div>
   );
 }

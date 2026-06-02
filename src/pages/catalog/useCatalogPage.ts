@@ -2,7 +2,6 @@ import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useBranding } from '@app/BrandingContext';
 import { fetchCatalog, type CatalogData, type PublicProduct, type PublicCategory } from '@entities/catalog/api';
-import { getCatalogProfile } from '@entities/shopper-profile/api';
 import { useCart } from '@shared/lib/use-cart';
 
 export interface CatalogPageProps {
@@ -16,7 +15,6 @@ export interface CatalogPageProps {
   searchQuery: string;
   isLoading: boolean;
   error: boolean;
-  showAbout: boolean;
   cartCount: number;
   companyName: string;
   logoUrl: string | null;
@@ -37,7 +35,6 @@ export function useCatalogPage(): CatalogPageProps {
 
   const [catalog, setCatalog] = useState<CatalogData | null>(null);
   const [loading, setLoading] = useState(true);
-  const [showAbout, setShowAbout] = useState(false);
   const [error, setError] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategoryId, setSelectedCategoryId] = useState<string | null>(null);
@@ -65,12 +62,6 @@ export function useCatalogPage(): CatalogPageProps {
   useEffect(() => {
     void load();
   }, [load]);
-
-  useEffect(() => {
-    getCatalogProfile(slug)
-      .then((p) => setShowAbout(p.hasAboutSection))
-      .catch(() => {});
-  }, [slug]);
 
   function onCategorySelect(id: string | null) {
     setSelectedCategoryId(id);
@@ -121,7 +112,6 @@ export function useCatalogPage(): CatalogPageProps {
     searchQuery,
     isLoading: loading,
     error,
-    showAbout,
     cartCount,
     companyName: branding.companyName,
     logoUrl: branding.logoUrl,

@@ -25,6 +25,11 @@ const LINKS: NavLink[] = [
   { label: 'Nosotros', path: '/about' },
 ];
 
+function resolveActiveRoute(pathname: string): string {
+  if (pathname.startsWith('/products/')) return '/catalog';
+  return pathname;
+}
+
 export function useNavigation(): NavigationProps {
   const { slug, branding } = useBranding();
   const { items: cartItems } = useCart(slug);
@@ -51,7 +56,7 @@ export function useNavigation(): NavigationProps {
   );
 
   return {
-    activeRoute: location.pathname,
+    activeRoute: resolveActiveRoute(location.pathname),
     cartCount,
     companyName: branding.companyName,
     logoUrl: branding.logoUrl,

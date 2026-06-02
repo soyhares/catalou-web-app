@@ -1,7 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { OfflineBanner } from '@shared/ui/OfflineBanner';
-import { BottomNav } from '@shared/ui/BottomNav';
 import { CatalogFooter } from '@shared/ui/CatalogFooter';
 import { useTheme } from '@shared/ui/ThemeProvider';
 import { formatPrice } from '@shared/lib/formatPrice';
@@ -39,7 +38,6 @@ const NeoLuxurySkin: React.FC<CatalogPageProps> = ({
   searchQuery,
   isLoading,
   error,
-  showAbout,
   cartCount,
   companyName,
   logoUrl,
@@ -455,7 +453,6 @@ const NeoLuxurySkin: React.FC<CatalogPageProps> = ({
       </main>
 
       <CatalogFooter />
-      <BottomNav showAbout={showAbout} />
     </div>
   );
 };

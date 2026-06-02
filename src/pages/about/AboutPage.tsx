@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useBranding } from '@app/BrandingContext';
 import { getCatalogProfile, type CatalogProfile, type SocialLink } from '@entities/shopper-profile/api';
-import { BottomNav } from '@shared/ui/BottomNav';
 
 /* ── SVG icons ───────────────────────────────────────────────────────────── */
 
@@ -93,17 +92,13 @@ export default function AboutPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center pb-16" style={{ backgroundColor: 'var(--pwa-bg)' }}>
-        <BottomNav showAbout />
-      </div>
+      <div className="min-h-screen flex items-center justify-center pb-16" style={{ backgroundColor: 'var(--pwa-bg)' }} />
     );
   }
 
   if (!profile) {
     return (
-      <div className="min-h-screen pb-16" style={{ backgroundColor: 'var(--pwa-bg)' }}>
-        <BottomNav showAbout />
-      </div>
+      <div className="min-h-screen pb-16" style={{ backgroundColor: 'var(--pwa-bg)' }} />
     );
   }
 
@@ -243,8 +238,6 @@ export default function AboutPage() {
           </div>
         )}
       </div>
-
-      <BottomNav showAbout />
     </div>
   );
 }
