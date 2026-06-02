@@ -91,7 +91,7 @@ export function HeroSection({ title, eyebrow, subtitle }: HeroSectionProps) {
                 borderRadius: 'var(--pwa-radius-button)',
               }}
             >
-              Cotizar
+              Agregar
             </button>
           </motion.div>
         </motion.div>
@@ -161,7 +161,7 @@ export function HeroSection({ title, eyebrow, subtitle }: HeroSectionProps) {
                   borderRadius: 'var(--pwa-radius-button)',
                 }}
               >
-                Cotizar
+                Agregar
               </button>
             </motion.div>
           </motion.div>

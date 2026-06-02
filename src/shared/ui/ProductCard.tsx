@@ -79,7 +79,7 @@ export function ProductCard({ id, name, imageUrl, price, showPrices, currency = 
             className="tracking-[0.2em] uppercase text-white w-full text-center transition-opacity hover:opacity-90"
             style={{ fontSize: '10px', fontFamily: 'var(--pwa-font-body)', fontWeight: 600 }}
           >
-            Cotizar
+            Agregar
           </button>
         </div>
       </div>

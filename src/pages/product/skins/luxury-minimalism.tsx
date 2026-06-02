@@ -328,7 +328,7 @@ const LuxuryMinimalismProductSkin: React.FC<ProductPageProps> = (props) => {
                 marginBottom: '32px',
               }}
             >
-              {addedFeedback ? '¡Añadido!' : canAddToCart ? 'Cotizar' : 'Selecciona una opción'}
+              {addedFeedback ? '¡Añadido!' : canAddToCart ? 'Agregar' : 'Selecciona una opción'}
             </button>
 
             {/* Description — serif body, generous line height */}

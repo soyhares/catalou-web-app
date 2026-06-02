@@ -98,7 +98,7 @@ const LuxuryMinimalismCheckoutSkin: React.FC<CheckoutPageProps> = ({
             margin: 0,
             fontWeight: 400,
           }}>
-            Reserva tu pedido
+            Confirma tu pedido
           </h1>
           <span style={{ width: '24px' }} />
         </header>

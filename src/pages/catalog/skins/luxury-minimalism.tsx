@@ -449,7 +449,7 @@ const LuxuryMinimalismSkin: React.FC<CatalogPageProps> = ({
                       cursor: 'pointer',
                     }}
                   >
-                    Cotizar
+                    Agregar
                   </button>
                 </div>
               </article>

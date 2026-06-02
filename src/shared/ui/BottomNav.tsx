@@ -38,7 +38,7 @@ interface NavItem {
 }
 
 const NAV_ITEMS: NavItem[] = [
-  { to: '/catalog', label: 'Inicio', end: true, Icon: IconHome },
+  { to: '/catalog', label: 'Inicio', end: false, Icon: IconHome },
   { to: '/about', label: 'Contacto', end: true, Icon: IconPerson },
 ];
 

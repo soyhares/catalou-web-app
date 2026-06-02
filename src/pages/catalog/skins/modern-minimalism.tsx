@@ -421,7 +421,7 @@ const ModernMinimalismSkin: React.FC<CatalogPageProps> = ({
                       textAlign: 'center' as const,
                     }}
                   >
-                    Cotizar
+                    Agregar
                   </button>
                 </div>
               </article>
