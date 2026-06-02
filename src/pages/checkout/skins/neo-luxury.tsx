@@ -1,5 +1,6 @@
 import React from 'react';
 import { useTheme } from '@shared/ui/ThemeProvider';
+import { formatPrice } from '@shared/lib/formatPrice';
 import type { CheckoutPageProps } from '../useCheckoutPage';
 
 /* ── Skin ───────────────────────────────────────────────────────────────── */
@@ -12,6 +13,7 @@ const NeoLuxuryCheckoutSkin: React.FC<CheckoutPageProps> = ({
   isSubmitting,
   submitError,
   showPrices,
+  currency,
   isOnline,
   orderType,
   hasBothOrderTypes,
@@ -240,7 +242,7 @@ const NeoLuxuryCheckoutSkin: React.FC<CheckoutPageProps> = ({
                     {item.productName} × {item.quantity}
                   </span>
                   <span style={{ fontSize: '13px', color: 'var(--pwa-text)' }}>
-                    ₡{(item.unitPrice * item.quantity).toLocaleString('es-CR')}
+                    {formatPrice(item.unitPrice * item.quantity, currency)}
                   </span>
                 </div>
               ))}

@@ -1,5 +1,6 @@
 import React from 'react';
 import { useTheme } from '@shared/ui/ThemeProvider';
+import { formatPrice } from '@shared/lib/formatPrice';
 import type { CartPageProps } from '../useCartPage';
 
 /* ── Icons ──────────────────────────────────────────────────────────────── */
@@ -34,6 +35,7 @@ const LuxuryMinimalismCartSkin: React.FC<CartPageProps> = ({
   items,
   total,
   showPrices,
+  currency,
   onUpdateQuantity,
   onRemove,
   onClear,
@@ -205,7 +207,7 @@ const LuxuryMinimalismCartSkin: React.FC<CartPageProps> = ({
                         fontWeight: 500,
                         letterSpacing: '0.06em',
                       }}>
-                        ₡{(item.unitPrice * item.quantity).toLocaleString('es-CR')}
+                        {formatPrice(item.unitPrice * item.quantity, currency)}
                       </p>
                     )}
                   </div>

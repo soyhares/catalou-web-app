@@ -7,6 +7,7 @@ import { fetchCatalog } from '@entities/catalog/api';
 import { useCart } from '@shared/lib/use-cart';
 import { CatalogFooter } from '@shared/ui/CatalogFooter';
 import { BottomNav } from '@shared/ui/BottomNav';
+import { formatPrice } from '@shared/lib/formatPrice';
 import type { ProductPublic, VariantValuePublic } from '@entities/product/api';
 
 function IconChevronLeft() {
@@ -281,7 +282,7 @@ export default function ProductDetailPage() {
                     letterSpacing: '0.02em',
                   }}
                 >
-                  ₡{Number(computedPrice()).toLocaleString('es-CR')}
+                  {formatPrice(Number(computedPrice()), branding.currency ?? 'CRC')}
                   {selectedVariant && parseFloat(selectedVariant.priceModifier) > 0 && (
                     <span
                       className="text-sm font-normal ml-2 not-italic"
@@ -321,7 +322,7 @@ export default function ProductDetailPage() {
                       >
                         {v.value}
                         {showPrices && parseFloat(v.priceModifier) > 0 && (
-                          <span className="ml-1 opacity-70" style={{ fontSize: '11px' }}>+₡{v.priceModifier}</span>
+                          <span className="ml-1 opacity-70" style={{ fontSize: '11px' }}>+{formatPrice(v.priceModifier, branding.currency ?? 'CRC')}</span>
                         )}
                       </button>
                     ))}

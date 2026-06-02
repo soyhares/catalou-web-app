@@ -2,6 +2,7 @@ import React from 'react';
 import { BottomNav } from '@shared/ui/BottomNav';
 import { CatalogFooter } from '@shared/ui/CatalogFooter';
 import { useTheme } from '@shared/ui/ThemeProvider';
+import { formatPrice } from '@shared/lib/formatPrice';
 import type { ProductPageProps } from '../useProductPage';
 
 /* ── Icons ───────────────────────────────────────────────────────────────── */
@@ -35,6 +36,7 @@ const NeoLuxuryProductSkin: React.FC<ProductPageProps> = (props) => {
     onGoHome,
     onImageSelect,
     showPrices,
+    currency,
     companyName,
   } = props;
 
@@ -214,7 +216,7 @@ const NeoLuxuryProductSkin: React.FC<ProductPageProps> = (props) => {
                 marginBottom: '20px',
                 textShadow: '0 0 12px var(--pwa-accent)',
               }}>
-                ₡{Number(computedPrice).toLocaleString('es-CR')}
+                {formatPrice(Number(computedPrice), currency)}
                 {selectedVariant && parseFloat(selectedVariant.priceModifier) > 0 && (
                   <span style={{ fontFamily: 'var(--pwa-font-body)', fontSize: '0.75rem', fontWeight: 400, color: 'var(--pwa-text-secondary)', marginLeft: '10px', textShadow: 'none' }}>
                     base + variante
@@ -254,7 +256,7 @@ const NeoLuxuryProductSkin: React.FC<ProductPageProps> = (props) => {
                     >
                       {v.value}
                       {showPrices && parseFloat(v.priceModifier) > 0 && (
-                        <span style={{ fontSize: '10px', marginLeft: '6px', opacity: 0.7 }}>+₡{v.priceModifier}</span>
+                        <span style={{ fontSize: '10px', marginLeft: '6px', opacity: 0.7 }}>+{formatPrice(v.priceModifier, currency)}</span>
                       )}
                     </button>
                   ))}

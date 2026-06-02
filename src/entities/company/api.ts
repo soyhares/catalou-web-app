@@ -12,6 +12,7 @@ export interface BrandingData {
   orderType: 'DIRECT' | 'FINANCED' | 'BOTH';
   servicePercentage: number;
   associationName?: string | null;
+  currency: 'USD' | 'CRC';
 }
 
 export async function getBranding(slug: string): Promise<BrandingData> {

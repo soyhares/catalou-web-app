@@ -6,6 +6,7 @@ import {
   confirmAssociation,
   type OrderSummaryForAssociation,
 } from '@entities/order/api';
+import { formatPrice } from '@shared/lib/formatPrice';
 
 function IconCheck() {
   return (
@@ -86,7 +87,7 @@ function StatusBlock({ icon, color, title, message }: StatusBlockProps) {
 
 export default function ConfirmAssociationPage() {
   const { t } = useTranslation();
-  const { slug } = useBranding();
+  const { slug, branding } = useBranding();
 
   const token = new URLSearchParams(window.location.search).get('token') ?? '';
   const [state, setState] = useState<PageState>({ kind: 'loading' });
@@ -226,7 +227,7 @@ export default function ConfirmAssociationPage() {
                     </td>
                     <td className="py-3 text-center text-xs" style={{ color: 'var(--pwa-text)' }}>{item.quantity}</td>
                     <td className="py-3 text-right text-xs" style={{ color: 'var(--pwa-text)' }}>
-                      ₡{(item.unitPriceSnapshot * item.quantity).toLocaleString('es-CR')}
+                      {formatPrice(item.unitPriceSnapshot * item.quantity, branding.currency ?? 'CRC')}
                     </td>
                   </tr>
                 ))}
@@ -235,7 +236,7 @@ export default function ConfirmAssociationPage() {
                 <tr>
                   <td colSpan={2} className="pt-4 uppercase tracking-[0.1em]" style={{ fontSize: '9px', color: 'var(--pwa-text)', fontWeight: 700 }}>{t('confirm.total')}</td>
                   <td className="pt-4 text-right" style={{ fontFamily: 'var(--pwa-font-heading)', fontStyle: 'italic', fontSize: '1.1rem', color: 'var(--pwa-accent)' }}>
-                    ₡{state.summary.totalAmount.toLocaleString('es-CR')}
+                    {formatPrice(state.summary.totalAmount, branding.currency ?? 'CRC')}
                   </td>
                 </tr>
               </tfoot>

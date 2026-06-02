@@ -22,6 +22,7 @@ export interface ProductPageProps {
   onGoHome: () => void;
   onImageSelect: (url: string) => void;
   showPrices: boolean;
+  currency: 'USD' | 'CRC';
   companyName: string;
 }
 
@@ -129,6 +130,7 @@ export function useProductPage(): ProductPageProps {
     onGoHome,
     onImageSelect,
     showPrices,
+    currency: branding.currency ?? 'CRC',
     companyName: branding.companyName,
   };
 }

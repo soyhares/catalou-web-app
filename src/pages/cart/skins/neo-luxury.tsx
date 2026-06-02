@@ -1,5 +1,6 @@
 import React from 'react';
 import { useTheme } from '@shared/ui/ThemeProvider';
+import { formatPrice } from '@shared/lib/formatPrice';
 import type { CartPageProps } from '../useCartPage';
 
 /* ── Icons ──────────────────────────────────────────────────────────────── */
@@ -42,6 +43,7 @@ const NeoLuxuryCartSkin: React.FC<CartPageProps> = ({
   items,
   total,
   showPrices,
+  currency,
   onUpdateQuantity,
   onRemove,
   onClear,
@@ -199,7 +201,7 @@ const NeoLuxuryCartSkin: React.FC<CartPageProps> = ({
                         margin: 0,
                         textShadow: '0 0 8px var(--pwa-accent)',
                       }}>
-                        ₡{(item.unitPrice * item.quantity).toLocaleString('es-CR')}
+                        {formatPrice(item.unitPrice * item.quantity, currency)}
                       </p>
                     )}
                   </div>

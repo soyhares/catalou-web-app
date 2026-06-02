@@ -2,6 +2,7 @@ import React from 'react';
 import { BottomNav } from '@shared/ui/BottomNav';
 import { CatalogFooter } from '@shared/ui/CatalogFooter';
 import { useTheme } from '@shared/ui/ThemeProvider';
+import { formatPrice } from '@shared/lib/formatPrice';
 import type { ProductPageProps } from '../useProductPage';
 
 /* ── Icons ───────────────────────────────────────────────────────────────── */
@@ -35,6 +36,7 @@ const ModernMinimalismProductSkin: React.FC<ProductPageProps> = (props) => {
     onGoHome,
     onImageSelect,
     showPrices,
+    currency,
     companyName,
   } = props;
 
@@ -222,7 +224,7 @@ const ModernMinimalismProductSkin: React.FC<ProductPageProps> = (props) => {
                 color: 'var(--pwa-text)',
                 marginBottom: '16px',
               }}>
-                ₡{Number(computedPrice).toLocaleString('es-CR')}
+                {formatPrice(Number(computedPrice), currency)}
                 {selectedVariant && parseFloat(selectedVariant.priceModifier) > 0 && (
                   <span style={{ fontFamily: 'var(--pwa-font-body)', fontSize: '0.8rem', fontWeight: 400, color: 'var(--pwa-text-secondary)', marginLeft: '8px' }}>
                     base + variante
@@ -261,7 +263,7 @@ const ModernMinimalismProductSkin: React.FC<ProductPageProps> = (props) => {
                     >
                       {v.value}
                       {showPrices && parseFloat(v.priceModifier) > 0 && (
-                        <span style={{ fontSize: '11px', marginLeft: '4px', opacity: 0.75 }}>+₡{v.priceModifier}</span>
+                        <span style={{ fontSize: '11px', marginLeft: '4px', opacity: 0.75 }}>+{formatPrice(v.priceModifier, currency)}</span>
                       )}
                     </button>
                   ))}

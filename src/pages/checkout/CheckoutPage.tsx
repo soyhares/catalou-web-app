@@ -6,6 +6,7 @@ import { useCart } from '@shared/lib/use-cart';
 import { clearCart } from '@shared/lib/cart-store';
 import { useOnlineStatus } from '@shared/hooks/useOnlineStatus';
 import { submitOrder, type OrderType } from '@entities/order/api';
+import { formatPrice } from '@shared/lib/formatPrice';
 
 type Step = 'type' | 'form';
 
@@ -327,7 +328,7 @@ export default function CheckoutPage() {
                   </span>
                   {branding.showPrices && (
                     <span className="font-semibold shrink-0" style={{ color: 'var(--pwa-text)' }}>
-                      ₡{(item.unitPrice * item.quantity).toLocaleString('es-CR')}
+                      {formatPrice(item.unitPrice * item.quantity, branding.currency ?? 'CRC')}
                     </span>
                   )}
                 </div>
@@ -335,7 +336,7 @@ export default function CheckoutPage() {
               {branding.showPrices && (
                 <div className="flex justify-between font-bold text-base border-t pt-3 mt-1" style={{ borderColor: 'var(--pwa-border)', color: 'var(--pwa-text)' }}>
                   <span>{t('checkout.total')}</span>
-                  <span style={{ color: 'var(--pwa-accent)' }}>₡{subtotal.toLocaleString('es-CR')}</span>
+                  <span style={{ color: 'var(--pwa-accent)' }}>{formatPrice(subtotal, branding.currency ?? 'CRC')}</span>
                 </div>
               )}
             </div>

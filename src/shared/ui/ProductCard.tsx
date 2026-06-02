@@ -1,4 +1,5 @@
 import { useNavigate } from 'react-router-dom';
+import { formatPrice } from '@shared/lib/formatPrice';
 
 interface ProductCardProps {
   id: string;
@@ -6,10 +7,11 @@ interface ProductCardProps {
   imageUrl: string | null;
   price: number | null;
   showPrices: boolean;
+  currency?: 'USD' | 'CRC';
   onQuote: (id: string) => void;
 }
 
-export function ProductCard({ id, name, imageUrl, price, showPrices, onQuote }: ProductCardProps) {
+export function ProductCard({ id, name, imageUrl, price, showPrices, currency = 'CRC', onQuote }: ProductCardProps) {
   const navigate = useNavigate();
 
   function handleCardClick() {
@@ -65,7 +67,7 @@ export function ProductCard({ id, name, imageUrl, price, showPrices, onQuote }: 
               letterSpacing: '-0.01em',
             }}
           >
-            ₡{price.toLocaleString('es-CR')}
+            {formatPrice(price, currency)}
           </div>
         )}
 

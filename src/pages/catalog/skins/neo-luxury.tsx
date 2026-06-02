@@ -4,6 +4,7 @@ import { OfflineBanner } from '@shared/ui/OfflineBanner';
 import { BottomNav } from '@shared/ui/BottomNav';
 import { CatalogFooter } from '@shared/ui/CatalogFooter';
 import { useTheme } from '@shared/ui/ThemeProvider';
+import { formatPrice } from '@shared/lib/formatPrice';
 import type { CatalogPageProps } from '../useCatalogPage';
 
 /* ── Icons ──────────────────────────────────────────────────────────────── */
@@ -32,6 +33,7 @@ const NeoLuxurySkin: React.FC<CatalogPageProps> = ({
   products,
   categories,
   showPrices,
+  currency,
   selectedCategory,
   selectedSubcategoryId,
   searchQuery,
@@ -420,7 +422,7 @@ const NeoLuxurySkin: React.FC<CatalogPageProps> = ({
                         fontWeight: 700,
                         color: 'var(--pwa-text)',
                       }}>
-                        ₡{parseFloat(product.basePrice).toLocaleString('es-CR')}
+                        {formatPrice(product.basePrice, currency)}
                       </p>
                     ) : (
                       <span />

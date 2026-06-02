@@ -1,5 +1,6 @@
 import React from 'react';
 import { useTheme } from '@shared/ui/ThemeProvider';
+import { formatPrice } from '@shared/lib/formatPrice';
 import type { CheckoutPageProps } from '../useCheckoutPage';
 
 /* ── Skin ───────────────────────────────────────────────────────────────── */
@@ -12,6 +13,7 @@ const ModernMinimalismCheckoutSkin: React.FC<CheckoutPageProps> = ({
   isSubmitting,
   submitError,
   showPrices,
+  currency,
   isOnline,
   orderType,
   hasBothOrderTypes,
@@ -246,7 +248,7 @@ const ModernMinimalismCheckoutSkin: React.FC<CheckoutPageProps> = ({
                       <span style={{ color: 'var(--pwa-text-secondary)' }}> × {item.quantity}</span>
                     </span>
                     <span style={{ fontSize: '14px', fontWeight: 600, color: 'var(--pwa-text)', flexShrink: 0 }}>
-                      ₡{(item.unitPrice * item.quantity).toLocaleString('es-CR')}
+                      {formatPrice(item.unitPrice * item.quantity, currency)}
                     </span>
                   </div>
                 ))}

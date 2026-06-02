@@ -5,6 +5,7 @@ import { useCart } from '@shared/lib/use-cart';
 import { clearCart } from '@shared/lib/cart-store';
 import { useOnlineStatus } from '@shared/hooks/useOnlineStatus';
 import { submitOrder, type OrderType } from '@entities/order/api';
+import { formatPrice } from '@shared/lib/formatPrice';
 import type { CartItem } from '@shared/lib/cart-store';
 
 export type { CartItem };
@@ -25,6 +26,7 @@ export interface CheckoutPageProps {
   isSubmitting: boolean;
   submitError: string | null;
   showPrices: boolean;
+  currency: 'USD' | 'CRC';
   isOnline: boolean;
   orderType: OrderType;
   hasBothOrderTypes: boolean;
@@ -114,14 +116,17 @@ export function useCheckoutPage(): CheckoutPageProps {
     navigate(-1);
   }
 
+  const currency = branding.currency ?? 'CRC';
+
   return {
     items,
-    total: `₡${subtotalNum.toLocaleString('es-CR')}`,
+    total: formatPrice(subtotalNum, currency),
     form,
     errors,
     isSubmitting,
     submitError,
     showPrices: branding.showPrices ?? false,
+    currency,
     isOnline,
     orderType,
     hasBothOrderTypes: branding.orderType === 'BOTH',

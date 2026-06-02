@@ -10,6 +10,7 @@ export interface CatalogPageProps {
   products: PublicProduct[];
   categories: PublicCategory[];
   showPrices: boolean;
+  currency: 'USD' | 'CRC';
   selectedCategory: PublicCategory | null;
   selectedSubcategoryId: string | null;
   searchQuery: string;
@@ -114,6 +115,7 @@ export function useCatalogPage(): CatalogPageProps {
     products: catalog?.products ?? [],
     categories: catalog?.categories ?? [],
     showPrices: catalog?.showPrices ?? false,
+    currency: branding.currency ?? 'CRC',
     selectedCategory: activeCategory,
     selectedSubcategoryId,
     searchQuery,

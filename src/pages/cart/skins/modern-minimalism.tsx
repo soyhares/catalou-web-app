@@ -1,5 +1,6 @@
 import React from 'react';
 import { useTheme } from '@shared/ui/ThemeProvider';
+import { formatPrice } from '@shared/lib/formatPrice';
 import type { CartPageProps } from '../useCartPage';
 
 /* ── Icons ──────────────────────────────────────────────────────────────── */
@@ -43,6 +44,7 @@ const ModernMinimalismCartSkin: React.FC<CartPageProps> = ({
   total,
   subtotal,
   showPrices,
+  currency,
   onUpdateQuantity,
   onRemove,
   onCheckout,
@@ -159,7 +161,7 @@ const ModernMinimalismCartSkin: React.FC<CartPageProps> = ({
                     )}
                     {showPrices && (
                       <p style={{ fontSize: '13px', color: 'var(--pwa-text)', fontWeight: 500, margin: 0 }}>
-                        ₡{item.unitPrice.toLocaleString('es-CR')} c/u
+                        {formatPrice(item.unitPrice, currency)} c/u
                       </p>
                     )}
                   </div>
@@ -216,7 +218,7 @@ const ModernMinimalismCartSkin: React.FC<CartPageProps> = ({
                   {/* Price total */}
                   {showPrices && (
                     <span style={{ fontSize: '14px', fontWeight: 700, color: 'var(--pwa-text)', minWidth: '72px', textAlign: 'right', flexShrink: 0 }}>
-                      ₡{(item.unitPrice * item.quantity).toLocaleString('es-CR')}
+                      {formatPrice(item.unitPrice * item.quantity, currency)}
                     </span>
                   )}
 

@@ -4,6 +4,7 @@ import { OfflineBanner } from '@shared/ui/OfflineBanner';
 import { BottomNav } from '@shared/ui/BottomNav';
 import { CatalogFooter } from '@shared/ui/CatalogFooter';
 import { useTheme } from '@shared/ui/ThemeProvider';
+import { formatPrice } from '@shared/lib/formatPrice';
 import type { CatalogPageProps } from '../useCatalogPage';
 
 /* ── Icons ──────────────────────────────────────────────────────────────── */
@@ -38,6 +39,7 @@ const ModernMinimalismSkin: React.FC<CatalogPageProps> = ({
   products,
   categories,
   showPrices,
+  currency,
   selectedCategory,
   selectedSubcategoryId,
   searchQuery,
@@ -396,7 +398,7 @@ const ModernMinimalismSkin: React.FC<CatalogPageProps> = ({
                       color: 'var(--pwa-text)',
                       marginBottom: '8px',
                     }}>
-                      ₡{parseFloat(product.basePrice).toLocaleString('es-CR')}
+                      {formatPrice(product.basePrice, currency)}
                     </p>
                   )}
 

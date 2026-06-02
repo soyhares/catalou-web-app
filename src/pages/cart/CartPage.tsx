@@ -4,6 +4,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { useBranding } from '@app/BrandingContext';
 import { useCart } from '@shared/lib/use-cart';
 import { clearCart } from '@shared/lib/cart-store';
+import { formatPrice } from '@shared/lib/formatPrice';
 
 function IconChevronLeft() {
   return (
@@ -193,7 +194,7 @@ export default function CartPage() {
                             className="mt-2 tracking-wide"
                             style={{ fontSize: '11px', color: 'var(--pwa-accent)', fontWeight: 500, letterSpacing: '0.06em' }}
                           >
-                            ₡{(item.unitPrice * item.quantity).toLocaleString('es-CR')}
+                            {formatPrice(item.unitPrice * item.quantity, branding.currency ?? 'CRC')}
                           </p>
                         )}
                       </div>
@@ -260,7 +261,7 @@ export default function CartPage() {
                           {t('cart.subtotal')}
                         </span>
                         <span style={{ fontSize: '12px', color: 'var(--pwa-text)' }}>
-                          ₡{subtotal.toLocaleString('es-CR')}
+                          {formatPrice(subtotal, branding.currency ?? 'CRC')}
                         </span>
                       </div>
                       <div className="flex justify-between">
@@ -271,7 +272,7 @@ export default function CartPage() {
                           {t('cart.serviceFee', { pct: servicePercentage })}
                         </span>
                         <span style={{ fontSize: '12px', color: 'var(--pwa-text)' }}>
-                          ₡{serviceAmount.toLocaleString('es-CR')}
+                          {formatPrice(serviceAmount, branding.currency ?? 'CRC')}
                         </span>
                       </div>
                     </>
@@ -297,7 +298,7 @@ export default function CartPage() {
                         fontWeight: 400,
                       }}
                     >
-                      ₡{grandTotal.toLocaleString('es-CR')}
+                      {formatPrice(grandTotal, branding.currency ?? 'CRC')}
                     </span>
                   </div>
                 </div>

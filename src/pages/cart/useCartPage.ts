@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useBranding } from '@app/BrandingContext';
 import { useCart } from '@shared/lib/use-cart';
 import { clearCart } from '@shared/lib/cart-store';
+import { formatPrice } from '@shared/lib/formatPrice';
 import type { CartItem } from '@shared/lib/cart-store';
 
 export type { CartItem };
@@ -13,6 +14,7 @@ export interface CartPageProps {
   subtotal: string;
   isLoading: boolean;
   showPrices: boolean;
+  currency: 'USD' | 'CRC';
   onUpdateQuantity: (id: string, qty: number) => void;
   onRemove: (id: string) => void;
   onClear: () => void;
@@ -62,12 +64,15 @@ export function useCartPage(): CartPageProps {
     navigate(-1);
   }
 
+  const currency = branding.currency ?? 'CRC';
+
   return {
     items,
-    total: `₡${totalNum.toLocaleString('es-CR')}`,
-    subtotal: `₡${subtotalNum.toLocaleString('es-CR')}`,
+    total: formatPrice(totalNum, currency),
+    subtotal: formatPrice(subtotalNum, currency),
     isLoading,
     showPrices: branding.showPrices ?? false,
+    currency,
     onUpdateQuantity,
     onRemove,
     onClear,
