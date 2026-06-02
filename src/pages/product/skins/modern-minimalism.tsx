@@ -263,7 +263,7 @@ const ModernMinimalismProductSkin: React.FC<ProductPageProps> = (props) => {
                     >
                       {v.value}
                       {showPrices && parseFloat(v.priceModifier) > 0 && (
-                        <span style={{ fontSize: '11px', marginLeft: '4px', opacity: 0.75 }}>+{formatPrice(v.priceModifier, currency)}</span>
+                        <span style={{ fontSize: '11px', marginLeft: '4px', opacity: 0.75 }}>+{formatPrice(parseFloat(v.priceModifier), currency)}</span>
                       )}
                     </button>
                   ))}

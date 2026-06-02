@@ -256,7 +256,7 @@ const NeoLuxuryProductSkin: React.FC<ProductPageProps> = (props) => {
                     >
                       {v.value}
                       {showPrices && parseFloat(v.priceModifier) > 0 && (
-                        <span style={{ fontSize: '10px', marginLeft: '6px', opacity: 0.7 }}>+{formatPrice(v.priceModifier, currency)}</span>
+                        <span style={{ fontSize: '10px', marginLeft: '6px', opacity: 0.7 }}>+{formatPrice(parseFloat(v.priceModifier), currency)}</span>
                       )}
                     </button>
                   ))}

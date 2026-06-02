@@ -322,7 +322,7 @@ export default function ProductDetailPage() {
                       >
                         {v.value}
                         {showPrices && parseFloat(v.priceModifier) > 0 && (
-                          <span className="ml-1 opacity-70" style={{ fontSize: '11px' }}>+{formatPrice(v.priceModifier, branding.currency ?? 'CRC')}</span>
+                          <span className="ml-1 opacity-70" style={{ fontSize: '11px' }}>+{formatPrice(parseFloat(v.priceModifier), branding.currency ?? 'CRC')}</span>
                         )}
                       </button>
                     ))}

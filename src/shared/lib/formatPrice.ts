@@ -5,6 +5,6 @@ const CURRENCY_SYMBOLS: Record<'USD' | 'CRC', string> = {
 
 export function formatPrice(amount: number | string, currency: 'USD' | 'CRC' = 'CRC'): string {
   const num = typeof amount === 'string' ? parseFloat(amount) : amount;
-  const symbol = CURRENCY_SYMBOLS[currency];
-  return `${symbol}${num.toLocaleString('es-CR')}`;
+  if (!isFinite(num)) return `${CURRENCY_SYMBOLS[currency]}0`;
+  return `${CURRENCY_SYMBOLS[currency]}${num.toLocaleString('es-CR')}`;
 }
