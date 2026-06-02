@@ -20,7 +20,6 @@ const ModernMinimalismAboutSkin: React.FC<AboutPageProps> = ({
   isLoading,
   error,
   companyName,
-  onBack,
   onGoHome,
 }) => {
   if (error) {
@@ -47,41 +46,7 @@ const ModernMinimalismAboutSkin: React.FC<AboutPageProps> = ({
   const p: CatalogProfile | null = profile;
 
   return (
-    <div style={{ minHeight: '100vh', backgroundColor: 'var(--pwa-bg)', paddingBottom: '64px' }}>
-
-      {/* Standard header */}
-      <header style={{
-        position: 'sticky',
-        top: 0,
-        zIndex: 10,
-        display: 'flex',
-        alignItems: 'center',
-        height: '56px',
-        padding: '0 20px',
-        backgroundColor: 'var(--pwa-card)',
-        borderBottom: '1px solid var(--pwa-border)',
-      }}>
-        <button
-          type="button"
-          onClick={onBack}
-          style={{
-            background: 'none',
-            border: 'none',
-            cursor: 'pointer',
-            fontFamily: 'var(--pwa-font-body)',
-            fontSize: '0.875rem',
-            fontWeight: 600,
-            color: 'var(--pwa-text)',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '4px',
-            padding: 0,
-          }}
-          aria-label="Atrás"
-        >
-          ← Atrás
-        </button>
-      </header>
+    <div style={{ minHeight: '100vh', backgroundColor: 'var(--pwa-bg)', paddingBottom: '88px' }}>
 
       <div style={{ maxWidth: '560px', margin: '0 auto', padding: '32px 20px 0' }}>
 

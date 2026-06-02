@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { OfflineBanner } from '@shared/ui/OfflineBanner';
 import { BottomNav } from '@shared/ui/BottomNav';
 import { CatalogFooter } from '@shared/ui/CatalogFooter';
+import { useTheme } from '@shared/ui/ThemeProvider';
 import type { CatalogPageProps } from '../useCatalogPage';
 
 /* ── Icons ──────────────────────────────────────────────────────────────── */
@@ -48,6 +49,7 @@ const NeoLuxurySkin: React.FC<CatalogPageProps> = ({
   onRetry,
 }) => {
   const navigate = useNavigate();
+  const { isMobile } = useTheme();
 
   /* ── Error ────────────────────────────────────────────────────────────── */
   if (error) {
@@ -87,15 +89,15 @@ const NeoLuxurySkin: React.FC<CatalogPageProps> = ({
     <div style={{ minHeight: '100vh', backgroundColor: 'var(--pwa-bg)', paddingBottom: '80px' }}>
       <OfflineBanner />
 
-      {/* ── Top Bar ───────────────────────────────────────────────────── */}
-      <header style={{
+      {/* ── Top Bar — mobile only; desktop nav handled by global TopBar ─ */}
+      {isMobile && <header style={{
         position: 'sticky',
         top: 0,
         zIndex: 20,
-        backgroundColor: 'var(--pwa-glass-bg)',
+        backgroundColor: 'var(--pwa-card)',
         backdropFilter: 'blur(12px)',
         WebkitBackdropFilter: 'blur(12px)',
-        borderBottom: '1px solid var(--pwa-glass-border)',
+        borderBottom: '1px solid var(--pwa-border)',
       }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '14px 20px' }}>
           {/* Logo with gradient text */}
@@ -129,7 +131,7 @@ const NeoLuxurySkin: React.FC<CatalogPageProps> = ({
               height: '40px',
               borderRadius: '50%',
               border: '1px solid var(--pwa-border)',
-              backgroundColor: 'var(--pwa-surface)',
+              backgroundColor: 'var(--pwa-bg)',
               color: 'var(--pwa-text)',
               display: 'flex',
               alignItems: 'center',
@@ -167,7 +169,7 @@ const NeoLuxurySkin: React.FC<CatalogPageProps> = ({
             display: 'flex',
             alignItems: 'center',
             gap: '10px',
-            backgroundColor: 'var(--pwa-surface)',
+            backgroundColor: 'var(--pwa-bg)',
             border: '1px solid var(--pwa-border)',
             borderRadius: '24px',
             padding: '10px 16px',
@@ -193,7 +195,7 @@ const NeoLuxurySkin: React.FC<CatalogPageProps> = ({
 
         {/* Category chips */}
         {categories.length > 0 && (
-          <div style={{ overflowX: 'auto', scrollbarWidth: 'none' as const, borderTop: '1px solid var(--pwa-glass-border)', padding: '10px 20px' }}>
+          <div style={{ overflowX: 'auto', scrollbarWidth: 'none' as const, borderTop: '1px solid var(--pwa-border)', padding: '10px 20px' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px', whiteSpace: 'nowrap' as const }}>
               <button
                 type="button"
@@ -237,7 +239,7 @@ const NeoLuxurySkin: React.FC<CatalogPageProps> = ({
             </div>
           </div>
         )}
-      </header>
+      </header>}
 
       {/* ── Main Content ──────────────────────────────────────────────── */}
       <main style={{ padding: '24px 16px 0' }}>
@@ -283,23 +285,60 @@ const NeoLuxurySkin: React.FC<CatalogPageProps> = ({
           </div>
         )}
 
-        {/* Loading */}
+        {/* Loading skeleton — mirrors the 2-column card layout with shimmer */}
         {isLoading && (
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
-            {Array.from({ length: 6 }).map((_, i) => (
-              <div
-                key={i}
-                style={{
-                  backgroundColor: 'var(--pwa-surface)',
-                  borderRadius: 'var(--pwa-radius-md)',
-                  height: '220px',
-                  border: '1px solid var(--pwa-border)',
-                  animation: 'pulse 1.5s ease-in-out infinite',
-                  opacity: 0.5,
-                }}
-              />
-            ))}
-            <style>{`@keyframes pulse { 0%,100% { opacity: 0.5; } 50% { opacity: 0.3; } }`}</style>
+          <div>
+            <style>{`
+              @keyframes neo-shimmer {
+                0%   { background-position: -200% 0; }
+                100% { background-position:  200% 0; }
+              }
+            `}</style>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+              {Array.from({ length: 6 }).map((_, i) => (
+                <div
+                  key={i}
+                  style={{
+                    backgroundColor: 'var(--pwa-card)',
+                    borderRadius: 'var(--pwa-radius-md)',
+                    border: '1px solid var(--pwa-border)',
+                    overflow: 'hidden',
+                    animationDelay: `${i * 0.08}s`,
+                  }}
+                >
+                  {/* Image area */}
+                  <div style={{
+                    width: '100%',
+                    aspectRatio: '3/4',
+                    background: `linear-gradient(90deg, var(--pwa-card) 25%, var(--pwa-bg) 50%, var(--pwa-card) 75%)`,
+                    backgroundSize: '200% 100%',
+                    animation: 'neo-shimmer 1.6s infinite',
+                    animationDelay: `${i * 0.08}s`,
+                  }} />
+                  {/* Text area */}
+                  <div style={{ padding: '10px 12px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                    <div style={{
+                      height: '11px',
+                      width: '70%',
+                      borderRadius: '4px',
+                      background: `linear-gradient(90deg, var(--pwa-card) 25%, var(--pwa-bg) 50%, var(--pwa-card) 75%)`,
+                      backgroundSize: '200% 100%',
+                      animation: 'neo-shimmer 1.6s infinite',
+                      animationDelay: `${i * 0.08 + 0.1}s`,
+                    }} />
+                    <div style={{
+                      height: '10px',
+                      width: '40%',
+                      borderRadius: '4px',
+                      background: `linear-gradient(90deg, var(--pwa-card) 25%, var(--pwa-bg) 50%, var(--pwa-card) 75%)`,
+                      backgroundSize: '200% 100%',
+                      animation: 'neo-shimmer 1.6s infinite',
+                      animationDelay: `${i * 0.08 + 0.18}s`,
+                    }} />
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
         )}
 
@@ -336,7 +375,7 @@ const NeoLuxurySkin: React.FC<CatalogPageProps> = ({
                 <div style={{
                   width: '100%',
                   aspectRatio: '1 / 1',
-                  backgroundColor: 'var(--pwa-surface-secondary)',
+                  backgroundColor: 'var(--pwa-bg)',
                   position: 'relative' as const,
                   overflow: 'hidden',
                 }}>

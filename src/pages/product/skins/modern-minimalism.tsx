@@ -1,6 +1,7 @@
 import React from 'react';
 import { BottomNav } from '@shared/ui/BottomNav';
 import { CatalogFooter } from '@shared/ui/CatalogFooter';
+import { useTheme } from '@shared/ui/ThemeProvider';
 import type { ProductPageProps } from '../useProductPage';
 
 /* ── Icons ───────────────────────────────────────────────────────────────── */
@@ -37,6 +38,7 @@ const ModernMinimalismProductSkin: React.FC<ProductPageProps> = (props) => {
     companyName,
   } = props;
 
+  const { isMobile } = useTheme();
   const galleryImages = product ? [...product.images].sort((a, b) => a.sortOrder - b.sortOrder) : [];
 
   /* ── Loading ──────────────────────────────────────────────────────────── */
@@ -71,31 +73,39 @@ const ModernMinimalismProductSkin: React.FC<ProductPageProps> = (props) => {
   return (
     <div style={{ minHeight: '100vh', backgroundColor: 'var(--pwa-bg)', paddingBottom: '80px' }}>
 
-      {/* ── Header ──────────────────────────────────────────────────────── */}
-      <header style={{
-        position: 'sticky',
-        top: 0,
-        zIndex: 20,
-        backgroundColor: 'var(--pwa-bg)',
-        borderBottom: '1px solid var(--pwa-border)',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        padding: '0 20px',
-        height: '52px',
-      }}>
-        <button
-          type="button"
-          onClick={onBack}
-          style={{ fontFamily: 'var(--pwa-font-body)', fontSize: '13px', color: 'var(--pwa-text)', background: 'none', border: 'none', cursor: 'pointer', padding: '4px 0' }}
-        >
-          ← Atrás
-        </button>
-        <span style={{ fontFamily: 'var(--pwa-font-heading)', fontSize: '0.9rem', fontWeight: 600, color: 'var(--pwa-text)' }}>
-          {companyName}
-        </span>
-        <div style={{ width: '52px' }} />
-      </header>
+      {/* ── Header — mobile only; desktop nav handled by global TopBar ── */}
+      {isMobile ? (
+        <header style={{
+          position: 'sticky',
+          top: 0,
+          zIndex: 20,
+          backgroundColor: 'var(--pwa-bg)',
+          borderBottom: '1px solid var(--pwa-border)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          padding: '0 20px',
+          height: '52px',
+        }}>
+          <button
+            type="button"
+            onClick={onBack}
+            style={{ fontFamily: 'var(--pwa-font-body)', fontSize: '13px', color: 'var(--pwa-text)', background: 'none', border: 'none', cursor: 'pointer', padding: '4px 0' }}
+          >
+            ← Atrás
+          </button>
+          <span style={{ fontFamily: 'var(--pwa-font-heading)', fontSize: '0.9rem', fontWeight: 600, color: 'var(--pwa-text)' }}>
+            {companyName}
+          </span>
+          <div style={{ width: '52px' }} />
+        </header>
+      ) : (
+        <div style={{ padding: '12px 24px' }}>
+          <button type="button" onClick={onBack} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--pwa-text-secondary)', fontFamily: 'var(--pwa-font-body)', fontSize: '13px' }}>
+            ← Volver
+          </button>
+        </div>
+      )}
 
       {/* ── Content ─────────────────────────────────────────────────────── */}
       <div style={{ maxWidth: '900px', margin: '0 auto', padding: '0 0 32px' }}>

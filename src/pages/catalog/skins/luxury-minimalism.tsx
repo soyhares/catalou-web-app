@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { OfflineBanner } from '@shared/ui/OfflineBanner';
 import { BottomNav } from '@shared/ui/BottomNav';
 import { CatalogFooter } from '@shared/ui/CatalogFooter';
+import { useTheme } from '@shared/ui/ThemeProvider';
 import type { CatalogPageProps } from '../useCatalogPage';
 
 /* ── SVG Icons ──────────────────────────────────────────────────────────── */
@@ -38,6 +39,7 @@ const LuxuryMinimalismSkin: React.FC<CatalogPageProps> = ({
   onRetry,
 }) => {
   const navigate = useNavigate();
+  const { isMobile } = useTheme();
 
   /* ── Error ────────────────────────────────────────────────────────────── */
   if (error) {
@@ -66,8 +68,8 @@ const LuxuryMinimalismSkin: React.FC<CatalogPageProps> = ({
     <div style={{ minHeight: '100vh', backgroundColor: 'var(--pwa-bg)', paddingBottom: '80px' }}>
       <OfflineBanner />
 
-      {/* ── Top Bar ───────────────────────────────────────────────────── */}
-      <header style={{
+      {/* ── Top Bar — mobile only; desktop nav handled by global TopBar ─ */}
+      {isMobile && <header style={{
         position: 'sticky',
         top: 0,
         zIndex: 20,
@@ -208,7 +210,7 @@ const LuxuryMinimalismSkin: React.FC<CatalogPageProps> = ({
             )}
           </div>
         )}
-      </header>
+      </header>}
 
       {/* ── Hero Section ──────────────────────────────────────────────── */}
       {!searchQuery && !selectedCategory && !isLoading && hasProducts && (
@@ -280,18 +282,70 @@ const LuxuryMinimalismSkin: React.FC<CatalogPageProps> = ({
           </p>
         )}
 
-        {/* Loading state */}
+        {/* Loading skeleton — mirrors the vertical card layout */}
         {isLoading && (
-          <div style={{ textAlign: 'center' as const, padding: '80px 0' }}>
-            <p style={{
-              fontFamily: 'var(--pwa-font-heading)',
-              fontStyle: 'italic',
-              fontSize: '1.3rem',
-              color: 'var(--pwa-text)',
-              opacity: 0.4,
-            }}>
-              Cargando…
-            </p>
+          <div>
+            <style>{`
+              @keyframes lux-shimmer {
+                0%   { background-position: -200% 0; }
+                100% { background-position:  200% 0; }
+              }
+            `}</style>
+            {Array.from({ length: 5 }).map((_, i) => (
+              <div
+                key={i}
+                style={{
+                  display: 'flex',
+                  gap: '20px',
+                  padding: '20px 0',
+                  borderBottom: '1px solid var(--pwa-border)',
+                  alignItems: 'center',
+                }}
+              >
+                {/* Image placeholder */}
+                <div style={{
+                  flexShrink: 0,
+                  width: '88px',
+                  height: '110px',
+                  borderRadius: 'var(--pwa-radius-sm)',
+                  background: `linear-gradient(90deg, var(--pwa-card) 25%, var(--pwa-border) 50%, var(--pwa-card) 75%)`,
+                  backgroundSize: '200% 100%',
+                  animation: 'lux-shimmer 1.5s infinite',
+                  animationDelay: `${i * 0.1}s`,
+                }} />
+                {/* Text lines */}
+                <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                  <div style={{
+                    height: '12px',
+                    width: '60%',
+                    borderRadius: '4px',
+                    background: `linear-gradient(90deg, var(--pwa-card) 25%, var(--pwa-border) 50%, var(--pwa-card) 75%)`,
+                    backgroundSize: '200% 100%',
+                    animation: 'lux-shimmer 1.5s infinite',
+                    animationDelay: `${i * 0.1 + 0.05}s`,
+                  }} />
+                  <div style={{
+                    height: '10px',
+                    width: '40%',
+                    borderRadius: '4px',
+                    background: `linear-gradient(90deg, var(--pwa-card) 25%, var(--pwa-border) 50%, var(--pwa-card) 75%)`,
+                    backgroundSize: '200% 100%',
+                    animation: 'lux-shimmer 1.5s infinite',
+                    animationDelay: `${i * 0.1 + 0.1}s`,
+                  }} />
+                  <div style={{
+                    marginTop: '4px',
+                    height: '10px',
+                    width: '25%',
+                    borderRadius: '4px',
+                    background: `linear-gradient(90deg, var(--pwa-card) 25%, var(--pwa-border) 50%, var(--pwa-card) 75%)`,
+                    backgroundSize: '200% 100%',
+                    animation: 'lux-shimmer 1.5s infinite',
+                    animationDelay: `${i * 0.1 + 0.15}s`,
+                  }} />
+                </div>
+              </div>
+            ))}
           </div>
         )}
 

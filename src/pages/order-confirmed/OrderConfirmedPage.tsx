@@ -58,7 +58,7 @@ export default function OrderConfirmedPage() {
 
         <motion.button
           type="button"
-          onClick={() => navigate('/', { replace: true })}
+          onClick={() => navigate('/catalog', { replace: true })}
           className="uppercase tracking-[0.18em] text-white transition-opacity hover:opacity-90"
           style={{
             backgroundColor: 'var(--pwa-accent)',

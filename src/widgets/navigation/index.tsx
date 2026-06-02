@@ -1,4 +1,5 @@
 import { lazy, Suspense } from 'react';
+import { useLocation } from 'react-router-dom';
 import { useTheme } from '@shared/ui/ThemeProvider';
 import { useNavigation } from './useNavigation';
 import type { NavigationProps } from './useNavigation';
@@ -34,6 +35,10 @@ export default function Navigation() {
   const { theme, isMobile } = useTheme();
   const props = useNavigation();
   const skins = SKINS[theme] ?? SKINS['modern-minimalism'];
+  const { pathname } = useLocation();
+
+  // Hero landing page — no navigation chrome
+  if (pathname === '/') return null;
 
   if (isMobile) {
     return (
@@ -46,7 +51,6 @@ export default function Navigation() {
   return (
     <Suspense fallback={null}>
       <skins.TopBar {...props} />
-      {props.isDrawerOpen && <skins.Drawer {...props} />}
     </Suspense>
   );
 }

@@ -8,8 +8,6 @@ const LuxuryTopBar: React.FC<NavigationProps> = ({
   cartCount,
   links,
   onNavigate,
-  onToggleDrawer,
-  isDrawerOpen,
 }) => {
   return (
     <header style={{
@@ -26,7 +24,7 @@ const LuxuryTopBar: React.FC<NavigationProps> = ({
       {/* Company name / logo — serif italic */}
       <div style={{ flex: '0 0 auto', minWidth: '120px' }}>
         {logoUrl ? (
-          <img src={logoUrl} alt={companyName} style={{ height: '32px', width: 'auto', objectFit: 'contain' }} />
+          <img src={logoUrl} alt={companyName} style={{ height: '44px', width: 'auto', objectFit: 'contain' }} />
         ) : (
           <span style={{
             fontFamily: 'var(--pwa-font-heading)',
@@ -117,34 +115,6 @@ const LuxuryTopBar: React.FC<NavigationProps> = ({
           )}
         </button>
 
-        {/* Hamburger button */}
-        <button
-          type="button"
-          onClick={onToggleDrawer}
-          aria-label="Abrir menú"
-          aria-expanded={isDrawerOpen}
-          style={{
-            background: 'none',
-            border: 'none',
-            cursor: 'pointer',
-            padding: '4px',
-            display: 'flex',
-            flexDirection: 'column',
-            justifyContent: 'center',
-            gap: '5px',
-          }}
-        >
-          {[0, 1, 2].map((i) => (
-            <div
-              key={i}
-              style={{
-                width: '20px',
-                height: '1px',
-                backgroundColor: 'var(--pwa-accent)',
-              }}
-            />
-          ))}
-        </button>
       </div>
     </header>
   );

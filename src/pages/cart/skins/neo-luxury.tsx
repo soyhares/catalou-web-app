@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTheme } from '@shared/ui/ThemeProvider';
 import type { CartPageProps } from '../useCartPage';
 
 /* ── Icons ──────────────────────────────────────────────────────────────── */
@@ -47,69 +48,78 @@ const NeoLuxuryCartSkin: React.FC<CartPageProps> = ({
   onCheckout,
   onBack,
 }) => {
+  const { isMobile } = useTheme();
   const isEmpty = items.length === 0;
 
   return (
     <div style={{ minHeight: '100vh', backgroundColor: 'var(--pwa-bg)' }}>
 
-      {/* Header */}
-      <header style={{
-        position: 'sticky',
-        top: 0,
-        zIndex: 10,
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        padding: '0 20px',
-        height: '60px',
-        borderBottom: '1px solid var(--pwa-border)',
-        backgroundColor: 'var(--pwa-surface)',
-      }}>
-        <button
-          type="button"
-          onClick={onBack}
-          aria-label="Volver"
-          style={{ color: 'var(--pwa-text)', opacity: 0.6, background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center' }}
-        >
-          <IconChevronLeft />
-        </button>
-
-        <h1 style={{
-          background: 'linear-gradient(135deg, var(--pwa-accent), var(--pwa-text-secondary))',
-          WebkitBackgroundClip: 'text',
-          WebkitTextFillColor: 'transparent',
-          backgroundClip: 'text',
-          fontFamily: 'var(--pwa-font-heading)',
-          fontSize: '1.1rem',
-          fontWeight: 700,
-          margin: 0,
+      {/* Header — mobile only; desktop nav handled by global TopBar */}
+      {isMobile ? (
+        <header style={{
+          position: 'sticky',
+          top: 0,
+          zIndex: 10,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          padding: '0 20px',
+          height: '60px',
+          borderBottom: '1px solid var(--pwa-border)',
+          backgroundColor: 'var(--pwa-card)',
         }}>
-          Tu carrito
-        </h1>
-
-        {!isEmpty ? (
           <button
             type="button"
-            onClick={onClear}
-            style={{
-              fontSize: '9px',
-              color: 'var(--pwa-text-secondary)',
-              opacity: 0.6,
-              textTransform: 'uppercase',
-              letterSpacing: '0.1em',
-              background: 'none',
-              border: 'none',
-              cursor: 'pointer',
-            }}
+            onClick={onBack}
+            aria-label="Volver"
+            style={{ color: 'var(--pwa-text)', opacity: 0.6, background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center' }}
           >
-            Vaciar
+            <IconChevronLeft />
           </button>
-        ) : (
-          <span style={{ width: '40px' }} />
-        )}
-      </header>
 
-      <main style={{ maxWidth: '512px', margin: '0 auto', padding: '24px 20px' }}>
+          <h1 style={{
+            background: 'linear-gradient(135deg, var(--pwa-accent), var(--pwa-text-secondary))',
+            WebkitBackgroundClip: 'text',
+            WebkitTextFillColor: 'transparent',
+            backgroundClip: 'text',
+            fontFamily: 'var(--pwa-font-heading)',
+            fontSize: '1.1rem',
+            fontWeight: 700,
+            margin: 0,
+          }}>
+            Tu carrito
+          </h1>
+
+          {!isEmpty ? (
+            <button
+              type="button"
+              onClick={onClear}
+              style={{
+                fontSize: '9px',
+                color: 'var(--pwa-text-secondary)',
+                opacity: 0.6,
+                textTransform: 'uppercase',
+                letterSpacing: '0.1em',
+                background: 'none',
+                border: 'none',
+                cursor: 'pointer',
+              }}
+            >
+              Vaciar
+            </button>
+          ) : (
+            <span style={{ width: '40px' }} />
+          )}
+        </header>
+      ) : (
+        <div style={{ padding: '12px 24px' }}>
+          <button type="button" onClick={onBack} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--pwa-text-secondary)', fontFamily: 'var(--pwa-font-body)', fontSize: '13px' }}>
+            ← Volver
+          </button>
+        </div>
+      )}
+
+      <main style={{ maxWidth: '512px', margin: '0 auto', padding: '24px 20px 88px' }}>
         {isEmpty ? (
           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '80px 0' }}>
             <svg width="48" height="48" viewBox="0 0 48 48" fill="none" style={{ color: 'var(--pwa-accent)', opacity: 0.2, marginBottom: '24px' }}>
@@ -151,7 +161,7 @@ const NeoLuxuryCartSkin: React.FC<CartPageProps> = ({
                 <div
                   key={item.id}
                   style={{
-                    backgroundColor: 'var(--pwa-surface)',
+                    backgroundColor: 'var(--pwa-card)',
                     border: '1px solid var(--pwa-border)',
                     borderRadius: 'var(--pwa-radius-md)',
                     padding: '16px',
@@ -243,7 +253,7 @@ const NeoLuxuryCartSkin: React.FC<CartPageProps> = ({
               <div style={{
                 marginTop: '20px',
                 padding: '16px',
-                backgroundColor: 'var(--pwa-surface)',
+                backgroundColor: 'var(--pwa-card)',
                 borderRadius: 'var(--pwa-radius-md)',
                 border: '1px solid var(--pwa-border)',
                 display: 'flex',

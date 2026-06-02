@@ -1,0 +1,131 @@
+<h2>¿Qué tan profundo debe ser el cambio estructural entre estilos?</h2>
+<p class="subtitle">Los 3 estilos que describiste tienen personalidades muy distintas. Necesito entender hasta qué nivel quieres que diverja la estructura.</p>
+
+<div class="cards">
+
+  <div class="card" data-choice="components" onclick="toggleSelect(this)">
+    <div class="card-image" style="background:#f8f8f8;padding:16px;display:flex;gap:10px;align-items:flex-start">
+      <!-- Mini mockup: same page structure, different card designs -->
+      <div style="flex:1">
+        <div style="height:8px;background:#ddd;border-radius:4px;margin-bottom:8px;width:60%"></div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px">
+          <!-- Luxury card style -->
+          <div style="background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,0.08)">
+            <div style="height:60px;background:linear-gradient(135deg,#f5efe6,#e8ddd0)"></div>
+            <div style="padding:6px">
+              <div style="height:6px;background:#c9a96e;border-radius:3px;width:70%;margin-bottom:3px"></div>
+              <div style="height:5px;background:#ddd;border-radius:2px;width:50%"></div>
+            </div>
+          </div>
+          <!-- Modern card style -->
+          <div style="background:#fff;border-radius:4px;overflow:hidden;border:1px solid #e5e7eb">
+            <div style="height:60px;background:#f3f4f6"></div>
+            <div style="padding:6px">
+              <div style="height:6px;background:#111;border-radius:3px;width:70%;margin-bottom:3px"></div>
+              <div style="height:5px;background:#2563eb;border-radius:2px;width:40%"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>A — Solo componentes</h3>
+      <p>Misma estructura de páginas en los 3 estilos. Las diferencias están en los componentes clave: ProductCard, HeroSection, tipografía, colores, radios, sombras. Impacto moderado, más fácil de mantener.</p>
+    </div>
+  </div>
+
+  <div class="card" data-choice="pages" onclick="toggleSelect(this)">
+    <div class="card-image" style="background:#f8f8f8;padding:16px;display:flex;gap:10px">
+      <!-- Mini mockup: completely different page layouts -->
+      <div style="flex:1;display:flex;gap:6px">
+        <!-- Luxury: editorial, full-bleed hero -->
+        <div style="flex:1;background:#fff;border-radius:8px;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,0.1)">
+          <div style="height:80px;background:linear-gradient(180deg,#f0e8de,#fff);display:flex;align-items:center;justify-content:center">
+            <div style="text-align:center">
+              <div style="height:8px;background:#c9a96e;border-radius:3px;width:50px;margin:0 auto 4px"></div>
+              <div style="height:5px;background:#ddd;border-radius:2px;width:70px;margin:0 auto"></div>
+            </div>
+          </div>
+          <div style="padding:6px">
+            <div style="display:grid;grid-template-columns:1fr;gap:4px">
+              <div style="height:30px;background:linear-gradient(135deg,#f5efe6,#e8ddd0);border-radius:8px"></div>
+              <div style="height:30px;background:linear-gradient(135deg,#f0ebe2,#ddd0c4);border-radius:8px"></div>
+            </div>
+          </div>
+        </div>
+        <!-- Neo Luxury: dark, AI -->
+        <div style="flex:1;background:#1a0a2e;border-radius:8px;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,0.3)">
+          <div style="height:80px;background:linear-gradient(135deg,#2d1b4e,#1a0a2e);display:flex;align-items:center;justify-content:center">
+            <div style="text-align:center">
+              <div style="height:8px;background:linear-gradient(90deg,#c026d3,#7c3aed);border-radius:3px;width:60px;margin:0 auto 4px"></div>
+              <div style="height:5px;background:#ffffff20;border-radius:2px;width:80px;margin:0 auto"></div>
+            </div>
+          </div>
+          <div style="padding:6px">
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:3px">
+              <div style="height:28px;background:linear-gradient(135deg,#2d1b4e,#1a0a2e);border:1px solid #7c3aed40;border-radius:6px"></div>
+              <div style="height:28px;background:linear-gradient(135deg,#3d1a5e,#1a0a2e);border:1px solid #c026d340;border-radius:6px"></div>
+            </div>
+          </div>
+        </div>
+        <!-- Modern: white, grid -->
+        <div style="flex:1;background:#fff;border-radius:8px;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,0.1)">
+          <div style="height:30px;background:#fff;display:flex;align-items:center;gap:4px;padding:0 6px">
+            <div style="flex:1;height:14px;background:#f3f4f6;border-radius:7px"></div>
+            <div style="width:20px;height:14px;background:#111;border-radius:3px"></div>
+          </div>
+          <div style="padding:6px">
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:3px">
+              <div style="height:30px;background:#f9fafb;border:1px solid #e5e7eb;border-radius:3px"></div>
+              <div style="height:30px;background:#f9fafb;border:1px solid #e5e7eb;border-radius:3px"></div>
+              <div style="height:30px;background:#f9fafb;border:1px solid #e5e7eb;border-radius:3px"></div>
+              <div style="height:30px;background:#f9fafb;border:1px solid #e5e7eb;border-radius:3px"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>B — Páginas completas</h3>
+      <p>Cada estilo tiene su propio layout de página completo: navegación diferente, estructura del catálogo diferente, densidad de información diferente. La experiencia entera es distinta por estilo. Mayor impacto, más trabajo de implementación.</p>
+    </div>
+  </div>
+
+  <div class="card" data-choice="hybrid" onclick="toggleSelect(this)">
+    <div class="card-image" style="background:#f8f8f8;padding:16px">
+      <!-- Mini mockup: hybrid — key pages differ, utility pages same -->
+      <div style="display:flex;gap:6px">
+        <div style="flex:2">
+          <div style="font-size:9px;color:#666;margin-bottom:4px;font-weight:600">PÁGINAS DISTINTAS POR ESTILO</div>
+          <div style="display:flex;gap:4px">
+            <div style="flex:1;background:linear-gradient(135deg,#f0e8de,#fff);border-radius:6px;height:50px;display:flex;align-items:center;justify-content:center">
+              <div style="height:6px;background:#c9a96e;border-radius:3px;width:30px"></div>
+            </div>
+            <div style="flex:1;background:#1a0a2e;border-radius:6px;height:50px;display:flex;align-items:center;justify-content:center">
+              <div style="height:6px;background:linear-gradient(90deg,#c026d3,#7c3aed);border-radius:3px;width:30px"></div>
+            </div>
+            <div style="flex:1;background:#fff;border:1px solid #e5e7eb;border-radius:6px;height:50px;display:flex;align-items:center;justify-content:center">
+              <div style="height:6px;background:#111;border-radius:3px;width:30px"></div>
+            </div>
+          </div>
+          <div style="font-size:8px;color:#999;text-align:center;margin-top:3px">Hero / Catálogo / Producto</div>
+        </div>
+        <div style="flex:1">
+          <div style="font-size:9px;color:#666;margin-bottom:4px;font-weight:600">PÁGINAS IGUALES</div>
+          <div style="background:#fff;border:1px solid #e5e7eb;border-radius:6px;height:50px;display:flex;align-items:center;justify-content:center">
+            <div style="text-align:center">
+              <div style="height:5px;background:#ddd;border-radius:2px;width:40px;margin:0 auto 3px"></div>
+              <div style="height:5px;background:#ddd;border-radius:2px;width:30px;margin:0 auto"></div>
+            </div>
+          </div>
+          <div style="font-size:8px;color:#999;text-align:center;margin-top:3px">Cart / Checkout / Confirm</div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>C — Híbrido (Recomendado)</h3>
+      <p>Las páginas de experiencia de marca (Hero, Catálogo, Producto) tienen layouts completamente distintos por estilo. Las páginas funcionales (Cart, Checkout, Confirmación) comparten una base estructural con personalización visual. Balance entre impacto y complejidad.</p>
+    </div>
+  </div>
+
+</div>

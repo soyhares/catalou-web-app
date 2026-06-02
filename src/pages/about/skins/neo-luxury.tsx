@@ -20,7 +20,6 @@ const NeoLuxuryAboutSkin: React.FC<AboutPageProps> = ({
   isLoading,
   error,
   companyName,
-  onBack,
   onGoHome,
 }) => {
   if (error) {
@@ -47,12 +46,12 @@ const NeoLuxuryAboutSkin: React.FC<AboutPageProps> = ({
   const p: CatalogProfile | null = profile;
 
   return (
-    <div style={{ minHeight: '100vh', backgroundColor: 'var(--pwa-bg)', paddingBottom: '64px' }}>
+    <div style={{ minHeight: '100vh', backgroundColor: 'var(--pwa-bg)', paddingBottom: '88px' }}>
 
       {/* Dark card header with photo + glow */}
       <div style={{
-        background: 'var(--pwa-surface)',
-        borderBottom: '1px solid var(--pwa-glass-border)',
+        background: 'var(--pwa-card)',
+        borderBottom: '1px solid var(--pwa-border)',
         padding: '48px 28px 36px',
       }}>
         <div style={{ maxWidth: '560px', margin: '0 auto' }}>
@@ -143,7 +142,7 @@ const NeoLuxuryAboutSkin: React.FC<AboutPageProps> = ({
                     fontWeight: 600,
                     textDecoration: 'none',
                     boxShadow: '0 0 10px var(--pwa-accent-soft)',
-                    backgroundColor: 'var(--pwa-glass-bg)',
+                    backgroundColor: 'var(--pwa-card)',
                     letterSpacing: '0.04em',
                   }}
                 >
@@ -219,26 +218,6 @@ const NeoLuxuryAboutSkin: React.FC<AboutPageProps> = ({
           </div>
         )}
 
-        {/* Back */}
-        <button
-          type="button"
-          onClick={onBack}
-          style={{
-            background: 'none',
-            border: '1px solid var(--pwa-border)',
-            cursor: 'pointer',
-            fontFamily: 'var(--pwa-font-body)',
-            fontSize: '11px',
-            fontWeight: 600,
-            color: 'var(--pwa-text-secondary)',
-            textTransform: 'uppercase',
-            letterSpacing: '0.14em',
-            padding: '10px 20px',
-            borderRadius: 'var(--pwa-radius-button)',
-          }}
-        >
-          ← Atrás
-        </button>
 
       </div>
     </div>

@@ -25,8 +25,8 @@ const NeoLuxuryBottomBar: React.FC<NavigationProps> = ({
         height: '68px',
         display: 'flex',
         alignItems: 'stretch',
-        backgroundColor: 'var(--pwa-surface)',
-        borderTop: '1px solid var(--pwa-glass-border)',
+        backgroundColor: 'var(--pwa-card)',
+        borderTop: '1px solid var(--pwa-border)',
       }}
     >
       {links.map((link) => {

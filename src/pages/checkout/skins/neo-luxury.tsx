@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTheme } from '@shared/ui/ThemeProvider';
 import type { CheckoutPageProps } from '../useCheckoutPage';
 
 /* ── Skin ───────────────────────────────────────────────────────────────── */
@@ -37,7 +38,7 @@ const NeoLuxuryCheckoutSkin: React.FC<CheckoutPageProps> = ({
   /* ── Input style — dark with accent border */
   const inputStyle: React.CSSProperties = {
     width: '100%',
-    backgroundColor: 'var(--pwa-surface)',
+    backgroundColor: 'var(--pwa-bg)',
     border: '1px solid var(--pwa-border)',
     borderRadius: 'var(--pwa-radius-sm)',
     outline: 'none',
@@ -58,48 +59,58 @@ const NeoLuxuryCheckoutSkin: React.FC<CheckoutPageProps> = ({
     marginBottom: '6px',
   };
 
+  const { isMobile } = useTheme();
+
   return (
     <div style={{ minHeight: '100vh', backgroundColor: 'var(--pwa-bg)' }}>
 
-      {/* Header */}
-      <header style={{
-        position: 'sticky',
-        top: 0,
-        zIndex: 10,
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        padding: '0 20px',
-        height: '60px',
-        borderBottom: '1px solid var(--pwa-border)',
-        backgroundColor: 'var(--pwa-surface)',
-      }}>
-        <button
-          type="button"
-          onClick={onBack}
-          aria-label="Volver"
-          style={{ color: 'var(--pwa-text)', opacity: 0.6, background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center' }}
-        >
-          <svg width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden="true">
-            <path d="M11 14L6 9L11 4" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round" />
-          </svg>
-        </button>
-        <h1 style={{
-          background: 'linear-gradient(135deg, var(--pwa-accent), var(--pwa-text-secondary))',
-          WebkitBackgroundClip: 'text',
-          WebkitTextFillColor: 'transparent',
-          backgroundClip: 'text',
-          fontFamily: 'var(--pwa-font-heading)',
-          fontSize: '1.1rem',
-          fontWeight: 700,
-          margin: 0,
+      {/* Header — mobile only; desktop nav handled by global TopBar */}
+      {isMobile ? (
+        <header style={{
+          position: 'sticky',
+          top: 0,
+          zIndex: 10,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          padding: '0 20px',
+          height: '60px',
+          borderBottom: '1px solid var(--pwa-border)',
+          backgroundColor: 'var(--pwa-card)',
         }}>
-          Confirma tu orden
-        </h1>
-        <span style={{ width: '24px' }} />
-      </header>
+          <button
+            type="button"
+            onClick={onBack}
+            aria-label="Volver"
+            style={{ color: 'var(--pwa-text)', opacity: 0.6, background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center' }}
+          >
+            <svg width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden="true">
+              <path d="M11 14L6 9L11 4" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+          </button>
+          <h1 style={{
+            background: 'linear-gradient(135deg, var(--pwa-accent), var(--pwa-text-secondary))',
+            WebkitBackgroundClip: 'text',
+            WebkitTextFillColor: 'transparent',
+            backgroundClip: 'text',
+            fontFamily: 'var(--pwa-font-heading)',
+            fontSize: '1.1rem',
+            fontWeight: 700,
+            margin: 0,
+          }}>
+            Confirma tu orden
+          </h1>
+          <span style={{ width: '24px' }} />
+        </header>
+      ) : (
+        <div style={{ padding: '12px 24px' }}>
+          <button type="button" onClick={onBack} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--pwa-text-secondary)', fontFamily: 'var(--pwa-font-body)', fontSize: '13px' }}>
+            ← Volver
+          </button>
+        </div>
+      )}
 
-      <main style={{ maxWidth: '512px', margin: '0 auto', padding: '24px 20px 48px' }}>
+      <main style={{ maxWidth: '512px', margin: '0 auto', padding: '24px 20px 88px' }}>
 
         {!isOnline && (
           <div style={{ marginBottom: '20px', padding: '12px 16px', borderRadius: 'var(--pwa-radius-sm)', backgroundColor: 'var(--pwa-warning-bg)', border: '1px solid var(--pwa-warning-text)', fontSize: '13px', color: 'var(--pwa-warning-text)' }}>
@@ -118,7 +129,7 @@ const NeoLuxuryCheckoutSkin: React.FC<CheckoutPageProps> = ({
                 style={{
                   flex: 1,
                   padding: '10px 8px',
-                  backgroundColor: orderType === type ? 'var(--pwa-accent)' : 'var(--pwa-surface)',
+                  backgroundColor: orderType === type ? 'var(--pwa-accent)' : 'var(--pwa-bg)',
                   color: orderType === type ? 'var(--pwa-on-accent)' : 'var(--pwa-text-secondary)',
                   border: '1px solid',
                   borderColor: orderType === type ? 'var(--pwa-accent)' : 'var(--pwa-border)',
@@ -214,7 +225,7 @@ const NeoLuxuryCheckoutSkin: React.FC<CheckoutPageProps> = ({
           {/* Order summary */}
           {showPrices && (
             <div style={{
-              backgroundColor: 'var(--pwa-surface)',
+              backgroundColor: 'var(--pwa-card)',
               border: '1px solid var(--pwa-border)',
               borderRadius: 'var(--pwa-radius-md)',
               padding: '16px',

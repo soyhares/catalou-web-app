@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTheme } from '@shared/ui/ThemeProvider';
 import type { CartPageProps } from '../useCartPage';
 
 /* ── Icons ──────────────────────────────────────────────────────────────── */
@@ -39,81 +40,90 @@ const LuxuryMinimalismCartSkin: React.FC<CartPageProps> = ({
   onCheckout,
   onBack,
 }) => {
+  const { isMobile } = useTheme();
   const isEmpty = items.length === 0;
 
   return (
     <div style={{ minHeight: '100vh', backgroundColor: 'var(--pwa-bg)' }}>
 
-      {/* Header */}
-      <header style={{
-        position: 'sticky',
-        top: 0,
-        zIndex: 10,
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        padding: '0 20px',
-        height: '56px',
-        borderBottom: '1px solid var(--pwa-border)',
-        backgroundColor: 'var(--pwa-bg)',
-      }}>
-        <button
-          type="button"
-          onClick={onBack}
-          aria-label="Volver"
-          style={{ color: 'var(--pwa-text)', opacity: 0.5, background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center' }}
-        >
-          <IconChevronLeft />
-        </button>
-
-        <div style={{ textAlign: 'center' }}>
-          <p style={{
-            fontFamily: 'var(--pwa-font-heading)',
-            fontStyle: 'italic',
-            fontSize: '1.1rem',
-            color: 'var(--pwa-text)',
-            margin: 0,
-          }}>
-            Mi Selección
-          </p>
-          {!isEmpty && (
-            <p style={{
-              fontSize: '9px',
-              color: 'var(--pwa-text-secondary)',
-              opacity: 0.5,
-              textTransform: 'uppercase',
-              letterSpacing: '0.14em',
-              margin: '2px 0 0',
-            }}>
-              {items.length} {items.length === 1 ? 'artículo' : 'artículos'}
-            </p>
-          )}
-        </div>
-
-        {!isEmpty ? (
+      {/* Header — mobile only; desktop nav handled by global TopBar */}
+      {isMobile ? (
+        <header style={{
+          position: 'sticky',
+          top: 0,
+          zIndex: 10,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          padding: '0 20px',
+          height: '56px',
+          borderBottom: '1px solid var(--pwa-border)',
+          backgroundColor: 'var(--pwa-bg)',
+        }}>
           <button
             type="button"
-            onClick={onClear}
-            style={{
-              fontSize: '9px',
-              color: 'var(--pwa-text)',
-              opacity: 0.4,
-              textTransform: 'uppercase',
-              letterSpacing: '0.1em',
-              fontWeight: 600,
-              background: 'none',
-              border: 'none',
-              cursor: 'pointer',
-            }}
+            onClick={onBack}
+            aria-label="Volver"
+            style={{ color: 'var(--pwa-text)', opacity: 0.5, background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center' }}
           >
-            Vaciar
+            <IconChevronLeft />
           </button>
-        ) : (
-          <span style={{ width: '40px' }} />
-        )}
-      </header>
 
-      <main style={{ maxWidth: '512px', margin: '0 auto', padding: '32px 20px' }}>
+          <div style={{ textAlign: 'center' }}>
+            <p style={{
+              fontFamily: 'var(--pwa-font-heading)',
+              fontStyle: 'italic',
+              fontSize: '1.1rem',
+              color: 'var(--pwa-text)',
+              margin: 0,
+            }}>
+              Mi Selección
+            </p>
+            {!isEmpty && (
+              <p style={{
+                fontSize: '9px',
+                color: 'var(--pwa-text-secondary)',
+                opacity: 0.5,
+                textTransform: 'uppercase',
+                letterSpacing: '0.14em',
+                margin: '2px 0 0',
+              }}>
+                {items.length} {items.length === 1 ? 'artículo' : 'artículos'}
+              </p>
+            )}
+          </div>
+
+          {!isEmpty ? (
+            <button
+              type="button"
+              onClick={onClear}
+              style={{
+                fontSize: '9px',
+                color: 'var(--pwa-text)',
+                opacity: 0.4,
+                textTransform: 'uppercase',
+                letterSpacing: '0.1em',
+                fontWeight: 600,
+                background: 'none',
+                border: 'none',
+                cursor: 'pointer',
+              }}
+            >
+              Vaciar
+            </button>
+          ) : (
+            <span style={{ width: '40px' }} />
+          )}
+        </header>
+      ) : (
+        <div style={{ padding: '12px 24px' }}>
+          <button type="button" onClick={onBack} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--pwa-text-secondary)', fontFamily: 'var(--pwa-font-body)', fontSize: '13px' }}>
+            ← Volver
+          </button>
+        </div>
+      )}
+
+      <main style={{ maxWidth: '512px', margin: '0 auto', padding: '32px 20px 88px' }}>
         {isEmpty ? (
           /* Empty state */
           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '96px 0' }}>

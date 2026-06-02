@@ -1,0 +1,133 @@
+<h2>¿Cómo debe gestionar el operador el estilo de cada tenant?</h2>
+<p class="subtitle">El operador accede a <strong>/backoffice/tenants</strong> en el admin. ¿Dónde y cómo elige el estilo de una empresa cliente?</p>
+
+<div class="cards">
+
+  <div class="card" data-choice="inline-list" onclick="toggleSelect(this)">
+    <div class="card-image" style="background:#f8f8f8;padding:14px">
+      <!-- Mockup: tenant list with inline style selector -->
+      <div style="background:#fff;border-radius:8px;border:1px solid #e5e7eb;overflow:hidden">
+        <div style="background:#1e293b;padding:8px 12px;display:flex;align-items:center;gap:8px">
+          <div style="width:8px;height:8px;background:#ef4444;border-radius:50%"></div>
+          <div style="width:8px;height:8px;background:#f59e0b;border-radius:50%"></div>
+          <div style="width:8px;height:8px;background:#22c55e;border-radius:50%"></div>
+          <div style="flex:1;height:6px;background:#334155;border-radius:3px;margin-left:8px"></div>
+        </div>
+        <div style="padding:10px">
+          <div style="font-size:9px;font-weight:700;color:#64748b;margin-bottom:6px;letter-spacing:1px">TENANTS</div>
+          <!-- Tenant row 1 -->
+          <div style="display:flex;align-items:center;gap:8px;padding:6px;background:#f8fafc;border-radius:6px;margin-bottom:4px">
+            <div style="width:28px;height:28px;background:linear-gradient(135deg,#f5efe6,#c9a96e);border-radius:6px"></div>
+            <div style="flex:1">
+              <div style="height:6px;background:#1e293b;border-radius:3px;width:60px;margin-bottom:2px"></div>
+              <div style="height:4px;background:#cbd5e1;border-radius:2px;width:40px"></div>
+            </div>
+            <div style="display:flex;gap:4px">
+              <div style="width:8px;height:8px;border-radius:50%;background:#c9a96e;border:2px solid #c9a96e"></div>
+              <div style="width:8px;height:8px;border-radius:50%;background:#f3f4f6;border:2px solid #e5e7eb"></div>
+              <div style="width:8px;height:8px;border-radius:50%;background:#f3f4f6;border:2px solid #e5e7eb"></div>
+            </div>
+          </div>
+          <!-- Tenant row 2 -->
+          <div style="display:flex;align-items:center;gap:8px;padding:6px;border-radius:6px;margin-bottom:4px">
+            <div style="width:28px;height:28px;background:linear-gradient(135deg,#2d1b4e,#7c3aed);border-radius:6px"></div>
+            <div style="flex:1">
+              <div style="height:6px;background:#1e293b;border-radius:3px;width:50px;margin-bottom:2px"></div>
+              <div style="height:4px;background:#cbd5e1;border-radius:2px;width:35px"></div>
+            </div>
+            <div style="display:flex;gap:4px">
+              <div style="width:8px;height:8px;border-radius:50%;background:#f3f4f6;border:2px solid #e5e7eb"></div>
+              <div style="width:8px;height:8px;border-radius:50%;background:#7c3aed;border:2px solid #7c3aed"></div>
+              <div style="width:8px;height:8px;border-radius:50%;background:#f3f4f6;border:2px solid #e5e7eb"></div>
+            </div>
+          </div>
+          <!-- Tenant row 3 -->
+          <div style="display:flex;align-items:center;gap:8px;padding:6px;border-radius:6px">
+            <div style="width:28px;height:28px;background:linear-gradient(135deg,#f9fafb,#e5e7eb);border-radius:4px"></div>
+            <div style="flex:1">
+              <div style="height:6px;background:#1e293b;border-radius:3px;width:55px;margin-bottom:2px"></div>
+              <div style="height:4px;background:#cbd5e1;border-radius:2px;width:45px"></div>
+            </div>
+            <div style="display:flex;gap:4px">
+              <div style="width:8px;height:8px;border-radius:50%;background:#f3f4f6;border:2px solid #e5e7eb"></div>
+              <div style="width:8px;height:8px;border-radius:50%;background:#f3f4f6;border:2px solid #e5e7eb"></div>
+              <div style="width:8px;height:8px;border-radius:50%;background:#374151;border:2px solid #374151"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>A — Selector inline en la lista de tenants</h3>
+      <p>El operador ve todos los tenants con 3 puntos de color. Hace clic para cambiar el estilo en el momento, sin salir de la lista. Rápido para gestionar muchos clientes a la vez.</p>
+    </div>
+  </div>
+
+  <div class="card" data-choice="tenant-detail" onclick="toggleSelect(this)">
+    <div class="card-image" style="background:#f8f8f8;padding:14px">
+      <!-- Mockup: tenant detail page with style section -->
+      <div style="background:#fff;border-radius:8px;border:1px solid #e5e7eb;overflow:hidden">
+        <div style="background:#1e293b;padding:8px 12px;display:flex;align-items:center;gap:6px">
+          <div style="color:#94a3b8;font-size:9px">← Tenants</div>
+          <div style="color:#fff;font-size:9px;font-weight:600">/ Maison Studio</div>
+        </div>
+        <div style="padding:10px">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
+            <div style="width:32px;height:32px;background:linear-gradient(135deg,#f5efe6,#c9a96e);border-radius:8px"></div>
+            <div>
+              <div style="height:7px;background:#1e293b;border-radius:3px;width:70px;margin-bottom:2px"></div>
+              <div style="height:4px;background:#cbd5e1;border-radius:2px;width:50px"></div>
+            </div>
+          </div>
+          <div style="font-size:9px;font-weight:700;color:#64748b;margin-bottom:5px;letter-spacing:1px">ESTILO DE CATÁLOGO</div>
+          <div style="display:flex;gap:5px">
+            <div style="flex:1;padding:5px;border:2px solid #c9a96e;border-radius:6px;text-align:center">
+              <div style="height:20px;background:linear-gradient(135deg,#f5efe6,#e8ddd0);border-radius:4px;margin-bottom:3px"></div>
+              <div style="height:4px;background:#c9a96e;border-radius:2px;width:80%;margin:0 auto"></div>
+            </div>
+            <div style="flex:1;padding:5px;border:1px solid #e5e7eb;border-radius:6px;text-align:center">
+              <div style="height:20px;background:linear-gradient(135deg,#2d1b4e,#1a0a2e);border-radius:4px;margin-bottom:3px"></div>
+              <div style="height:4px;background:#7c3aed;border-radius:2px;width:80%;margin:0 auto"></div>
+            </div>
+            <div style="flex:1;padding:5px;border:1px solid #e5e7eb;border-radius:6px;text-align:center">
+              <div style="height:20px;background:#f9fafb;border:1px solid #e5e7eb;border-radius:4px;margin-bottom:3px"></div>
+              <div style="height:4px;background:#374151;border-radius:2px;width:80%;margin:0 auto"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>B — Sección en el detalle del tenant <span style="font-size:11px;background:#3b82f620;color:#2563eb;padding:2px 8px;border-radius:10px;font-weight:600">Recomendado</span></h3>
+      <p>El operador abre el tenant, ve una sección "Estilo de Catálogo" con 3 tarjetas visuales (una por estilo). Selecciona y guarda. Más contexto, menos error.</p>
+    </div>
+  </div>
+
+  <div class="card" data-choice="preview-mode" onclick="toggleSelect(this)">
+    <div class="card-image" style="background:#f8f8f8;padding:14px">
+      <!-- Mockup: full preview modal -->
+      <div style="background:#fff;border-radius:8px;border:1px solid #e5e7eb;overflow:hidden">
+        <div style="background:#1e293b;padding:8px 12px">
+          <div style="height:5px;background:#334155;border-radius:2px;width:50%;margin:0 auto"></div>
+        </div>
+        <div style="padding:10px">
+          <div style="font-size:9px;font-weight:700;color:#64748b;margin-bottom:6px;letter-spacing:1px">PREVISUALIZACIÓN DE ESTILOS</div>
+          <div style="display:flex;gap:4px;margin-bottom:6px">
+            <div style="flex:1;height:50px;background:linear-gradient(180deg,#f0e8de,#fff);border-radius:6px;border:2px solid #c9a96e"></div>
+            <div style="flex:1;height:50px;background:linear-gradient(180deg,#2d1b4e,#1a0a2e);border-radius:6px;border:1px solid #334155"></div>
+            <div style="flex:1;height:50px;background:#fff;border-radius:6px;border:1px solid #e5e7eb"></div>
+          </div>
+          <div style="display:flex;gap:4px">
+            <div style="flex:1;height:14px;background:#f1f5f9;border-radius:4px;border:1px dashed #cbd5e1"></div>
+            <div style="width:50px;height:14px;background:#1e293b;border-radius:4px"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>C — Modal con previsualización completa</h3>
+      <p>Al cambiar el estilo se abre un modal que muestra cómo quedaría el catálogo del cliente en cada estilo — con sus propios colores y logo aplicados. Mayor confianza antes de confirmar el cambio.</p>
+    </div>
+  </div>
+
+</div>

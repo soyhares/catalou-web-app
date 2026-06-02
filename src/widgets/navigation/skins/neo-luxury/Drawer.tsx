@@ -34,7 +34,7 @@ const NeoLuxuryDrawer: React.FC<NavigationProps> = ({
           bottom: 0,
           zIndex: 31,
           width: '280px',
-          backgroundColor: 'var(--pwa-glass-bg)',
+          backgroundColor: 'var(--pwa-card)',
           backdropFilter: 'blur(16px)',
           WebkitBackdropFilter: 'blur(16px)',
           borderLeft: '1px solid var(--pwa-accent)',
@@ -52,7 +52,7 @@ const NeoLuxuryDrawer: React.FC<NavigationProps> = ({
           style={{
             alignSelf: 'flex-end',
             background: 'none',
-            border: '1px solid var(--pwa-glass-border)',
+            border: '1px solid var(--pwa-border)',
             cursor: 'pointer',
             color: 'var(--pwa-text-secondary)',
             padding: '6px 12px',

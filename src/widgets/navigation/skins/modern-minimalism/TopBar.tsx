@@ -7,8 +7,6 @@ const ModernTopBar: React.FC<NavigationProps> = ({
   activeRoute,
   cartCount,
   links,
-  isDrawerOpen,
-  onToggleDrawer,
   onNavigate,
 }) => {
   return (
@@ -27,7 +25,7 @@ const ModernTopBar: React.FC<NavigationProps> = ({
       {/* Bold logo left */}
       <div style={{ flex: '0 0 auto' }}>
         {logoUrl ? (
-          <img src={logoUrl} alt={companyName} style={{ height: '28px', width: 'auto', objectFit: 'contain' }} />
+          <img src={logoUrl} alt={companyName} style={{ height: '44px', width: 'auto', objectFit: 'contain' }} />
         ) : (
           <span style={{
             fontFamily: 'var(--pwa-font-body)',
@@ -110,25 +108,6 @@ const ModernTopBar: React.FC<NavigationProps> = ({
           )}
         </button>
 
-        {/* Hamburger (≡) */}
-        <button
-          type="button"
-          onClick={onToggleDrawer}
-          aria-label={isDrawerOpen ? 'Cerrar menú' : 'Abrir menú'}
-          aria-expanded={isDrawerOpen}
-          style={{
-            background: 'none',
-            border: '1px solid var(--pwa-border)',
-            cursor: 'pointer',
-            color: 'var(--pwa-text)',
-            padding: '5px 9px',
-            borderRadius: 'var(--pwa-radius-sm)',
-            fontSize: '14px',
-            lineHeight: 1,
-          }}
-        >
-          ≡
-        </button>
       </div>
     </header>
   );

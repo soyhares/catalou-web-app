@@ -40,9 +40,16 @@ export async function getCartItems(slug: string): Promise<CartItem[]> {
   });
 }
 
+function genId(): string {
+  if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') {
+    return crypto.randomUUID();
+  }
+  return Date.now().toString(36) + '-' + Math.random().toString(36).slice(2, 11);
+}
+
 export async function addCartItem(item: Omit<CartItem, 'id'>): Promise<CartItem> {
   const db = await openDB();
-  const newItem: CartItem = { ...item, id: crypto.randomUUID() };
+  const newItem: CartItem = { ...item, id: genId() };
   return new Promise((resolve, reject) => {
     const req = tx(db, 'readwrite').add(newItem);
     req.onsuccess = () => resolve(newItem);

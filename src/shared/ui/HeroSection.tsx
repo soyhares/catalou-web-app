@@ -70,7 +70,7 @@ export function HeroSection({ title, eyebrow, subtitle }: HeroSectionProps) {
           <motion.div variants={fadeUp} className="flex gap-3 justify-center flex-wrap">
             <button
               type="button"
-              onClick={() => void navigate('/')}
+              onClick={() => void navigate('/catalog')}
               className="px-8 py-3 text-sm font-semibold transition-opacity hover:opacity-90"
               style={{
                 backgroundColor: 'var(--pwa-accent)',
@@ -140,7 +140,7 @@ export function HeroSection({ title, eyebrow, subtitle }: HeroSectionProps) {
             <motion.div variants={fadeUp} className="flex gap-3 flex-wrap">
               <button
                 type="button"
-                onClick={() => void navigate('/')}
+                onClick={() => void navigate('/catalog')}
                 className="px-6 py-2.5 text-sm font-semibold transition-opacity hover:opacity-90"
                 style={{
                   backgroundColor: 'var(--pwa-accent)',
@@ -242,7 +242,7 @@ export function HeroSection({ title, eyebrow, subtitle }: HeroSectionProps) {
         <motion.div variants={fadeUp} className="flex gap-3 justify-center flex-wrap">
           <button
             type="button"
-            onClick={() => void navigate('/')}
+            onClick={() => void navigate('/catalog')}
             className="px-8 py-3 text-sm font-semibold transition-opacity hover:opacity-90"
             style={{
               backgroundColor: 'var(--pwa-accent)',

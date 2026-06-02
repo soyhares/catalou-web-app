@@ -13,7 +13,6 @@ const LuxuryMinimalismAboutSkin: React.FC<AboutPageProps> = ({
   isLoading,
   error,
   companyName,
-  onBack,
   onGoHome,
 }) => {
   if (error) {
@@ -40,29 +39,7 @@ const LuxuryMinimalismAboutSkin: React.FC<AboutPageProps> = ({
   const p: CatalogProfile | null = profile;
 
   return (
-    <div style={{ minHeight: '100vh', backgroundColor: 'var(--pwa-bg)', paddingBottom: '64px' }}>
-
-      {/* Back link — top */}
-      <div style={{ padding: '20px 32px 0' }}>
-        <button
-          type="button"
-          onClick={onBack}
-          style={{
-            background: 'none',
-            border: 'none',
-            cursor: 'pointer',
-            fontFamily: 'var(--pwa-font-body)',
-            fontSize: '9px',
-            textTransform: 'uppercase',
-            letterSpacing: '0.16em',
-            color: 'var(--pwa-accent)',
-            fontWeight: 600,
-            padding: 0,
-          }}
-        >
-          ← Volver
-        </button>
-      </div>
+    <div style={{ minHeight: '100vh', backgroundColor: 'var(--pwa-bg)', paddingBottom: '88px' }}>
 
       {/* Large hero photo or blank accent bar */}
       {p?.photoUrl ? (
@@ -188,25 +165,6 @@ const LuxuryMinimalismAboutSkin: React.FC<AboutPageProps> = ({
           </div>
         )}
 
-        {/* Back — text link */}
-        <button
-          type="button"
-          onClick={onBack}
-          style={{
-            background: 'none',
-            border: 'none',
-            cursor: 'pointer',
-            fontFamily: 'var(--pwa-font-heading)',
-            fontStyle: 'italic',
-            fontSize: '0.875rem',
-            color: 'var(--pwa-text)',
-            opacity: 0.45,
-            padding: 0,
-            letterSpacing: '0.04em',
-          }}
-        >
-          Volver
-        </button>
 
       </div>
     </div>

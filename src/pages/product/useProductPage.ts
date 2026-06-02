@@ -80,7 +80,7 @@ export function useProductPage(): ProductPageProps {
   }
 
   function onGoHome() {
-    navigate('/');
+    navigate('/catalog');
   }
 
   function onImageSelect(url: string) {

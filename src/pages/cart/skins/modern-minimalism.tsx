@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTheme } from '@shared/ui/ThemeProvider';
 import type { CartPageProps } from '../useCartPage';
 
 /* ── Icons ──────────────────────────────────────────────────────────────── */
@@ -47,44 +48,53 @@ const ModernMinimalismCartSkin: React.FC<CartPageProps> = ({
   onCheckout,
   onBack,
 }) => {
+  const { isMobile } = useTheme();
   const isEmpty = items.length === 0;
 
   return (
     <div style={{ minHeight: '100vh', backgroundColor: 'var(--pwa-bg)' }}>
 
-      {/* Header */}
-      <header style={{
-        position: 'sticky',
-        top: 0,
-        zIndex: 10,
-        display: 'flex',
-        alignItems: 'center',
-        gap: '12px',
-        padding: '0 16px',
-        height: '56px',
-        borderBottom: '1px solid var(--pwa-border)',
-        backgroundColor: 'var(--pwa-bg)',
-      }}>
-        <button
-          type="button"
-          onClick={onBack}
-          aria-label="Volver"
-          style={{ color: 'var(--pwa-text)', background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', padding: '4px' }}
-        >
-          <IconChevronLeft />
-        </button>
-        <h1 style={{
-          fontFamily: 'var(--pwa-font-heading)',
-          fontSize: '1rem',
-          fontWeight: 600,
-          color: 'var(--pwa-text)',
-          margin: 0,
+      {/* Header — mobile only; desktop nav handled by global TopBar */}
+      {isMobile ? (
+        <header style={{
+          position: 'sticky',
+          top: 0,
+          zIndex: 10,
+          display: 'flex',
+          alignItems: 'center',
+          gap: '12px',
+          padding: '0 16px',
+          height: '56px',
+          borderBottom: '1px solid var(--pwa-border)',
+          backgroundColor: 'var(--pwa-bg)',
         }}>
-          Carrito {!isEmpty && `(${items.length} ${items.length === 1 ? 'artículo' : 'artículos'})`}
-        </h1>
-      </header>
+          <button
+            type="button"
+            onClick={onBack}
+            aria-label="Volver"
+            style={{ color: 'var(--pwa-text)', background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', padding: '4px' }}
+          >
+            <IconChevronLeft />
+          </button>
+          <h1 style={{
+            fontFamily: 'var(--pwa-font-heading)',
+            fontSize: '1rem',
+            fontWeight: 600,
+            color: 'var(--pwa-text)',
+            margin: 0,
+          }}>
+            Carrito {!isEmpty && `(${items.length} ${items.length === 1 ? 'artículo' : 'artículos'})`}
+          </h1>
+        </header>
+      ) : (
+        <div style={{ padding: '12px 24px' }}>
+          <button type="button" onClick={onBack} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--pwa-text-secondary)', fontFamily: 'var(--pwa-font-body)', fontSize: '13px' }}>
+            ← Volver
+          </button>
+        </div>
+      )}
 
-      <main style={{ maxWidth: '640px', margin: '0 auto', padding: '16px' }}>
+      <main style={{ maxWidth: '640px', margin: '0 auto', padding: '16px 16px 88px' }}>
         {isEmpty ? (
           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '80px 0' }}>
             <p style={{ fontSize: '1rem', color: 'var(--pwa-text-secondary)', marginBottom: '16px' }}>

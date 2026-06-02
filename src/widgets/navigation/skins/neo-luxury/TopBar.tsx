@@ -6,8 +6,6 @@ const NeoLuxuryTopBar: React.FC<NavigationProps> = ({
   logoUrl,
   cartCount,
   activeRoute,
-  isDrawerOpen,
-  onToggleDrawer,
   onNavigate,
 }) => {
   return (
@@ -19,14 +17,14 @@ const NeoLuxuryTopBar: React.FC<NavigationProps> = ({
       display: 'flex',
       alignItems: 'center',
       padding: '0 24px',
-      backgroundColor: 'var(--pwa-surface)',
-      borderBottom: '1px solid var(--pwa-glass-border)',
+      backgroundColor: 'var(--pwa-card)',
+      borderBottom: '1px solid var(--pwa-border)',
       gap: '16px',
     }}>
       {/* Gradient logo text left */}
       <div style={{ flex: '0 0 auto', minWidth: '120px' }}>
         {logoUrl ? (
-          <img src={logoUrl} alt={companyName} style={{ height: '32px', width: 'auto', objectFit: 'contain' }} />
+          <img src={logoUrl} alt={companyName} style={{ height: '44px', width: 'auto', objectFit: 'contain' }} />
         ) : (
           <span style={{
             fontFamily: 'var(--pwa-font-body)',
@@ -49,8 +47,8 @@ const NeoLuxuryTopBar: React.FC<NavigationProps> = ({
         display: 'flex',
         alignItems: 'center',
         height: '36px',
-        backgroundColor: 'var(--pwa-glass-bg)',
-        border: '1px solid var(--pwa-glass-border)',
+        backgroundColor: 'var(--pwa-bg)',
+        border: '1px solid var(--pwa-border)',
         borderRadius: 'var(--pwa-radius-sm)',
         padding: '0 12px',
         gap: '8px',
@@ -109,25 +107,6 @@ const NeoLuxuryTopBar: React.FC<NavigationProps> = ({
           )}
         </button>
 
-        {/* Hamburger for drawer */}
-        <button
-          type="button"
-          onClick={onToggleDrawer}
-          aria-label={isDrawerOpen ? 'Cerrar menú' : 'Abrir menú'}
-          aria-expanded={isDrawerOpen}
-          style={{
-            background: 'none',
-            border: '1px solid var(--pwa-glass-border)',
-            cursor: 'pointer',
-            color: 'var(--pwa-text)',
-            padding: '6px 10px',
-            borderRadius: 'var(--pwa-radius-sm)',
-            fontSize: '14px',
-            lineHeight: 1,
-          }}
-        >
-          ☰
-        </button>
       </div>
     </header>
   );

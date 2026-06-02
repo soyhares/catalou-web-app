@@ -1,6 +1,7 @@
 import React from 'react';
 import { BottomNav } from '@shared/ui/BottomNav';
 import { CatalogFooter } from '@shared/ui/CatalogFooter';
+import { useTheme } from '@shared/ui/ThemeProvider';
 import type { ProductPageProps } from '../useProductPage';
 
 /* ── Icons ───────────────────────────────────────────────────────────────── */
@@ -37,6 +38,7 @@ const NeoLuxuryProductSkin: React.FC<ProductPageProps> = (props) => {
     companyName,
   } = props;
 
+  const { isMobile } = useTheme();
   const galleryImages = product ? [...product.images].sort((a, b) => a.sortOrder - b.sortOrder) : [];
 
   /* ── Loading ──────────────────────────────────────────────────────────── */
@@ -71,31 +73,39 @@ const NeoLuxuryProductSkin: React.FC<ProductPageProps> = (props) => {
   return (
     <div style={{ minHeight: '100vh', backgroundColor: 'var(--pwa-bg)', paddingBottom: '80px' }}>
 
-      {/* ── Header ──────────────────────────────────────────────────────── */}
-      <header style={{
-        position: 'sticky',
-        top: 0,
-        zIndex: 20,
-        backgroundColor: 'var(--pwa-bg)',
-        borderBottom: '1px solid var(--pwa-border)',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        padding: '0 20px',
-        height: '56px',
-      }}>
-        <button
-          type="button"
-          onClick={onBack}
-          style={{ fontFamily: 'var(--pwa-font-body)', fontSize: '11px', letterSpacing: '0.08em', color: 'var(--pwa-accent)', background: 'none', border: 'none', cursor: 'pointer', padding: '4px 0' }}
-        >
-          ← Volver
-        </button>
-        <span style={{ fontFamily: 'var(--pwa-font-heading)', fontSize: '1rem', fontWeight: 600, color: 'var(--pwa-text)', letterSpacing: '0.05em' }}>
-          {companyName}
-        </span>
-        <div style={{ width: '60px' }} />
-      </header>
+      {/* ── Header — mobile only; desktop nav handled by global TopBar ── */}
+      {isMobile ? (
+        <header style={{
+          position: 'sticky',
+          top: 0,
+          zIndex: 20,
+          backgroundColor: 'var(--pwa-bg)',
+          borderBottom: '1px solid var(--pwa-border)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          padding: '0 20px',
+          height: '56px',
+        }}>
+          <button
+            type="button"
+            onClick={onBack}
+            style={{ fontFamily: 'var(--pwa-font-body)', fontSize: '11px', letterSpacing: '0.08em', color: 'var(--pwa-accent)', background: 'none', border: 'none', cursor: 'pointer', padding: '4px 0' }}
+          >
+            ← Volver
+          </button>
+          <span style={{ fontFamily: 'var(--pwa-font-heading)', fontSize: '1rem', fontWeight: 600, color: 'var(--pwa-text)', letterSpacing: '0.05em' }}>
+            {companyName}
+          </span>
+          <div style={{ width: '60px' }} />
+        </header>
+      ) : (
+        <div style={{ padding: '12px 24px' }}>
+          <button type="button" onClick={onBack} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--pwa-text-secondary)', fontFamily: 'var(--pwa-font-body)', fontSize: '13px' }}>
+            ← Volver
+          </button>
+        </div>
+      )}
 
       {/* ── Content ─────────────────────────────────────────────────────── */}
       <div style={{ maxWidth: '900px', margin: '0 auto', padding: '24px 20px' }}>
@@ -106,7 +116,7 @@ const NeoLuxuryProductSkin: React.FC<ProductPageProps> = (props) => {
             {/* Main image — dark card, neon border/glow */}
             <div style={{
               aspectRatio: '3/4',
-              backgroundColor: 'var(--pwa-surface)',
+              backgroundColor: 'var(--pwa-card)',
               borderRadius: 'var(--pwa-radius-md)',
               overflow: 'hidden',
               border: '1px solid var(--pwa-accent)',
@@ -145,7 +155,7 @@ const NeoLuxuryProductSkin: React.FC<ProductPageProps> = (props) => {
                       opacity: activeImage === product.mainImageUrl ? 1 : 0.5,
                       cursor: 'pointer',
                       padding: 0,
-                      background: 'var(--pwa-surface)',
+                      background: 'var(--pwa-card)',
                     }}
                   >
                     <img src={product.mainImageUrl} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} loading="lazy" />
@@ -167,7 +177,7 @@ const NeoLuxuryProductSkin: React.FC<ProductPageProps> = (props) => {
                       opacity: activeImage === img.url ? 1 : 0.5,
                       cursor: 'pointer',
                       padding: 0,
-                      background: 'var(--pwa-surface)',
+                      background: 'var(--pwa-card)',
                     }}
                   >
                     <img src={img.url} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} loading="lazy" />
@@ -235,7 +245,7 @@ const NeoLuxuryProductSkin: React.FC<ProductPageProps> = (props) => {
                         padding: '8px 18px',
                         borderRadius: 'var(--pwa-radius-chip)',
                         border: `1.5px solid ${selectedVariant?.id === v.id ? 'var(--pwa-accent)' : 'var(--pwa-border)'}`,
-                        backgroundColor: 'var(--pwa-surface)',
+                        backgroundColor: 'var(--pwa-card)',
                         color: selectedVariant?.id === v.id ? 'var(--pwa-accent)' : 'var(--pwa-text)',
                         boxShadow: selectedVariant?.id === v.id ? '0 0 10px var(--pwa-accent)' : 'none',
                         cursor: 'pointer',
@@ -266,17 +276,17 @@ const NeoLuxuryProductSkin: React.FC<ProductPageProps> = (props) => {
                 <button
                   type="button"
                   onClick={() => onQuantityChange(quantity - 1)}
-                  style={{ fontFamily: 'var(--pwa-font-body)', fontSize: '18px', color: 'var(--pwa-accent)', background: 'var(--pwa-surface)', border: 'none', cursor: 'pointer', padding: '8px 14px', lineHeight: 1 }}
+                  style={{ fontFamily: 'var(--pwa-font-body)', fontSize: '18px', color: 'var(--pwa-accent)', background: 'var(--pwa-card)', border: 'none', cursor: 'pointer', padding: '8px 14px', lineHeight: 1 }}
                 >
                   −
                 </button>
-                <span style={{ fontFamily: 'var(--pwa-font-body)', fontSize: '14px', fontWeight: 600, color: 'var(--pwa-text)', padding: '8px 14px', backgroundColor: 'var(--pwa-surface-secondary)', minWidth: '32px', textAlign: 'center' }}>
+                <span style={{ fontFamily: 'var(--pwa-font-body)', fontSize: '14px', fontWeight: 600, color: 'var(--pwa-text)', padding: '8px 14px', backgroundColor: 'var(--pwa-bg)', minWidth: '32px', textAlign: 'center' }}>
                   {quantity}
                 </span>
                 <button
                   type="button"
                   onClick={() => onQuantityChange(quantity + 1)}
-                  style={{ fontFamily: 'var(--pwa-font-body)', fontSize: '18px', color: 'var(--pwa-accent)', background: 'var(--pwa-surface)', border: 'none', cursor: 'pointer', padding: '8px 14px', lineHeight: 1 }}
+                  style={{ fontFamily: 'var(--pwa-font-body)', fontSize: '18px', color: 'var(--pwa-accent)', background: 'var(--pwa-card)', border: 'none', cursor: 'pointer', padding: '8px 14px', lineHeight: 1 }}
                 >
                   +
                 </button>
@@ -297,7 +307,7 @@ const NeoLuxuryProductSkin: React.FC<ProductPageProps> = (props) => {
                 color: 'var(--pwa-bg)',
                 background: canAddToCart
                   ? 'linear-gradient(135deg, var(--pwa-accent) 0%, var(--pwa-text-secondary) 100%)'
-                  : 'var(--pwa-surface)',
+                  : 'var(--pwa-card)',
                 border: 'none',
                 borderRadius: 'var(--pwa-radius-button)',
                 padding: '16px 24px',

@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { OfflineBanner } from '@shared/ui/OfflineBanner';
 import { BottomNav } from '@shared/ui/BottomNav';
 import { CatalogFooter } from '@shared/ui/CatalogFooter';
+import { useTheme } from '@shared/ui/ThemeProvider';
 import type { CatalogPageProps } from '../useCatalogPage';
 
 /* ── Icons ──────────────────────────────────────────────────────────────── */
@@ -54,6 +55,7 @@ const ModernMinimalismSkin: React.FC<CatalogPageProps> = ({
   onRetry,
 }) => {
   const navigate = useNavigate();
+  const { isMobile } = useTheme();
   const [wishlisted, setWishlisted] = useState<Set<string>>(new Set());
 
   function toggleWishlist(id: string, e: React.MouseEvent) {
@@ -104,8 +106,8 @@ const ModernMinimalismSkin: React.FC<CatalogPageProps> = ({
     <div style={{ minHeight: '100vh', backgroundColor: 'var(--pwa-bg)', paddingBottom: '80px' }}>
       <OfflineBanner />
 
-      {/* ── Top Bar — search as main element ──────────────────────────── */}
-      <header style={{
+      {/* ── Top Bar — mobile only; desktop nav handled by global TopBar ─ */}
+      {isMobile && <header style={{
         position: 'sticky',
         top: 0,
         zIndex: 20,
@@ -241,26 +243,55 @@ const ModernMinimalismSkin: React.FC<CatalogPageProps> = ({
             ))}
           </div>
         )}
-      </header>
+      </header>}
 
       {/* ── Main Content ──────────────────────────────────────────────── */}
       <main style={{ padding: '16px' }}>
-        {/* Loading indicator */}
+        {/* Loading skeleton — mirrors the 2-column card layout with shimmer */}
         {isLoading && (
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
-            {Array.from({ length: 6 }).map((_, i) => (
-              <div key={i} style={{ backgroundColor: 'var(--pwa-border)', borderRadius: 'var(--pwa-radius-md)', height: '240px' }}>
-                <div style={{
-                  width: '100%',
-                  height: '100%',
-                  background: 'linear-gradient(90deg, var(--pwa-border) 25%, var(--pwa-surface-secondary) 50%, var(--pwa-border) 75%)',
-                  backgroundSize: '200% 100%',
-                  animation: 'shimmer 1.4s infinite',
-                  borderRadius: 'var(--pwa-radius-md)',
-                }} />
-              </div>
-            ))}
-            <style>{`@keyframes shimmer { 0% { background-position: -200% 0; } 100% { background-position: 200% 0; } }`}</style>
+          <div>
+            <style>{`
+              @keyframes mod-shimmer {
+                0%   { background-position: -200% 0; }
+                100% { background-position:  200% 0; }
+              }
+            `}</style>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+              {Array.from({ length: 6 }).map((_, i) => (
+                <div key={i} style={{ borderRadius: 'var(--pwa-radius-md)', overflow: 'hidden', backgroundColor: 'var(--pwa-card)' }}>
+                  {/* Image area */}
+                  <div style={{
+                    width: '100%',
+                    aspectRatio: '3/4',
+                    background: `linear-gradient(90deg, var(--pwa-border) 25%, var(--pwa-card) 50%, var(--pwa-border) 75%)`,
+                    backgroundSize: '200% 100%',
+                    animation: 'mod-shimmer 1.4s infinite',
+                    animationDelay: `${i * 0.07}s`,
+                  }} />
+                  {/* Text lines */}
+                  <div style={{ padding: '10px 12px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                    <div style={{
+                      height: '11px',
+                      width: '75%',
+                      borderRadius: '3px',
+                      background: `linear-gradient(90deg, var(--pwa-border) 25%, var(--pwa-card) 50%, var(--pwa-border) 75%)`,
+                      backgroundSize: '200% 100%',
+                      animation: 'mod-shimmer 1.4s infinite',
+                      animationDelay: `${i * 0.07 + 0.08}s`,
+                    }} />
+                    <div style={{
+                      height: '10px',
+                      width: '45%',
+                      borderRadius: '3px',
+                      background: `linear-gradient(90deg, var(--pwa-border) 25%, var(--pwa-card) 50%, var(--pwa-border) 75%)`,
+                      backgroundSize: '200% 100%',
+                      animation: 'mod-shimmer 1.4s infinite',
+                      animationDelay: `${i * 0.07 + 0.15}s`,
+                    }} />
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
         )}
 

@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Interpretación de los 3 Estilos</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #0f172a; color: #e2e8f0; min-height: 100vh; padding: 32px 24px; }
+
+  h1 { font-size: 20px; font-weight: 600; color: #f8fafc; margin-bottom: 6px; }
+  .sub { font-size: 14px; color: #94a3b8; margin-bottom: 32px; }
+
+  .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; max-width: 1100px; margin: 0 auto; }
+
+  .style-card { border-radius: 16px; overflow: hidden; border: 1px solid #1e293b; }
+  .style-label { padding: 12px 16px; border-bottom: 1px solid rgba(255,255,255,0.06); }
+  .style-label h2 { font-size: 13px; font-weight: 700; letter-spacing: 0.5px; margin-bottom: 2px; }
+  .style-label p { font-size: 11px; opacity: 0.6; }
+
+  /* ===================== LUXURY MINIMALISM ===================== */
+  .luxury { background: #faf7f2; }
+  .luxury .style-label { background: #f5efe6; border-color: #e8ddd0; }
+  .luxury .style-label h2 { color: #5c4a35; }
+  .luxury .style-label p { color: #8b7355; }
+
+  .luxury .phone-frame { background: #faf7f2; padding: 0; }
+
+  /* Topbar */
+  .lux-topbar { display: flex; align-items: center; justify-content: space-between; padding: 14px 16px 10px; background: #faf7f2; }
+  .lux-logo { font-size: 18px; font-weight: 300; color: #3d2e1e; letter-spacing: 2px; font-style: italic; }
+  .lux-icons { display: flex; gap: 10px; }
+  .lux-icon { width: 20px; height: 20px; background: none; border: none; }
+  .lux-icon-bar { width: 18px; height: 1px; background: #8b7355; display: block; margin-bottom: 4px; }
+
+  /* Hero editorial */
+  .lux-hero { padding: 8px 16px 20px; }
+  .lux-hero-img { width: 100%; height: 130px; background: linear-gradient(160deg, #f0e8de 0%, #ddd0c4 60%, #c9b8a5 100%); border-radius: 16px; margin-bottom: 16px; position: relative; overflow: hidden; display: flex; align-items: flex-end; padding: 16px; }
+  .lux-hero-img::before { content: ''; position: absolute; inset: 0; background: linear-gradient(0deg, rgba(50,35,20,0.35) 0%, transparent 60%); }
+  .lux-hero-text { position: relative; z-index: 1; }
+  .lux-hero-eyebrow { font-size: 9px; letter-spacing: 3px; color: #d4b896; text-transform: uppercase; margin-bottom: 4px; }
+  .lux-hero-title { font-size: 20px; font-weight: 300; color: #faf7f2; line-height: 1.2; font-style: italic; }
+
+  /* Section title */
+  .lux-section { padding: 0 16px 12px; }
+  .lux-section-title { font-size: 9px; letter-spacing: 3px; color: #8b7355; text-transform: uppercase; margin-bottom: 12px; }
+
+  /* Category chips */
+  .lux-chips { display: flex; gap: 8px; padding: 0 16px 16px; overflow: hidden; }
+  .lux-chip { padding: 5px 12px; border-radius: 20px; font-size: 10px; letter-spacing: 0.5px; white-space: nowrap; }
+  .lux-chip.active { background: #3d2e1e; color: #faf7f2; }
+  .lux-chip.inactive { background: transparent; color: #8b7355; border: 1px solid #d4c5b0; }
+
+  /* Product grid - single column editorial */
+  .lux-grid { padding: 0 16px; display: flex; flex-direction: column; gap: 10px; }
+  .lux-product { display: flex; gap: 12px; align-items: center; padding: 10px; background: #fff; border-radius: 12px; box-shadow: 0 1px 8px rgba(60,40,20,0.06); }
+  .lux-product-img { width: 64px; height: 64px; background: linear-gradient(135deg, #f5efe6, #ddd0c4); border-radius: 8px; flex-shrink: 0; }
+  .lux-product-info { flex: 1; }
+  .lux-product-name { font-size: 12px; font-weight: 400; color: #3d2e1e; margin-bottom: 2px; font-style: italic; }
+  .lux-product-mat { font-size: 9px; color: #8b7355; margin-bottom: 4px; letter-spacing: 0.5px; }
+  .lux-product-price { font-size: 13px; font-weight: 500; color: #c9a96e; }
+
+  /* Bottom nav */
+  .lux-nav { display: flex; justify-content: space-around; padding: 10px 16px 14px; border-top: 1px solid #e8ddd0; }
+  .lux-nav-item { display: flex; flex-direction: column; align-items: center; gap: 3px; }
+  .lux-nav-dot { width: 4px; height: 4px; border-radius: 50%; }
+  .lux-nav-dot.active { background: #c9a96e; }
+  .lux-nav-dot.inactive { background: transparent; }
+  .lux-nav-label { font-size: 8px; letter-spacing: 1px; text-transform: uppercase; color: #8b7355; }
+  .lux-nav-label.active { color: #3d2e1e; }
+
+  /* ===================== NEO LUXURY ===================== */
+  .neo { background: #0d0718; }
+  .neo .style-label { background: #150b2a; border-color: #2d1b4e; }
+  .neo .style-label h2 { color: #e879f9; }
+  .neo .style-label p { color: #a78bfa; }
+
+  .neo .phone-frame { background: #0d0718; }
+
+  /* Topbar */
+  .neo-topbar { display: flex; align-items: center; justify-content: space-between; padding: 14px 16px 10px; }
+  .neo-logo { font-size: 13px; font-weight: 700; background: linear-gradient(90deg, #e879f9, #a78bfa); -webkit-background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: 1px; }
+  .neo-icons { display: flex; gap: 10px; }
+  .neo-icon { width: 28px; height: 28px; border-radius: 50%; background: rgba(167,139,250,0.12); display: flex; align-items: center; justify-content: center; }
+  .neo-icon-dot { width: 10px; height: 10px; border-radius: 50%; background: rgba(232,121,249,0.6); }
+
+  /* AI Search bar */
+  .neo-search { margin: 0 16px 14px; padding: 10px 14px; background: rgba(167,139,250,0.08); border: 1px solid rgba(167,139,250,0.2); border-radius: 30px; display: flex; align-items: center; gap: 8px; }
+  .neo-search-text { font-size: 11px; color: rgba(167,139,250,0.6); flex: 1; }
+  .neo-search-orb { width: 18px; height: 18px; border-radius: 50%; background: radial-gradient(circle at 35% 35%, #e879f9, #7c3aed); box-shadow: 0 0 8px rgba(232,121,249,0.4); }
+
+  /* Section header */
+  .neo-section { padding: 0 16px 10px; display: flex; align-items: center; justify-content: space-between; }
+  .neo-section-title { font-size: 11px; font-weight: 600; color: #f8fafc; }
+  .neo-see-all { font-size: 10px; color: #a78bfa; }
+
+  /* Brand grid */
+  .neo-brands { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; padding: 0 16px 14px; }
+  .neo-brand { height: 42px; border-radius: 10px; background: rgba(167,139,250,0.08); border: 1px solid rgba(167,139,250,0.12); display: flex; align-items: center; justify-content: center; font-size: 9px; font-weight: 700; color: rgba(248,250,252,0.6); letter-spacing: 1px; }
+  .neo-brand.glow { border-color: rgba(232,121,249,0.3); background: rgba(232,121,249,0.06); color: rgba(248,250,252,0.9); }
+
+  /* Recommended */
+  .neo-rec-section { padding: 0 16px 10px; display: flex; align-items: center; gap: 6px; }
+  .neo-spark { font-size: 11px; }
+  .neo-rec-title { font-size: 11px; font-weight: 600; color: #f8fafc; flex: 1; }
+  .neo-rec-all { font-size: 10px; color: #a78bfa; }
+
+  /* Product cards - dark horizontal scroll -->*/
+  .neo-products { display: flex; gap: 8px; padding: 0 16px 14px; overflow: hidden; }
+  .neo-product { flex-shrink: 0; width: 90px; background: rgba(21,11,42,0.8); border: 1px solid rgba(167,139,250,0.15); border-radius: 12px; overflow: hidden; }
+  .neo-product-img { height: 70px; background: linear-gradient(135deg, #1e0a35, #2d1b4e); display: flex; align-items: center; justify-content: center; }
+  .neo-product-img-inner { width: 40px; height: 40px; border-radius: 8px; background: rgba(167,139,250,0.2); }
+  .neo-product-info { padding: 6px 8px; }
+  .neo-badge { display: inline-block; font-size: 7px; background: rgba(232,121,249,0.15); color: #e879f9; border-radius: 4px; padding: 1px 4px; margin-bottom: 3px; }
+  .neo-product-name { font-size: 9px; color: #e2e8f0; line-height: 1.3; margin-bottom: 3px; }
+  .neo-product-price { font-size: 11px; font-weight: 700; color: #f8fafc; }
+
+  /* Bottom nav */
+  .neo-nav { display: flex; justify-content: space-around; padding: 10px 16px 14px; border-top: 1px solid rgba(167,139,250,0.1); background: rgba(13,7,24,0.95); }
+  .neo-nav-item { display: flex; flex-direction: column; align-items: center; gap: 2px; }
+  .neo-nav-bar { width: 20px; height: 2px; border-radius: 1px; }
+  .neo-nav-bar.active { background: linear-gradient(90deg, #e879f9, #a78bfa); }
+  .neo-nav-bar.inactive { background: rgba(167,139,250,0.2); }
+  .neo-nav-label { font-size: 8px; color: rgba(167,139,250,0.5); }
+  .neo-nav-label.active { color: #e879f9; }
+
+  /* ===================== MODERN MINIMALISM ===================== */
+  .modern { background: #ffffff; }
+  .modern .style-label { background: #f9fafb; border-color: #e5e7eb; }
+  .modern .style-label h2 { color: #111827; }
+  .modern .style-label p { color: #6b7280; }
+
+  /* Topbar */
+  .mod-topbar { display: flex; align-items: center; gap: 8px; padding: 10px 14px 8px; background: #fff; border-bottom: 1px solid #f3f4f6; }
+  .mod-search { flex: 1; height: 32px; background: #f3f4f6; border-radius: 8px; display: flex; align-items: center; padding: 0 10px; gap: 6px; }
+  .mod-search-icon { width: 12px; height: 12px; border: 1.5px solid #9ca3af; border-radius: 50%; flex-shrink: 0; }
+  .mod-search-text { font-size: 10px; color: #9ca3af; }
+  .mod-filter-btn { width: 32px; height: 32px; background: #111827; border-radius: 8px; display: flex; align-items: center; justify-content: center; }
+  .mod-filter-lines { display: flex; flex-direction: column; gap: 3px; }
+  .mod-filter-line { height: 1.5px; background: #fff; border-radius: 1px; }
+  .mod-filter-line:nth-child(1) { width: 14px; }
+  .mod-filter-line:nth-child(2) { width: 10px; }
+  .mod-filter-line:nth-child(3) { width: 12px; }
+
+  /* Category horizontal scroll */
+  .mod-cats { display: flex; gap: 6px; padding: 10px 14px 8px; overflow: hidden; }
+  .mod-cat { padding: 5px 12px; border-radius: 6px; font-size: 10px; font-weight: 500; white-space: nowrap; }
+  .mod-cat.active { background: #111827; color: #fff; }
+  .mod-cat.inactive { background: #f3f4f6; color: #6b7280; }
+
+  /* Stats bar -->*/
+  .mod-stats { padding: 4px 14px 8px; display: flex; align-items: center; justify-content: space-between; }
+  .mod-count { font-size: 10px; color: #6b7280; }
+  .mod-sort { font-size: 10px; color: #374151; font-weight: 500; }
+
+  /* Product grid - dense 2 col -->*/
+  .mod-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; padding: 0 14px 14px; }
+  .mod-product { background: #fff; border: 1px solid #f3f4f6; border-radius: 8px; overflow: hidden; }
+  .mod-product-img { height: 80px; background: #f9fafb; position: relative; display: flex; align-items: center; justify-content: center; }
+  .mod-product-img-inner { width: 48px; height: 48px; background: #e5e7eb; border-radius: 4px; }
+  .mod-heart { position: absolute; top: 6px; right: 6px; width: 18px; height: 18px; background: rgba(255,255,255,0.9); border-radius: 50%; display: flex; align-items: center; justify-content: center; }
+  .mod-heart-icon { width: 10px; height: 9px; border-radius: 5px 5px 0 0; background: #e5e7eb; }
+  .mod-product-info { padding: 8px; }
+  .mod-brand { font-size: 8px; color: #9ca3af; margin-bottom: 1px; font-weight: 500; }
+  .mod-name { font-size: 10px; font-weight: 500; color: #111827; line-height: 1.3; margin-bottom: 4px; }
+  .mod-price-row { display: flex; align-items: center; gap: 4px; }
+  .mod-price { font-size: 12px; font-weight: 700; color: #111827; }
+  .mod-original { font-size: 9px; color: #9ca3af; text-decoration: line-through; }
+  .mod-rating { display: flex; align-items: center; gap: 2px; margin-top: 3px; }
+  .mod-star { width: 8px; height: 8px; background: #f59e0b; clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%); }
+  .mod-rating-text { font-size: 8px; color: #9ca3af; }
+
+  /* Bottom nav -->*/
+  .mod-nav { display: flex; justify-content: space-around; padding: 8px 14px 12px; border-top: 1px solid #f3f4f6; background: #fff; }
+  .mod-nav-item { display: flex; flex-direction: column; align-items: center; gap: 2px; }
+  .mod-nav-icon { width: 18px; height: 2px; background: #e5e7eb; border-radius: 1px; }
+  .mod-nav-icon.active { background: #111827; }
+  .mod-nav-label { font-size: 8px; color: #9ca3af; }
+  .mod-nav-label.active { color: #111827; font-weight: 600; }
+
+  .section-title { text-align: center; margin-bottom: 8px; }
+  .section-sub { text-align: center; font-size: 13px; color: #94a3b8; margin-bottom: 28px; }
+</style>
+</head>
+<body>
+  <div style="max-width:1100px;margin:0 auto">
+    <h1 class="section-title">Interpretación de los 3 Estilos — Pantalla Catálogo</h1>
+    <p class="section-sub">Así es como veo la experiencia de cada personalidad aplicada a la página principal del catálogo. ¿Está alineado con lo que tienes en mente?</p>
+
+    <div class="grid">
+
+      <!-- LUXURY MINIMALISM -->
+      <div class="style-card luxury">
+        <div class="style-label">
+          <h2>LUXURY MINIMALISM</h2>
+          <p>Elegante · Atemporal · Cálida · Serenidad</p>
+        </div>
+        <div class="phone-frame">
+          <div class="lux-topbar">
+            <div class="lux-logo">Maison</div>
+            <div class="lux-icons">
+              <div style="display:flex;flex-direction:column;gap:3px;padding:4px">
+                <span class="lux-icon-bar"></span>
+                <span class="lux-icon-bar" style="width:12px"></span>
+              </div>
+            </div>
+          </div>
+          <div class="lux-hero">
+            <div class="lux-hero-img">
+              <div class="lux-hero-text">
+                <div class="lux-hero-eyebrow">Nueva colección</div>
+                <div class="lux-hero-title">Muebles<br>atemporales</div>
+              </div>
+            </div>
+          </div>
+          <div class="lux-chips">
+            <div class="lux-chip active">Todo</div>
+            <div class="lux-chip inactive">Dormitorio</div>
+            <div class="lux-chip inactive">Sala</div>
+            <div class="lux-chip inactive">Cocina</div>
+          </div>
+          <div class="lux-section">
+            <div class="lux-section-title">Selección Editorial</div>
+          </div>
+          <div class="lux-grid">
+            <div class="lux-product">
+              <div class="lux-product-img"></div>
+              <div class="lux-product-info">
+                <div class="lux-product-name">Mesa de Centro Roble</div>
+                <div class="lux-product-mat">Madera natural</div>
+                <div class="lux-product-price">$1,200</div>
+              </div>
+            </div>
+            <div class="lux-product">
+              <div class="lux-product-img" style="background:linear-gradient(135deg,#e8ddd0,#c9b8a5)"></div>
+              <div class="lux-product-info">
+                <div class="lux-product-name">Sillón Bergère</div>
+                <div class="lux-product-mat">Lino beige</div>
+                <div class="lux-product-price">$3,500</div>
+              </div>
+            </div>
+          </div>
+          <div class="lux-nav" style="margin-top:12px">
+            <div class="lux-nav-item">
+              <div class="lux-nav-dot active"></div>
+              <div class="lux-nav-label active">Inicio</div>
+            </div>
+            <div class="lux-nav-item">
+              <div class="lux-nav-dot inactive"></div>
+              <div class="lux-nav-label">Tienda</div>
+            </div>
+            <div class="lux-nav-item">
+              <div class="lux-nav-dot inactive"></div>
+              <div class="lux-nav-label">Carrito</div>
+            </div>
+            <div class="lux-nav-item">
+              <div class="lux-nav-dot inactive"></div>
+              <div class="lux-nav-label">Perfil</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- NEO LUXURY -->
+      <div class="style-card neo">
+        <div class="style-label">
+          <h2>NEO LUXURY</h2>
+          <p>Futurista · Innovadora · Asombro</p>
+        </div>
+        <div class="phone-frame">
+          <div class="neo-topbar">
+            <div class="neo-logo">NOVA AI</div>
+            <div class="neo-icons">
+              <div class="neo-icon"><div class="neo-icon-dot"></div></div>
+            </div>
+          </div>
+          <div class="neo-search">
+            <div class="neo-search-text">Busca o pregunta a la IA...</div>
+            <div class="neo-search-orb"></div>
+          </div>
+          <div class="neo-section">
+            <div class="neo-section-title">Marcas</div>
+            <div class="neo-see-all">Ver todo</div>
+          </div>
+          <div class="neo-brands">
+            <div class="neo-brand glow">PRADA</div>
+            <div class="neo-brand">NIKE</div>
+            <div class="neo-brand">EDGE</div>
+            <div class="neo-brand">LACOSTE</div>
+            <div class="neo-brand glow">ADIDAS</div>
+            <div class="neo-brand">GUCCI</div>
+          </div>
+          <div class="neo-rec-section">
+            <div class="neo-spark">✦</div>
+            <div class="neo-rec-title">Recomendado para ti</div>
+            <div class="neo-rec-all">Ver todo</div>
+          </div>
+          <div class="neo-products">
+            <div class="neo-product">
+              <div class="neo-product-img"><div class="neo-product-img-inner"></div></div>
+              <div class="neo-product-info">
+                <div class="neo-badge">Nuevo</div>
+                <div class="neo-product-name">Premium Hoodie Black</div>
+                <div class="neo-product-price">$23.65</div>
+              </div>
+            </div>
+            <div class="neo-product">
+              <div class="neo-product-img" style="background:linear-gradient(135deg,#1e1035,#2d0a3e)"><div class="neo-product-img-inner" style="background:rgba(232,121,249,0.15)"></div></div>
+              <div class="neo-product-info">
+                <div class="neo-badge" style="background:rgba(167,139,250,0.15);color:#a78bfa">-15%</div>
+                <div class="neo-product-name">Gamer Gloves</div>
+                <div class="neo-product-price">$10.60</div>
+              </div>
+            </div>
+            <div class="neo-product">
+              <div class="neo-product-img" style="background:linear-gradient(135deg,#1a0830,#2d1b4e)"><div class="neo-product-img-inner"></div></div>
+              <div class="neo-product-info">
+                <div class="neo-badge">AI Pick</div>
+                <div class="neo-product-name">Runner X-Pro</div>
+                <div class="neo-product-price">$89.00</div>
+              </div>
+            </div>
+          </div>
+          <div class="neo-nav">
+            <div class="neo-nav-item">
+              <div class="neo-nav-bar active"></div>
+              <div class="neo-nav-label active">Home</div>
+            </div>
+            <div class="neo-nav-item">
+              <div class="neo-nav-bar inactive"></div>
+              <div class="neo-nav-label">Shop</div>
+            </div>
+            <div class="neo-nav-item">
+              <div class="neo-nav-bar inactive"></div>
+              <div class="neo-nav-label">Cart</div>
+            </div>
+            <div class="neo-nav-item">
+              <div class="neo-nav-bar inactive"></div>
+              <div class="neo-nav-label">Profile</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- MODERN MINIMALISM -->
+      <div class="style-card modern">
+        <div class="style-label">
+          <h2>MODERN MINIMALISM</h2>
+          <p>Práctica · Confiable · Eficiente · Confianza</p>
+        </div>
+        <div class="phone-frame">
+          <div class="mod-topbar">
+            <div class="mod-search">
+              <div class="mod-search-icon"></div>
+              <div class="mod-search-text">Buscar productos...</div>
+            </div>
+            <div class="mod-filter-btn">
+              <div class="mod-filter-lines">
+                <div class="mod-filter-line"></div>
+                <div class="mod-filter-line"></div>
+                <div class="mod-filter-line"></div>
+              </div>
+            </div>
+          </div>
+          <div class="mod-cats">
+            <div class="mod-cat active">Todo</div>
+            <div class="mod-cat inactive">Mujeres</div>
+            <div class="mod-cat inactive">Hombres</div>
+            <div class="mod-cat inactive">Teens</div>
+          </div>
+          <div class="mod-stats">
+            <div class="mod-count">248 productos</div>
+            <div class="mod-sort">Relevancia ↓</div>
+          </div>
+          <div class="mod-grid">
+            <div class="mod-product">
+              <div class="mod-product-img">
+                <div class="mod-product-img-inner"></div>
+                <div class="mod-heart"><div class="mod-heart-icon"></div></div>
+              </div>
+              <div class="mod-product-info">
+                <div class="mod-brand">H&M</div>
+                <div class="mod-name">Oversized Fit T-Shirt</div>
+                <div class="mod-price-row">
+                  <div class="mod-price">$295</div>
+                  <div class="mod-original">$550</div>
+                </div>
+                <div class="mod-rating">
+                  <div class="mod-star"></div>
+                  <div class="mod-rating-text">4.9 (136)</div>
+                </div>
+              </div>
+            </div>
+            <div class="mod-product">
+              <div class="mod-product-img" style="background:#f0f0f0">
+                <div class="mod-product-img-inner" style="background:#d1d5db"></div>
+                <div class="mod-heart"><div class="mod-heart-icon"></div></div>
+              </div>
+              <div class="mod-product-info">
+                <div class="mod-brand">H&M</div>
+                <div class="mod-name">Printed Sweatshirt</div>
+                <div class="mod-price-row">
+                  <div class="mod-price">$314</div>
+                </div>
+                <div class="mod-rating">
+                  <div class="mod-star"></div>
+                  <div class="mod-rating-text">4.8 (171)</div>
+                </div>
+              </div>
+            </div>
+            <div class="mod-product">
+              <div class="mod-product-img" style="background:#e8f0fe">
+                <div class="mod-product-img-inner" style="background:#bfdbfe"></div>
+              </div>
+              <div class="mod-product-info">
+                <div class="mod-brand">ZARA</div>
+                <div class="mod-name">Slim Fit Jeans</div>
+                <div class="mod-price-row">
+                  <div class="mod-price">$180</div>
+                </div>
+                <div class="mod-rating">
+                  <div class="mod-star"></div>
+                  <div class="mod-rating-text">4.7 (89)</div>
+                </div>
+              </div>
+            </div>
+            <div class="mod-product">
+              <div class="mod-product-img" style="background:#fef3c7">
+                <div class="mod-product-img-inner" style="background:#fde68a"></div>
+              </div>
+              <div class="mod-product-info">
+                <div class="mod-brand">NIKE</div>
+                <div class="mod-name">DryMove Track Jacket</div>
+                <div class="mod-price-row">
+                  <div class="mod-price">$520</div>
+                  <div class="mod-original">$650</div>
+                </div>
+                <div class="mod-rating">
+                  <div class="mod-star"></div>
+                  <div class="mod-rating-text">4.8 (63)</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="mod-nav">
+            <div class="mod-nav-item">
+              <div class="mod-nav-icon active"></div>
+              <div class="mod-nav-label active">Inicio</div>
+            </div>
+            <div class="mod-nav-item">
+              <div class="mod-nav-icon"></div>
+              <div class="mod-nav-label">Explorar</div>
+            </div>
+            <div class="mod-nav-item">
+              <div class="mod-nav-icon"></div>
+              <div class="mod-nav-label">Notif.</div>
+            </div>
+            <div class="mod-nav-item">
+              <div class="mod-nav-icon"></div>
+              <div class="mod-nav-label">Perfil</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <p style="text-align:center;margin-top:28px;font-size:13px;color:#64748b">¿Esta interpretación visual está alineada con lo que tienes en mente para los 3 estilos?<br>Responde en el terminal si quieres ajustar algo antes de continuar con el diseño técnico.</p>
+  </div>
+</body>
+</html>

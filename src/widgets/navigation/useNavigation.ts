@@ -21,8 +21,7 @@ export interface NavigationProps {
 }
 
 const LINKS: NavLink[] = [
-  { label: 'Inicio', path: '/' },
-  { label: 'Carrito', path: '/cart' },
+  { label: 'Inicio', path: '/catalog' },
   { label: 'Nosotros', path: '/about' },
 ];
 

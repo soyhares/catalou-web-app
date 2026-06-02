@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTheme } from '@shared/ui/ThemeProvider';
 import type { CheckoutPageProps } from '../useCheckoutPage';
 
 /* ── Skin ───────────────────────────────────────────────────────────────── */
@@ -58,46 +59,56 @@ const LuxuryMinimalismCheckoutSkin: React.FC<CheckoutPageProps> = ({
     boxSizing: 'border-box',
   };
 
+  const { isMobile } = useTheme();
+
   return (
     <div style={{ minHeight: '100vh', backgroundColor: 'var(--pwa-bg)' }}>
 
-      {/* Header */}
-      <header style={{
-        position: 'sticky',
-        top: 0,
-        zIndex: 10,
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        padding: '0 20px',
-        height: '56px',
-        borderBottom: '1px solid var(--pwa-border)',
-        backgroundColor: 'var(--pwa-bg)',
-      }}>
-        <button
-          type="button"
-          onClick={onBack}
-          aria-label="Volver"
-          style={{ color: 'var(--pwa-text)', opacity: 0.5, background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center' }}
-        >
-          <svg width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden="true">
-            <path d="M11 14L6 9L11 4" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round" />
-          </svg>
-        </button>
-        <h1 style={{
-          fontFamily: 'var(--pwa-font-heading)',
-          fontStyle: 'italic',
-          fontSize: '1.1rem',
-          color: 'var(--pwa-text)',
-          margin: 0,
-          fontWeight: 400,
+      {/* Header — mobile only; desktop nav handled by global TopBar */}
+      {isMobile ? (
+        <header style={{
+          position: 'sticky',
+          top: 0,
+          zIndex: 10,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          padding: '0 20px',
+          height: '56px',
+          borderBottom: '1px solid var(--pwa-border)',
+          backgroundColor: 'var(--pwa-bg)',
         }}>
-          Reserva tu pedido
-        </h1>
-        <span style={{ width: '24px' }} />
-      </header>
+          <button
+            type="button"
+            onClick={onBack}
+            aria-label="Volver"
+            style={{ color: 'var(--pwa-text)', opacity: 0.5, background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center' }}
+          >
+            <svg width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden="true">
+              <path d="M11 14L6 9L11 4" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+          </button>
+          <h1 style={{
+            fontFamily: 'var(--pwa-font-heading)',
+            fontStyle: 'italic',
+            fontSize: '1.1rem',
+            color: 'var(--pwa-text)',
+            margin: 0,
+            fontWeight: 400,
+          }}>
+            Reserva tu pedido
+          </h1>
+          <span style={{ width: '24px' }} />
+        </header>
+      ) : (
+        <div style={{ padding: '12px 24px' }}>
+          <button type="button" onClick={onBack} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--pwa-text-secondary)', fontFamily: 'var(--pwa-font-body)', fontSize: '13px' }}>
+            ← Volver
+          </button>
+        </div>
+      )}
 
-      <main style={{ maxWidth: '480px', margin: '0 auto', padding: '40px 24px 48px' }}>
+      <main style={{ maxWidth: '480px', margin: '0 auto', padding: '40px 24px 88px' }}>
 
         {!isOnline && (
           <div style={{ marginBottom: '24px', padding: '12px 16px', borderRadius: '4px', backgroundColor: 'var(--pwa-warning-bg)', border: '1px solid var(--pwa-warning-text)', fontSize: '13px', color: 'var(--pwa-warning-text)' }}>
