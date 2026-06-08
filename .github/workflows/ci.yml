@@ -65,3 +65,58 @@ jobs:
         run: |
           ls catalou-web-app/dist/sw.js || ls catalou-web-app/dist/workbox-*.js || \
           (echo "ERROR: No service worker found in dist/" && exit 1)
+
+  deploy:
+    name: Deploy to Cloudflare Pages
+    needs: ci
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          path: catalou-web-app
+
+      - name: Check out catalou-platform-core
+        uses: actions/checkout@v4
+        with:
+          repository: soyhares/catalou-platform-core
+          token: ${{ secrets.PLATFORM_CORE_TOKEN }}
+          path: catalou-platform-core
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Set up pnpm
+        uses: pnpm/action-setup@v3
+        with:
+          version: '10'
+
+      - name: Install dependencies
+        working-directory: catalou-web-app
+        run: pnpm install --frozen-lockfile
+
+      - name: Generate OpenAPI types
+        working-directory: catalou-web-app
+        run: pnpm generate
+
+      - name: Build
+        working-directory: catalou-web-app
+        env:
+          VITE_API_URL: https://api.catalou.com
+          VITE_SUPABASE_URL: https://eqrrxrilgddxcxewaonc.supabase.co
+          VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
+          VITE_CATALOU_DOMAIN: catalou.com
+          VITE_CATALOG_DOMAIN: catalou.com
+          VITE_DEV_SLUG: ""
+        run: pnpm build
+
+      - name: Deploy to Cloudflare Pages
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: pages deploy dist --project-name=catalou-web-app --branch=main
+          workingDirectory: catalou-web-app
