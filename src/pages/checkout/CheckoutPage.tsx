@@ -18,6 +18,20 @@ function BackArrow() {
   );
 }
 
+function PageHeader({ onBack, title }: { onBack: () => void; title: string }) {
+  return (
+    <header
+      className="sticky top-0 z-10 px-4 h-14 flex items-center gap-3 border-b"
+      style={{ backgroundColor: 'var(--pwa-surface)', borderColor: 'var(--pwa-border)' }}
+    >
+      <button type="button" onClick={onBack} className="p-1.5 rounded-lg hover:opacity-80 transition-opacity" style={{ color: 'var(--pwa-text)' }}>
+        <BackArrow />
+      </button>
+      <h1 className="text-base font-semibold" style={{ color: 'var(--pwa-text)' }}>{title}</h1>
+    </header>
+  );
+}
+
 function CheckIcon() {
   return (
     <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true">
@@ -173,19 +187,6 @@ export default function CheckoutPage() {
       setSubmitting(false);
     }
   }
-
-  /* ── Shared header ── */
-  const PageHeader = ({ onBack, title }: { onBack: () => void; title: string }) => (
-    <header
-      className="sticky top-0 z-10 px-4 h-14 flex items-center gap-3 border-b"
-      style={{ backgroundColor: 'var(--pwa-surface)', borderColor: 'var(--pwa-border)' }}
-    >
-      <button type="button" onClick={onBack} className="p-1.5 rounded-lg hover:opacity-80 transition-opacity" style={{ color: 'var(--pwa-text)' }}>
-        <BackArrow />
-      </button>
-      <h1 className="text-base font-semibold" style={{ color: 'var(--pwa-text)' }}>{title}</h1>
-    </header>
-  );
 
   /* ── Step 1: order type ── */
   if (step === 'type') {

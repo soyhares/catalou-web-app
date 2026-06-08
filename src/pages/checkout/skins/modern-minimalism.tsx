@@ -22,6 +22,8 @@ const ModernMinimalismCheckoutSkin: React.FC<CheckoutPageProps> = ({
   onSubmit,
   onBack,
 }) => {
+  const { isMobile } = useTheme();
+
   if (items.length === 0) {
     return (
       <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: 'var(--pwa-bg)' }}>
@@ -64,8 +66,6 @@ const ModernMinimalismCheckoutSkin: React.FC<CheckoutPageProps> = ({
     flexDirection: 'column',
     gap: '4px',
   };
-
-  const { isMobile } = useTheme();
 
   return (
     <div style={{ minHeight: '100vh', backgroundColor: 'var(--pwa-bg)' }}>

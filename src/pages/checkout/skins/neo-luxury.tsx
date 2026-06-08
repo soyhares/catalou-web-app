@@ -22,6 +22,8 @@ const NeoLuxuryCheckoutSkin: React.FC<CheckoutPageProps> = ({
   onSubmit,
   onBack,
 }) => {
+  const { isMobile } = useTheme();
+
   if (items.length === 0) {
     return (
       <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: 'var(--pwa-bg)' }}>
@@ -60,8 +62,6 @@ const NeoLuxuryCheckoutSkin: React.FC<CheckoutPageProps> = ({
     display: 'block',
     marginBottom: '6px',
   };
-
-  const { isMobile } = useTheme();
 
   return (
     <div style={{ minHeight: '100vh', backgroundColor: 'var(--pwa-bg)' }}>
