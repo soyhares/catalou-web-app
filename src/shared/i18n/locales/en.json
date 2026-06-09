@@ -1,6 +1,7 @@
 {
   "common": {
     "poweredBy": "Powered by Catalou",
+    "poweredByPrefix": "Powered by",
     "privacyPolicy": "Privacy Policy",
     "loading": "Loading...",
     "retry": "Try again",
