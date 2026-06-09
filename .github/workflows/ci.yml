@@ -113,6 +113,12 @@ jobs:
           VITE_DEV_SLUG: ""
         run: pnpm build
 
+      - name: Create Pages project if not exists
+        run: pnpm dlx wrangler pages project create catalou-web-app --production-branch=main || true
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+
       - name: Deploy to Cloudflare Pages
         working-directory: catalou-web-app
         run: pnpm dlx wrangler pages deploy dist --project-name=catalou-web-app --branch=main
