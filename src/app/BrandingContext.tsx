@@ -25,7 +25,15 @@ function resolveSlug(): string {
   const hostname = window.location.hostname;
   if (hostname === 'localhost' || hostname === domain) return '';
 
-  return hostname.split(`.${domain}`)[0] ?? '';
+  const slug = hostname.split(`.${domain}`)[0] ?? '';
+
+  // Reserved subdomains are not tenant slugs — redirect to apex
+  if (slug === 'www') {
+    window.location.replace(`https://${domain}${window.location.pathname}${window.location.search}`);
+    return '';
+  }
+
+  return slug;
 }
 
 function applyBrandingCssVars(branding: BrandingData): void {
