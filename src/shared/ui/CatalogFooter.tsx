@@ -19,7 +19,16 @@ export function CatalogFooter({ className = '' }: CatalogFooterProps) {
           {t('common.privacyPolicy')}
         </Link>
         {' · '}
-        {t('common.poweredBy')}
+        {t('common.poweredByPrefix')}{' '}
+        <a
+          href="https://catalou.com"
+          target="_blank"
+          rel="noopener noreferrer"
+          style={{ color: 'var(--pwa-text)' }}
+          className="underline underline-offset-2 hover:opacity-80 transition-opacity"
+        >
+          Catalou
+        </a>
       </p>
     </footer>
   );
