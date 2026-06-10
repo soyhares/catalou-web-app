@@ -49,6 +49,15 @@ jobs:
         working-directory: catalou-web-app
         run: pnpm generate
 
+      - name: Verify generated types are up to date
+        working-directory: catalou-web-app
+        run: |
+          if ! git diff --exit-code src/generated/; then
+            echo "❌ src/generated/ was modified manually — regenerate with pnpm generate instead"
+            exit 1
+          fi
+          echo "✅ src/generated/ is clean"
+
       - name: Type check
         working-directory: catalou-web-app
         run: pnpm typecheck
