@@ -80,7 +80,7 @@ const LuxuryMinimalismSkin: React.FC<CatalogPageProps> = ({
           {/* Logo / Brand name — italic serif, centered */}
           <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
             {logoUrl ? (
-              <img src={logoUrl} alt={companyName} style={{ height: '28px', width: 'auto', objectFit: 'contain' }} />
+              <img src={logoUrl} alt={companyName} style={{ height: '52px', width: 'auto', objectFit: 'contain' }} />
             ) : (
               <span style={{
                 fontFamily: 'var(--pwa-font-heading)',
