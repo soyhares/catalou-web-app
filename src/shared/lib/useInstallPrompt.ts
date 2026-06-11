@@ -39,10 +39,12 @@ export function useInstallPrompt() {
       setDeferredPrompt(e as BeforeInstallPromptEvent);
       setStatus('available');
     };
+    const installedHandler = () => setStatus('installed');
     window.addEventListener('beforeinstallprompt', handler);
-    window.addEventListener('appinstalled', () => setStatus('installed'));
+    window.addEventListener('appinstalled', installedHandler);
     return () => {
       window.removeEventListener('beforeinstallprompt', handler);
+      window.removeEventListener('appinstalled', installedHandler);
     };
   }, []);
 

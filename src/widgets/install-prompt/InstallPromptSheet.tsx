@@ -26,7 +26,7 @@ export function InstallPromptSheet() {
         <img
           src="/pwa-icon-192.png"
           alt="App icon"
-          className="w-13 h-13 rounded-xl shrink-0"
+          className="w-[52px] h-[52px] rounded-xl shrink-0"
           onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = 'none'; }}
         />
         <div>
