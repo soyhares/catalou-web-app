@@ -89,6 +89,40 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/auth/me": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Verify session and return the caller's company context */
+        get: operations["getMe"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/auth/signout": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Revoke the Supabase session server-side (global scope) */
+        post: operations["signout"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/auth/invitations/{token}": {
         parameters: {
             query?: never;
@@ -135,6 +169,14 @@ export interface components {
             country: string;
             /** @enum {string} */
             language: "ES" | "EN";
+            /** @description Optional feature flags to enable at registration. Omitted keys use backend defaults. */
+            featuresEnabled?: {
+                orders?: boolean;
+                bookings?: boolean;
+                broadcasts?: boolean;
+                analytics?: boolean;
+                loyalty?: boolean;
+            };
         };
         LoginRequest: {
             /** Format: email */
@@ -143,6 +185,8 @@ export interface components {
         };
         AuthResponse: {
             accessToken: string;
+            /** @description Present only in register response; login uses Supabase client directly */
+            refreshToken?: string;
             user: components["schemas"]["AuthUser"];
         };
         AuthUser: {
@@ -152,8 +196,18 @@ export interface components {
             email: string;
             /** Format: uuid */
             companyId: string;
+            /** @description Present only in register response */
+            companyName?: string;
             /** @enum {string} */
             role: "CREADOR" | "ADMIN" | "EDITOR" | "VIEWER";
+        };
+        MeResponse: {
+            /** Format: uuid */
+            companyId: string;
+            /** @enum {string} */
+            role: "CREADOR" | "ADMIN" | "EDITOR" | "VIEWER";
+            /** Format: uuid */
+            supabaseUserId: string;
         };
         InvitationDetails: {
             /** Format: email */
@@ -346,6 +400,62 @@ export interface operations {
             };
             /** @description Token expired or already used */
             400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    getMe: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Session valid */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MeResponse"];
+                };
+            };
+            /** @description Unauthorized — missing or invalid token */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    signout: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Session revoked */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized — missing or invalid token */
+            401: {
                 headers: {
                     [name: string]: unknown;
                 };

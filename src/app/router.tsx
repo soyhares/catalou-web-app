@@ -3,6 +3,7 @@ import { lazy, Suspense } from 'react';
 import { AnimatePresence } from 'framer-motion';
 import { PageTransition } from '@shared/ui/PageTransition';
 import { AddedToCartToast } from '@shared/ui/AddedToCartToast';
+import { InstallPromptSheet } from '@widgets/install-prompt/InstallPromptSheet';
 import Navigation from '@widgets/navigation';
 
 const HeroPage = lazy(() => import('@pages/hero'));
@@ -45,6 +46,7 @@ export function AppRouter() {
       <Navigation />
       <AnimatedRoutes />
       <AddedToCartToast />
+      <InstallPromptSheet />
     </BrowserRouter>
   );
 }
