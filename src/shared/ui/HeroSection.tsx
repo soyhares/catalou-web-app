@@ -72,7 +72,7 @@ function BookingModal({ slug, onClose }: { slug: string; onClose: () => void }) 
               style={{ backgroundColor: 'var(--pwa-surface)', borderColor: 'var(--pwa-border)' }}
             >
               <h2 className="text-base font-semibold" style={{ color: 'var(--pwa-text)' }}>
-                Agendar consulta
+                Agendar cita
               </h2>
               <button
                 type="button"
@@ -194,7 +194,7 @@ export function HeroSection({ title, eyebrow, subtitle }: HeroSectionProps) {
                   border: '2px solid var(--pwa-accent)',
                 }}
               >
-                Agendar consulta
+                Agendar cita
               </button>
             </motion.div>
           </motion.div>
@@ -280,7 +280,7 @@ export function HeroSection({ title, eyebrow, subtitle }: HeroSectionProps) {
                     borderRadius: 'var(--pwa-radius-button)',
                   }}
                 >
-                  Agendar consulta
+                  Agendar cita
                 </button>
               </motion.div>
             </motion.div>
@@ -398,7 +398,7 @@ export function HeroSection({ title, eyebrow, subtitle }: HeroSectionProps) {
                 borderRadius: 'var(--pwa-radius-button)',
               }}
             >
-              Agendar consulta
+              Agendar cita
             </button>
           </motion.div>
         </motion.div>

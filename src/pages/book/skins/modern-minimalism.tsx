@@ -134,7 +134,7 @@ export default function ModernBookSkin({ slug, confirmation, onSuccess, onBack, 
                 lineHeight: 1.15,
                 letterSpacing: '-0.02em',
               }}>
-                Agenda una consulta
+                Agenda tu cita
               </h1>
 
               <p style={{
@@ -151,7 +151,7 @@ export default function ModernBookSkin({ slug, confirmation, onSuccess, onBack, 
               {[
                 'Confirmación en menos de 24 horas',
                 'Puedes cancelar hasta 24h antes',
-                'Sin costo por la consulta',
+                'Sin costo por reservar tu cita',
               ].map((item) => (
                 <div key={item} style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', marginBottom: '12px' }}>
                   <div style={{

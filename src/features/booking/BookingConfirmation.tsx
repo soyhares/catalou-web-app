@@ -7,7 +7,7 @@ interface BookingConfirmationProps {
 }
 
 function formatDate(isoDate: string): string {
-  const [year, month, day] = isoDate.split('-').map(Number);
+  const [year, month, day] = isoDate.slice(0, 10).split('-').map(Number);
   const d = new Date(year, month - 1, day);
   return d.toLocaleDateString('es-CR', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
 }
@@ -46,7 +46,7 @@ export function BookingConfirmation({ booking, onClose }: BookingConfirmationPro
       </h2>
 
       <p className="text-sm mb-6" style={{ color: 'var(--pwa-text-secondary)', lineHeight: 1.6 }}>
-        El consultor te contactará pronto.
+        El equipo te contactará para confirmar tu cita.
       </p>
 
       {/* Date & time detail */}

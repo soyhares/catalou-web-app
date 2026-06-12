@@ -85,10 +85,16 @@ function todayISOString(): string {
   return `${yyyy}-${mm}-${dd}`;
 }
 
+const LS_NAME = 'catalou_booking_name';
+const LS_CONTACT = 'catalou_booking_contact';
+const LS_CONTACT_TYPE = 'catalou_booking_contact_type';
+
 export function BookingForm({ slug, onSuccess, onCancel }: BookingFormProps) {
-  const [visitorName, setVisitorName] = useState('');
-  const [visitorContactType, setVisitorContactType] = useState<'email' | 'phone'>('email');
-  const [visitorContact, setVisitorContact] = useState('');
+  const [visitorName, setVisitorName] = useState(() => localStorage.getItem(LS_NAME) ?? '');
+  const [visitorContactType, setVisitorContactType] = useState<'email' | 'phone'>(
+    () => (localStorage.getItem(LS_CONTACT_TYPE) as 'email' | 'phone') ?? 'email',
+  );
+  const [visitorContact, setVisitorContact] = useState(() => localStorage.getItem(LS_CONTACT) ?? '');
   const [preferredDate, setPreferredDate] = useState('');
   const [preferredTime, setPreferredTime] = useState('');
   const [message, setMessage] = useState('');
@@ -169,10 +175,13 @@ export function BookingForm({ slug, onSuccess, onCancel }: BookingFormProps) {
         method: 'POST',
         body: JSON.stringify({
           ...formData,
-          message: formData.message ?? null,
+          ...(formData.message ? { message: formData.message } : {}),
           ...(visitorPushEndpoint ? { visitorPushEndpoint } : {}),
         }),
       });
+      localStorage.setItem(LS_NAME, formData.visitorName);
+      localStorage.setItem(LS_CONTACT, formData.visitorContact);
+      localStorage.setItem(LS_CONTACT_TYPE, formData.visitorContactType);
       saveBookingRef(slug, { id: result.id, createdAt: new Date().toISOString() });
       onSuccess(result);
     } catch (err) {

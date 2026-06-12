@@ -260,7 +260,7 @@ export default function ModernAppointmentsSkin({ slug, bookings, isLoading, onCa
               Sin citas agendadas
             </p>
             <p style={{ fontFamily: 'var(--pwa-font-body)', fontSize: '13px', color: 'var(--pwa-text-secondary)', marginBottom: '24px' }}>
-              Agenda tu primera consulta.
+              Agenda tu primera cita.
             </p>
             <button
               type="button"

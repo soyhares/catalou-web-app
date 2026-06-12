@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { usePushSubscription } from './usePushSubscription';
 
 interface PushPermissionModalProps {
@@ -8,12 +9,24 @@ interface PushPermissionModalProps {
 
 export function PushPermissionModal({ isOpen, onClose }: PushPermissionModalProps) {
   const { isSupported, permission, subscribe } = usePushSubscription();
+  const [isLoading, setIsLoading] = useState(false);
+  const [isDenied, setIsDenied] = useState(false);
 
   if (!isOpen) return null;
-  if (!isSupported || permission === 'denied') return null;
+  if (!isSupported) return null;
 
   const handleActivate = async (): Promise<void> => {
-    await subscribe();
+    setIsLoading(true);
+    try {
+      await subscribe();
+      const currentPermission = Notification.permission;
+      if (currentPermission === 'denied') {
+        setIsDenied(true);
+        return;
+      }
+    } finally {
+      setIsLoading(false);
+    }
     onClose();
   };
 
@@ -59,43 +72,84 @@ export function PushPermissionModal({ isOpen, onClose }: PushPermissionModalProp
           </svg>
         </div>
 
-        <h2
-          id="push-modal-title"
-          className="text-lg font-bold text-center mb-2"
-          style={{ color: 'var(--pwa-text, #111827)', fontFamily: 'var(--pwa-font-heading, inherit)' }}
-        >
-          Recibe notificaciones
-        </h2>
-
-        <p
-          className="text-sm text-center mb-6"
-          style={{ color: 'var(--pwa-text-secondary, #6b7280)', lineHeight: 1.6 }}
-        >
-          Te avisaremos cuando tu cita sea confirmada o cambiada.
-        </p>
-
-        <div className="flex flex-col gap-3">
-          <button
-            type="button"
-            onClick={() => void handleActivate()}
-            className="w-full py-3 text-sm font-semibold text-white transition-opacity hover:opacity-90 active:scale-[0.98]"
-            style={{
-              backgroundColor: 'var(--pwa-accent, #6366f1)',
-              borderRadius: 'var(--pwa-radius-button, 0.75rem)',
-            }}
-          >
-            Activar notificaciones
-          </button>
-
-          <button
-            type="button"
-            onClick={onClose}
-            className="w-full py-3 text-sm font-medium transition-opacity hover:opacity-70"
-            style={{ color: 'var(--pwa-text-secondary, #6b7280)' }}
-          >
-            Ahora no
-          </button>
-        </div>
+        {isDenied || permission === 'denied' ? (
+          <>
+            <h2
+              id="push-modal-title"
+              className="text-lg font-bold text-center mb-2"
+              style={{ color: 'var(--pwa-text, #111827)', fontFamily: 'var(--pwa-font-heading, inherit)' }}
+            >
+              Notificaciones bloqueadas
+            </h2>
+            <p
+              className="text-sm text-center mb-6"
+              style={{ color: 'var(--pwa-text-secondary, #6b7280)', lineHeight: 1.6 }}
+            >
+              Para recibir avisos de tu cita, actívalas desde la configuración de tu navegador y vuelve a intentarlo.
+            </p>
+            <button
+              type="button"
+              onClick={onClose}
+              className="w-full py-3 text-sm font-semibold transition-opacity hover:opacity-90 active:scale-[0.98]"
+              style={{
+                backgroundColor: 'var(--pwa-surface-secondary, #f3f4f6)',
+                color: 'var(--pwa-text, #111827)',
+                borderRadius: 'var(--pwa-radius-button, 0.75rem)',
+              }}
+            >
+              Entendido
+            </button>
+          </>
+        ) : (
+          <>
+            <h2
+              id="push-modal-title"
+              className="text-lg font-bold text-center mb-2"
+              style={{ color: 'var(--pwa-text, #111827)', fontFamily: 'var(--pwa-font-heading, inherit)' }}
+            >
+              Recibe notificaciones
+            </h2>
+            <p
+              className="text-sm text-center mb-6"
+              style={{ color: 'var(--pwa-text-secondary, #6b7280)', lineHeight: 1.6 }}
+            >
+              Te avisaremos cuando tu cita sea confirmada o cambiada.
+            </p>
+            <div className="flex flex-col gap-3">
+              <button
+                type="button"
+                disabled={isLoading}
+                onClick={() => void handleActivate()}
+                className="w-full py-3 text-sm font-semibold text-white transition-opacity hover:opacity-90 active:scale-[0.98] disabled:opacity-60 disabled:cursor-not-allowed"
+                style={{
+                  backgroundColor: 'var(--pwa-accent, #6366f1)',
+                  borderRadius: 'var(--pwa-radius-button, 0.75rem)',
+                }}
+              >
+                {isLoading ? (
+                  <span className="flex items-center justify-center gap-2">
+                    <svg className="animate-spin h-4 w-4" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                    </svg>
+                    Activando…
+                  </span>
+                ) : (
+                  'Activar notificaciones'
+                )}
+              </button>
+              <button
+                type="button"
+                disabled={isLoading}
+                onClick={onClose}
+                className="w-full py-3 text-sm font-medium transition-opacity hover:opacity-70 disabled:opacity-40"
+                style={{ color: 'var(--pwa-text-secondary, #6b7280)' }}
+              >
+                Ahora no
+              </button>
+            </div>
+          </>
+        )}
       </div>
     </div>
   );
