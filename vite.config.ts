@@ -15,6 +15,7 @@ export default defineConfig(({ mode }) => {
         injectRegister: 'auto',
         strategies: 'generateSW',
         workbox: {
+          importScripts: ['/push-handler.js'],
           globPatterns: ['**/*.{js,css,html,ico,png,svg,webp}'],
           navigateFallback: '/index.html',
           navigateFallbackDenylist: [/^\/api\//],
