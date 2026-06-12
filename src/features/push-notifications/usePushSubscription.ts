@@ -2,8 +2,6 @@ import { useState, useEffect } from 'react';
 import { useBranding } from '@app/BrandingContext';
 import { publicFetch } from '@shared/lib/api';
 
-const vapidPublicKey = import.meta.env.VITE_VAPID_PUBLIC_KEY as string;
-
 function urlBase64ToUint8Array(base64String: string): Uint8Array {
   const padding = '='.repeat((4 - (base64String.length % 4)) % 4);
   const base64 = (base64String + padding).replace(/-/g, '+').replace(/_/g, '/');
@@ -20,7 +18,8 @@ interface PushSubscriptionHook {
 }
 
 export function usePushSubscription(): PushSubscriptionHook {
-  const { slug } = useBranding();
+  const { slug, branding } = useBranding();
+  const vapidPublicKey = branding.vapidPublicKey ?? '';
 
   const isSupported =
     typeof window !== 'undefined' &&
@@ -45,7 +44,7 @@ export function usePushSubscription(): PushSubscriptionHook {
   }, [isSupported]);
 
   const subscribe = async (): Promise<void> => {
-    if (!isSupported) return;
+    if (!isSupported || !vapidPublicKey) return;
 
     const perm = await Notification.requestPermission();
     setPermission(perm);
@@ -64,7 +63,7 @@ export function usePushSubscription(): PushSubscriptionHook {
 
     await publicFetch<void>(`/companies/${slug}/push-subscriptions`, {
       method: 'POST',
-      body: JSON.stringify({ endpoint, auth, p256dh }),
+      body: JSON.stringify({ endpoint, keys: { auth, p256dh } }),
     });
 
     setIsSubscribed(true);
