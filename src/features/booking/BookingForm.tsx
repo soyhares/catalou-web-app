@@ -1,7 +1,36 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { publicFetch } from '@shared/lib/api';
 import type { BookingConfirmation, BookingFormData } from './useBooking';
+
+interface AvailabilityConfig {
+  enabledDays: number[];
+  startTime: string;
+  endTime: string;
+  slotDuration: number;
+  timezone: string;
+}
+
+function generateTimeSlots(startTime: string, endTime: string, slotDuration: number): string[] {
+  const slots: string[] = [];
+  const [startH, startM] = startTime.split(':').map(Number);
+  const [endH, endM] = endTime.split(':').map(Number);
+  let current = startH * 60 + startM;
+  const end = endH * 60 + endM;
+  while (current <= end) {
+    const h = Math.floor(current / 60).toString().padStart(2, '0');
+    const m = (current % 60).toString().padStart(2, '0');
+    slots.push(`${h}:${m}`);
+    current += slotDuration;
+  }
+  return slots;
+}
+
+function isDateOnEnabledDay(dateStr: string, enabledDays: number[]): boolean {
+  if (!dateStr) return true;
+  const date = new Date(`${dateStr}T12:00:00`);
+  return enabledDays.includes(date.getDay());
+}
 
 interface BookingFormProps {
   slug: string;
@@ -66,6 +95,13 @@ export function BookingForm({ slug, onSuccess, onCancel }: BookingFormProps) {
   const [touched, setTouched] = useState<Record<string, boolean>>({});
   const [isLoading, setIsLoading] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
+  const [availability, setAvailability] = useState<AvailabilityConfig | null>(null);
+
+  useEffect(() => {
+    void publicFetch<AvailabilityConfig | null>(`/companies/${slug}/availability`)
+      .then((config) => setAvailability(config))
+      .catch(() => setAvailability(null));
+  }, [slug]);
 
   function validate(): FormErrors {
     const errs: FormErrors = {};
@@ -82,6 +118,8 @@ export function BookingForm({ slug, onSuccess, onCancel }: BookingFormProps) {
 
     if (!preferredDate) {
       errs.preferredDate = 'La fecha es requerida';
+    } else if (availability && !isDateOnEnabledDay(preferredDate, availability.enabledDays)) {
+      errs.preferredDate = 'El negocio no atiende ese día de la semana';
     }
 
     if (!preferredTime) {
@@ -215,13 +253,27 @@ export function BookingForm({ slug, onSuccess, onCancel }: BookingFormProps) {
 
           {/* Time */}
           <FormField label="Hora preferida" error={touched.preferredTime ? errors.preferredTime : undefined} required>
-            <input
-              type="time"
-              value={preferredTime}
-              onChange={(e) => setPreferredTime(e.target.value)}
-              onBlur={() => handleBlur('preferredTime')}
-              className={touched.preferredTime && errors.preferredTime ? inputErrorClass : inputClass}
-            />
+            {availability ? (
+              <select
+                value={preferredTime}
+                onChange={(e) => setPreferredTime(e.target.value)}
+                onBlur={() => handleBlur('preferredTime')}
+                className={touched.preferredTime && errors.preferredTime ? inputErrorClass : inputClass}
+              >
+                <option value="">Selecciona una hora</option>
+                {generateTimeSlots(availability.startTime, availability.endTime, availability.slotDuration).map((slot) => (
+                  <option key={slot} value={slot}>{slot}</option>
+                ))}
+              </select>
+            ) : (
+              <input
+                type="time"
+                value={preferredTime}
+                onChange={(e) => setPreferredTime(e.target.value)}
+                onBlur={() => handleBlur('preferredTime')}
+                className={touched.preferredTime && errors.preferredTime ? inputErrorClass : inputClass}
+              />
+            )}
           </FormField>
 
           {/* Message */}
