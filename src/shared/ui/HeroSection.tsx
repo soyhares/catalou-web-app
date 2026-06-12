@@ -5,6 +5,7 @@ import { useTheme } from '@shared/ui/ThemeProvider';
 import { useBranding } from '@app/BrandingContext';
 import { BookingForm } from '@features/booking/BookingForm';
 import { BookingConfirmation } from '@features/booking/BookingConfirmation';
+import { PushPermissionModal } from '@features/push-notifications/PushPermissionModal';
 import type { BookingConfirmation as BookingConfirmationType } from '@features/booking/useBooking';
 
 interface HeroSectionProps {
@@ -24,6 +25,21 @@ const fadeUp = {
 
 function BookingModal({ slug, onClose }: { slug: string; onClose: () => void }) {
   const [confirmation, setConfirmation] = useState<BookingConfirmationType | null>(null);
+  const [showPushPrompt, setShowPushPrompt] = useState(false);
+
+  function handleConfirmationClose() {
+    setShowPushPrompt(true);
+  }
+
+  if (showPushPrompt) {
+    return (
+      <PushPermissionModal
+        isOpen
+        slug={slug}
+        onClose={onClose}
+      />
+    );
+  }
 
   return (
     <AnimatePresence>
@@ -75,7 +91,7 @@ function BookingModal({ slug, onClose }: { slug: string; onClose: () => void }) 
           {/* Body */}
           <div className="px-5 py-5">
             {confirmation ? (
-              <BookingConfirmation booking={confirmation} onClose={onClose} />
+              <BookingConfirmation booking={confirmation} onClose={handleConfirmationClose} />
             ) : (
               <BookingForm slug={slug} onSuccess={setConfirmation} onCancel={onClose} />
             )}
