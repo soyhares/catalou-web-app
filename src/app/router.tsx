@@ -1,10 +1,11 @@
 import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
-import { lazy, Suspense } from 'react';
+import { lazy, Suspense, type ReactNode } from 'react';
 import { AnimatePresence } from 'framer-motion';
 import { PageTransition } from '@shared/ui/PageTransition';
 import { AddedToCartToast } from '@shared/ui/AddedToCartToast';
 import { InstallPromptSheet } from '@widgets/install-prompt/InstallPromptSheet';
 import Navigation from '@widgets/navigation';
+import { useBranding } from '@app/BrandingContext';
 
 const HeroPage = lazy(() => import('@pages/hero'));
 const CatalogPage = lazy(() => import('@pages/catalog'));
@@ -20,6 +21,12 @@ const PrivacyPolicyPage = lazy(() => import('@pages/privacy-policy/PrivacyPolicy
 const AppointmentsPage = lazy(() => import('@pages/appointments'));
 const BookPage = lazy(() => import('@pages/book'));
 
+function BookingsGuard({ children }: { children: ReactNode }) {
+  const { branding } = useBranding();
+  if (!branding.featuresEnabled?.bookings) return <Navigate to="/catalog" replace />;
+  return <>{children}</>;
+}
+
 function AnimatedRoutes() {
   const location = useLocation();
   return (
@@ -34,8 +41,8 @@ function AnimatedRoutes() {
           <Route path="/order-confirmed" element={<PageTransition><OrderConfirmedPage /></PageTransition>} />
           <Route path="/confirm-association" element={<PageTransition><ConfirmAssociationPage /></PageTransition>} />
           <Route path="/about" element={<PageTransition><AboutPage /></PageTransition>} />
-          <Route path="/appointments" element={<PageTransition><AppointmentsPage /></PageTransition>} />
-          <Route path="/book" element={<BookPage />} />
+          <Route path="/appointments" element={<BookingsGuard><PageTransition><AppointmentsPage /></PageTransition></BookingsGuard>} />
+          <Route path="/book" element={<BookingsGuard><BookPage /></BookingsGuard>} />
           <Route path="/privacy-policy" element={<PageTransition><PrivacyPolicyPage /></PageTransition>} />
           <Route path="*" element={<Navigate to="/catalog" replace />} />
         </Routes>

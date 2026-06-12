@@ -20,7 +20,7 @@ export interface NavigationProps {
   onNavigate: (path: string) => void;
 }
 
-const LINKS: NavLink[] = [
+const BASE_LINKS: NavLink[] = [
   { label: 'Inicio', path: '/catalog' },
   { label: 'Citas', path: '/appointments' },
   { label: 'Nosotros', path: '/about' },
@@ -57,13 +57,18 @@ export function useNavigation(): NavigationProps {
     [navigate],
   );
 
+  const bookingsEnabled = branding.featuresEnabled?.bookings === true;
+  const links = bookingsEnabled
+    ? BASE_LINKS
+    : BASE_LINKS.filter((l) => l.path !== '/appointments');
+
   return {
     activeRoute: resolveActiveRoute(location.pathname),
     cartCount,
     companyName: branding.companyName,
     logoUrl: branding.logoUrl,
     isDrawerOpen,
-    links: LINKS,
+    links,
     onToggleDrawer,
     onCloseDrawer,
     onNavigate,
