@@ -17,6 +17,7 @@ const ConfirmAssociationPage = lazy(
 );
 const AboutPage = lazy(() => import('@pages/about'));
 const PrivacyPolicyPage = lazy(() => import('@pages/privacy-policy/PrivacyPolicyPage'));
+const AppointmentsPage = lazy(() => import('@pages/appointments/AppointmentsPage'));
 
 function AnimatedRoutes() {
   const location = useLocation();
@@ -32,6 +33,7 @@ function AnimatedRoutes() {
           <Route path="/order-confirmed" element={<PageTransition><OrderConfirmedPage /></PageTransition>} />
           <Route path="/confirm-association" element={<PageTransition><ConfirmAssociationPage /></PageTransition>} />
           <Route path="/about" element={<PageTransition><AboutPage /></PageTransition>} />
+          <Route path="/appointments" element={<PageTransition><AppointmentsPage /></PageTransition>} />
           <Route path="/privacy-policy" element={<PageTransition><PrivacyPolicyPage /></PageTransition>} />
           <Route path="*" element={<Navigate to="/catalog" replace />} />
         </Routes>

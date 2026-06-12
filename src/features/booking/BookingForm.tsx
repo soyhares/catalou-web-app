@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { publicFetch } from '@shared/lib/api';
+import { saveBookingRef } from '@shared/lib/bookings-storage';
 import type { BookingConfirmation, BookingFormData } from './useBooking';
 
 interface AvailabilityConfig {
@@ -161,6 +162,7 @@ export function BookingForm({ slug, onSuccess, onCancel }: BookingFormProps) {
           message: formData.message ?? null,
         }),
       });
+      saveBookingRef(slug, { id: result.id, createdAt: new Date().toISOString() });
       onSuccess(result);
     } catch (err) {
       setSubmitError(err instanceof Error ? err.message : 'Ocurrió un error. Intenta de nuevo.');

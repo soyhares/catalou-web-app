@@ -7,6 +7,13 @@ const NAV_ICONS: Record<string, string> = {
   '/about': '◯',
 };
 
+const CALENDAR_SVG = (
+  <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+    <rect x="1" y="3" width="14" height="11" rx="1.5" stroke="currentColor" strokeWidth="1.2" fill="none" />
+    <path d="M4 1.5V4M12 1.5V4M1 7H15" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" />
+  </svg>
+);
+
 const NeoLuxuryBottomBar: React.FC<NavigationProps> = ({
   activeRoute,
   cartCount,
@@ -87,7 +94,7 @@ const NeoLuxuryBottomBar: React.FC<NavigationProps> = ({
               </span>
             )}
             <span style={{ fontSize: '18px', lineHeight: 1, opacity: isActive ? 1 : 0.4 }} aria-hidden="true">
-              {NAV_ICONS[link.path] ?? '·'}
+              {link.path === '/appointments' ? CALENDAR_SVG : (NAV_ICONS[link.path] ?? '·')}
             </span>
             <span style={{
               fontFamily: 'var(--pwa-font-body)',

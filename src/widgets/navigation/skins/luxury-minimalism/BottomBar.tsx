@@ -47,7 +47,7 @@ const LuxuryBottomBar: React.FC<NavigationProps> = ({
             }}
           >
             {/* Active dot */}
-            {isActive && (
+            {isActive && link.path !== '/appointments' && (
               <span style={{
                 position: 'absolute',
                 top: '8px',
@@ -78,13 +78,27 @@ const LuxuryBottomBar: React.FC<NavigationProps> = ({
                 {cartCount > 9 ? '9+' : cartCount}
               </span>
             )}
+            {/* Calendar icon for /appointments */}
+            {link.path === '/appointments' && (
+              <svg
+                width="16"
+                height="16"
+                viewBox="0 0 16 16"
+                fill="none"
+                aria-hidden="true"
+                style={{ opacity: isActive ? 1 : 0.45 }}
+              >
+                <rect x="1" y="3" width="14" height="11" rx="1.5" stroke="currentColor" strokeWidth="1.2" fill="none" />
+                <path d="M4 1.5V4M12 1.5V4M1 7H15" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" />
+              </svg>
+            )}
             <span style={{
               fontFamily: 'var(--pwa-font-body)',
               fontSize: '8px',
               textTransform: 'uppercase',
               letterSpacing: '0.14em',
               opacity: isActive ? 1 : 0.45,
-              marginTop: '10px',
+              marginTop: link.path === '/appointments' ? '2px' : '10px',
             }}>
               {link.label}
             </span>
