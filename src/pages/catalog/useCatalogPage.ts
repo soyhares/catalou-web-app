@@ -20,6 +20,7 @@ export interface CatalogPageProps {
   logoUrl: string | null;
 
   // Actions
+  ordersEnabled: boolean;
   onCategorySelect: (id: string | null) => void;
   onSubcategorySelect: (id: string | null) => void;
   onSearchChange: (q: string) => void;
@@ -107,6 +108,7 @@ export function useCatalogPage(): CatalogPageProps {
     categories: catalog?.categories ?? [],
     showPrices: catalog?.showPrices ?? false,
     currency: branding.currency ?? 'CRC',
+    ordersEnabled: branding.featuresEnabled?.orders === true,
     selectedCategory: activeCategory,
     selectedSubcategoryId,
     searchQuery,

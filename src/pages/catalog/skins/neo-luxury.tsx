@@ -38,6 +38,7 @@ const NeoLuxurySkin: React.FC<CatalogPageProps> = ({
   searchQuery,
   isLoading,
   error,
+  ordersEnabled,
   cartCount,
   companyName,
   logoUrl,
@@ -120,47 +121,49 @@ const NeoLuxurySkin: React.FC<CatalogPageProps> = ({
             )}
           </div>
 
-          {/* Cart icon in circle */}
-          <button
-            type="button"
-            onClick={onCartClick}
-            aria-label={`Carrito (${cartCount} artículos)`}
-            style={{
-              position: 'relative',
-              width: '40px',
-              height: '40px',
-              borderRadius: '50%',
-              border: '1px solid var(--pwa-border)',
-              backgroundColor: 'var(--pwa-bg)',
-              color: 'var(--pwa-text)',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              cursor: 'pointer',
-            }}
-          >
-            <IconCart />
-            {cartCount > 0 && (
-              <span style={{
-                position: 'absolute',
-                top: '-2px',
-                right: '-2px',
-                backgroundColor: 'var(--pwa-accent)',
-                color: 'var(--pwa-bg)',
-                fontSize: '9px',
-                fontWeight: 700,
-                minWidth: '15px',
-                height: '15px',
-                borderRadius: '8px',
+          {/* Cart icon — only when orders enabled */}
+          {ordersEnabled && (
+            <button
+              type="button"
+              onClick={onCartClick}
+              aria-label={`Carrito (${cartCount} artículos)`}
+              style={{
+                position: 'relative',
+                width: '40px',
+                height: '40px',
+                borderRadius: '50%',
+                border: '1px solid var(--pwa-border)',
+                backgroundColor: 'var(--pwa-bg)',
+                color: 'var(--pwa-text)',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                padding: '0 3px',
-              }}>
-                {cartCount}
-              </span>
-            )}
-          </button>
+                cursor: 'pointer',
+              }}
+            >
+              <IconCart />
+              {cartCount > 0 && (
+                <span style={{
+                  position: 'absolute',
+                  top: '-2px',
+                  right: '-2px',
+                  backgroundColor: 'var(--pwa-accent)',
+                  color: 'var(--pwa-bg)',
+                  fontSize: '9px',
+                  fontWeight: 700,
+                  minWidth: '15px',
+                  height: '15px',
+                  borderRadius: '8px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  padding: '0 3px',
+                }}>
+                  {cartCount}
+                </span>
+              )}
+            </button>
+          )}
         </div>
 
         {/* Search bar */}
@@ -427,7 +430,10 @@ const NeoLuxurySkin: React.FC<CatalogPageProps> = ({
                     )}
                     <button
                       type="button"
-                      onClick={(e) => { e.stopPropagation(); onQuote(product.id); }}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        if (ordersEnabled) { onQuote(product.id); } else { void navigate(`/products/${product.id}`); }
+                      }}
                       style={{
                         background: 'var(--pwa-accent)',
                         border: 'none',
@@ -442,7 +448,7 @@ const NeoLuxurySkin: React.FC<CatalogPageProps> = ({
                         cursor: 'pointer',
                       }}
                     >
-                      +
+                      {ordersEnabled ? '+' : '›'}
                     </button>
                   </div>
                 </div>

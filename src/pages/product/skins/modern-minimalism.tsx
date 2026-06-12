@@ -37,6 +37,7 @@ const ModernMinimalismProductSkin: React.FC<ProductPageProps> = (props) => {
     showPrices,
     currency,
     companyName,
+    ordersEnabled,
   } = props;
 
   const { isMobile } = useTheme();
@@ -275,55 +276,58 @@ const ModernMinimalismProductSkin: React.FC<ProductPageProps> = (props) => {
               </div>
             )}
 
-            {/* Quantity — standard stepper with border */}
-            <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '16px' }}>
-              <span style={{ fontFamily: 'var(--pwa-font-body)', fontSize: '13px', fontWeight: 500, color: 'var(--pwa-text)' }}>
-                Cantidad:
-              </span>
-              <div style={{ display: 'flex', alignItems: 'center', border: '1px solid var(--pwa-border)', borderRadius: 'var(--pwa-radius-sm)', overflow: 'hidden' }}>
-                <button
-                  type="button"
-                  onClick={() => onQuantityChange(quantity - 1)}
-                  style={{ fontFamily: 'var(--pwa-font-body)', fontSize: '16px', color: 'var(--pwa-text)', backgroundColor: 'var(--pwa-surface-secondary)', border: 'none', borderRight: '1px solid var(--pwa-border)', cursor: 'pointer', padding: '6px 12px', lineHeight: 1 }}
-                >
-                  −
-                </button>
-                <span style={{ fontFamily: 'var(--pwa-font-body)', fontSize: '14px', fontWeight: 600, color: 'var(--pwa-text)', padding: '6px 16px', minWidth: '40px', textAlign: 'center' }}>
-                  {quantity}
-                </span>
-                <button
-                  type="button"
-                  onClick={() => onQuantityChange(quantity + 1)}
-                  style={{ fontFamily: 'var(--pwa-font-body)', fontSize: '16px', color: 'var(--pwa-text)', backgroundColor: 'var(--pwa-surface-secondary)', border: 'none', borderLeft: '1px solid var(--pwa-border)', cursor: 'pointer', padding: '6px 12px', lineHeight: 1 }}
-                >
-                  +
-                </button>
-              </div>
-            </div>
+            {/* Quantity + CTA — only when orders enabled */}
+            {ordersEnabled && (
+              <>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '16px' }}>
+                  <span style={{ fontFamily: 'var(--pwa-font-body)', fontSize: '13px', fontWeight: 500, color: 'var(--pwa-text)' }}>
+                    Cantidad:
+                  </span>
+                  <div style={{ display: 'flex', alignItems: 'center', border: '1px solid var(--pwa-border)', borderRadius: 'var(--pwa-radius-sm)', overflow: 'hidden' }}>
+                    <button
+                      type="button"
+                      onClick={() => onQuantityChange(quantity - 1)}
+                      style={{ fontFamily: 'var(--pwa-font-body)', fontSize: '16px', color: 'var(--pwa-text)', backgroundColor: 'var(--pwa-surface-secondary)', border: 'none', borderRight: '1px solid var(--pwa-border)', cursor: 'pointer', padding: '6px 12px', lineHeight: 1 }}
+                    >
+                      −
+                    </button>
+                    <span style={{ fontFamily: 'var(--pwa-font-body)', fontSize: '14px', fontWeight: 600, color: 'var(--pwa-text)', padding: '6px 16px', minWidth: '40px', textAlign: 'center' }}>
+                      {quantity}
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => onQuantityChange(quantity + 1)}
+                      style={{ fontFamily: 'var(--pwa-font-body)', fontSize: '16px', color: 'var(--pwa-text)', backgroundColor: 'var(--pwa-surface-secondary)', border: 'none', borderLeft: '1px solid var(--pwa-border)', cursor: 'pointer', padding: '6px 12px', lineHeight: 1 }}
+                    >
+                      +
+                    </button>
+                  </div>
+                </div>
 
-            {/* CTA — "Agregar al carrito" (filled, dark) */}
-            <button
-              type="button"
-              disabled={!canAddToCart}
-              onClick={onAddToCart}
-              style={{
-                fontFamily: 'var(--pwa-font-body)',
-                fontSize: '13px',
-                fontWeight: 600,
-                color: 'var(--pwa-bg)',
-                backgroundColor: canAddToCart ? 'var(--pwa-accent)' : 'var(--pwa-text-secondary)',
-                border: 'none',
-                borderRadius: 'var(--pwa-radius-button)',
-                padding: '13px 24px',
-                width: '100%',
-                cursor: canAddToCart ? 'pointer' : 'not-allowed',
-                opacity: canAddToCart ? 1 : 0.4,
-                transition: 'all 0.15s',
-                marginBottom: '24px',
-              }}
-            >
-              {addedFeedback ? '¡Añadido al carrito!' : canAddToCart ? 'Agregar al carrito' : 'Selecciona una opción'}
-            </button>
+                <button
+                  type="button"
+                  disabled={!canAddToCart}
+                  onClick={onAddToCart}
+                  style={{
+                    fontFamily: 'var(--pwa-font-body)',
+                    fontSize: '13px',
+                    fontWeight: 600,
+                    color: 'var(--pwa-bg)',
+                    backgroundColor: canAddToCart ? 'var(--pwa-accent)' : 'var(--pwa-text-secondary)',
+                    border: 'none',
+                    borderRadius: 'var(--pwa-radius-button)',
+                    padding: '13px 24px',
+                    width: '100%',
+                    cursor: canAddToCart ? 'pointer' : 'not-allowed',
+                    opacity: canAddToCart ? 1 : 0.4,
+                    transition: 'all 0.15s',
+                    marginBottom: '24px',
+                  }}
+                >
+                  {addedFeedback ? '¡Añadido al carrito!' : canAddToCart ? 'Agregar al carrito' : 'Selecciona una opción'}
+                </button>
+              </>
+            )}
 
             {/* Description — regular weight, readable, compact */}
             {product.description && (

@@ -37,6 +37,7 @@ const NeoLuxuryProductSkin: React.FC<ProductPageProps> = (props) => {
     showPrices,
     currency,
     companyName,
+    ordersEnabled,
   } = props;
 
   const { isMobile } = useTheme();
@@ -268,60 +269,63 @@ const NeoLuxuryProductSkin: React.FC<ProductPageProps> = (props) => {
               </div>
             )}
 
-            {/* Quantity — dark controls, accent color on +/– */}
-            <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '20px' }}>
-              <span style={{ fontFamily: 'var(--pwa-font-body)', fontSize: '9px', letterSpacing: '0.14em', textTransform: 'uppercase', fontWeight: 700, color: 'var(--pwa-text-secondary)' }}>
-                Cantidad
-              </span>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0', border: '1px solid var(--pwa-border)', borderRadius: 'var(--pwa-radius-md)', overflow: 'hidden' }}>
-                <button
-                  type="button"
-                  onClick={() => onQuantityChange(quantity - 1)}
-                  style={{ fontFamily: 'var(--pwa-font-body)', fontSize: '18px', color: 'var(--pwa-accent)', background: 'var(--pwa-card)', border: 'none', cursor: 'pointer', padding: '8px 14px', lineHeight: 1 }}
-                >
-                  −
-                </button>
-                <span style={{ fontFamily: 'var(--pwa-font-body)', fontSize: '14px', fontWeight: 600, color: 'var(--pwa-text)', padding: '8px 14px', backgroundColor: 'var(--pwa-bg)', minWidth: '32px', textAlign: 'center' }}>
-                  {quantity}
-                </span>
-                <button
-                  type="button"
-                  onClick={() => onQuantityChange(quantity + 1)}
-                  style={{ fontFamily: 'var(--pwa-font-body)', fontSize: '18px', color: 'var(--pwa-accent)', background: 'var(--pwa-card)', border: 'none', cursor: 'pointer', padding: '8px 14px', lineHeight: 1 }}
-                >
-                  +
-                </button>
-              </div>
-            </div>
+            {/* Quantity + CTA — only when orders enabled */}
+            {ordersEnabled && (
+              <>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '20px' }}>
+                  <span style={{ fontFamily: 'var(--pwa-font-body)', fontSize: '9px', letterSpacing: '0.14em', textTransform: 'uppercase', fontWeight: 700, color: 'var(--pwa-text-secondary)' }}>
+                    Cantidad
+                  </span>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0', border: '1px solid var(--pwa-border)', borderRadius: 'var(--pwa-radius-md)', overflow: 'hidden' }}>
+                    <button
+                      type="button"
+                      onClick={() => onQuantityChange(quantity - 1)}
+                      style={{ fontFamily: 'var(--pwa-font-body)', fontSize: '18px', color: 'var(--pwa-accent)', background: 'var(--pwa-card)', border: 'none', cursor: 'pointer', padding: '8px 14px', lineHeight: 1 }}
+                    >
+                      −
+                    </button>
+                    <span style={{ fontFamily: 'var(--pwa-font-body)', fontSize: '14px', fontWeight: 600, color: 'var(--pwa-text)', padding: '8px 14px', backgroundColor: 'var(--pwa-bg)', minWidth: '32px', textAlign: 'center' }}>
+                      {quantity}
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => onQuantityChange(quantity + 1)}
+                      style={{ fontFamily: 'var(--pwa-font-body)', fontSize: '18px', color: 'var(--pwa-accent)', background: 'var(--pwa-card)', border: 'none', cursor: 'pointer', padding: '8px 14px', lineHeight: 1 }}
+                    >
+                      +
+                    </button>
+                  </div>
+                </div>
 
-            {/* CTA — gradient accent background, glowing effect, full width */}
-            <button
-              type="button"
-              disabled={!canAddToCart}
-              onClick={onAddToCart}
-              style={{
-                fontFamily: 'var(--pwa-font-body)',
-                fontSize: '11px',
-                letterSpacing: '0.18em',
-                textTransform: 'uppercase',
-                fontWeight: 700,
-                color: 'var(--pwa-bg)',
-                background: canAddToCart
-                  ? 'linear-gradient(135deg, var(--pwa-accent) 0%, var(--pwa-text-secondary) 100%)'
-                  : 'var(--pwa-card)',
-                border: 'none',
-                borderRadius: 'var(--pwa-radius-button)',
-                padding: '16px 24px',
-                width: '100%',
-                cursor: canAddToCart ? 'pointer' : 'not-allowed',
-                opacity: canAddToCart ? 1 : 0.4,
-                boxShadow: canAddToCart ? `0 0 20px var(--pwa-accent), var(--pwa-shadow-lg)` : 'none',
-                transition: 'all 0.2s',
-                marginBottom: '28px',
-              }}
-            >
-              {addedFeedback ? '¡Añadido!' : canAddToCart ? 'Añadir al carrito' : 'Selecciona una opción'}
-            </button>
+                <button
+                  type="button"
+                  disabled={!canAddToCart}
+                  onClick={onAddToCart}
+                  style={{
+                    fontFamily: 'var(--pwa-font-body)',
+                    fontSize: '11px',
+                    letterSpacing: '0.18em',
+                    textTransform: 'uppercase',
+                    fontWeight: 700,
+                    color: 'var(--pwa-bg)',
+                    background: canAddToCart
+                      ? 'linear-gradient(135deg, var(--pwa-accent) 0%, var(--pwa-text-secondary) 100%)'
+                      : 'var(--pwa-card)',
+                    border: 'none',
+                    borderRadius: 'var(--pwa-radius-button)',
+                    padding: '16px 24px',
+                    width: '100%',
+                    cursor: canAddToCart ? 'pointer' : 'not-allowed',
+                    opacity: canAddToCart ? 1 : 0.4,
+                    boxShadow: canAddToCart ? `0 0 20px var(--pwa-accent), var(--pwa-shadow-lg)` : 'none',
+                    transition: 'all 0.2s',
+                    marginBottom: '28px',
+                  }}
+                >
+                  {addedFeedback ? '¡Añadido!' : canAddToCart ? 'Añadir al carrito' : 'Selecciona una opción'}
+                </button>
+              </>
+            )}
 
             {/* Description — Space Grotesk, text-secondary color */}
             {product.description && (

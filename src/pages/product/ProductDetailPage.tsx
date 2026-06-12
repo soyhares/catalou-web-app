@@ -33,6 +33,8 @@ export default function ProductDetailPage() {
   const navigate = useNavigate();
   const { add: addToCart } = useCart(slug);
 
+  const ordersEnabled = branding.featuresEnabled?.orders === true;
+
   const [product, setProduct] = useState<ProductPublic | null>(null);
   const [showPrices, setShowPrices] = useState(true);
   const [loading, setLoading] = useState(true);
@@ -107,16 +109,20 @@ export default function ProductDetailPage() {
           {branding.companyName}
         </span>
 
-        {/* Cart */}
-        <button
-          type="button"
-          onClick={() => navigate('/cart')}
-          style={{ color: 'var(--pwa-text)', opacity: 0.6 }}
-          className="hover:opacity-100 transition-opacity"
-          aria-label="Ver carrito"
-        >
-          <IconBag />
-        </button>
+        {/* Cart — only when orders enabled */}
+        {ordersEnabled ? (
+          <button
+            type="button"
+            onClick={() => navigate('/cart')}
+            style={{ color: 'var(--pwa-text)', opacity: 0.6 }}
+            className="hover:opacity-100 transition-opacity"
+            aria-label="Ver carrito"
+          >
+            <IconBag />
+          </button>
+        ) : (
+          <span style={{ width: '18px' }} />
+        )}
       </header>
 
       {/* Loading state */}
@@ -337,75 +343,77 @@ export default function ProductDetailPage() {
                 </div>
               )}
 
-              {/* Quantity */}
-              <div className="flex items-center gap-4 mb-5">
-                <span
-                  className="uppercase tracking-[0.14em]"
-                  style={{ fontSize: '9px', fontWeight: 700, color: 'var(--pwa-text-secondary)', opacity: 0.5 }}
-                >
-                  Cantidad
-                </span>
-                <div className="flex items-center gap-4" style={{ borderBottom: '1px solid var(--pwa-border)', paddingBottom: '4px' }}>
-                  <button
-                    type="button"
-                    onClick={() => setQuantity((q) => Math.max(1, q - 1))}
-                    className="opacity-50 hover:opacity-100 transition-opacity text-lg leading-none"
-                    style={{ color: 'var(--pwa-text)' }}
-                  >
-                    −
-                  </button>
-                  <span
-                    className="tabular-nums"
-                    style={{ fontSize: '14px', color: 'var(--pwa-text)', minWidth: '20px', textAlign: 'center' }}
-                  >
-                    {quantity}
-                  </span>
-                  <button
-                    type="button"
-                    onClick={() => setQuantity((q) => q + 1)}
-                    className="opacity-50 hover:opacity-100 transition-opacity text-lg leading-none"
-                    style={{ color: 'var(--pwa-text)' }}
-                  >
-                    +
-                  </button>
-                </div>
-              </div>
+              {/* Quantity + Add to cart — only when orders enabled */}
+              {ordersEnabled && (
+                <>
+                  <div className="flex items-center gap-4 mb-5">
+                    <span
+                      className="uppercase tracking-[0.14em]"
+                      style={{ fontSize: '9px', fontWeight: 700, color: 'var(--pwa-text-secondary)', opacity: 0.5 }}
+                    >
+                      Cantidad
+                    </span>
+                    <div className="flex items-center gap-4" style={{ borderBottom: '1px solid var(--pwa-border)', paddingBottom: '4px' }}>
+                      <button
+                        type="button"
+                        onClick={() => setQuantity((q) => Math.max(1, q - 1))}
+                        className="opacity-50 hover:opacity-100 transition-opacity text-lg leading-none"
+                        style={{ color: 'var(--pwa-text)' }}
+                      >
+                        −
+                      </button>
+                      <span
+                        className="tabular-nums"
+                        style={{ fontSize: '14px', color: 'var(--pwa-text)', minWidth: '20px', textAlign: 'center' }}
+                      >
+                        {quantity}
+                      </span>
+                      <button
+                        type="button"
+                        onClick={() => setQuantity((q) => q + 1)}
+                        className="opacity-50 hover:opacity-100 transition-opacity text-lg leading-none"
+                        style={{ color: 'var(--pwa-text)' }}
+                      >
+                        +
+                      </button>
+                    </div>
+                  </div>
 
-              {/* Add to cart CTA */}
-              <motion.button
-                type="button"
-                disabled={!canAddToCart}
-                onClick={() => {
-                  if (!canAddToCart || !product) return;
-                  void addToCart({
-                    companySlug: slug,
-                    productId: product.id,
-                    productName: product.name,
-                    variantTypeId: product.variantType?.id ?? null,
-                    variantTypeName: product.variantType?.name ?? null,
-                    variantValueId: selectedVariant?.id ?? null,
-                    variantValueName: selectedVariant?.value ?? null,
-                    quantity,
-                    unitPrice: parseFloat(computedPrice() ?? '0'),
-                  }).then(() => {
-                    // 'cart-updated' is dispatched automatically by useCart.add()
-                    window.dispatchEvent(new CustomEvent('cart-item-added', { detail: { name: product.name } }));
-                    setAddedFeedback(true);
-                    setTimeout(() => setAddedFeedback(false), 2000);
-                  });
-                }}
-                className="w-full py-4 uppercase tracking-[0.2em] text-white disabled:opacity-30 disabled:cursor-not-allowed transition-opacity hover:opacity-90"
-                style={{
-                  backgroundColor: 'var(--pwa-accent)',
-                  borderRadius: 'var(--pwa-radius-button)',
-                  fontSize: '10px',
-                  fontWeight: 700,
-                  fontFamily: 'var(--pwa-font-body)',
-                }}
-                whileTap={{ scale: 0.98 }}
-              >
-                {addedFeedback ? '¡Añadido al carrito!' : canAddToCart ? 'Añadir al carrito' : 'Selecciona una opción'}
-              </motion.button>
+                  <motion.button
+                    type="button"
+                    disabled={!canAddToCart}
+                    onClick={() => {
+                      if (!canAddToCart || !product) return;
+                      void addToCart({
+                        companySlug: slug,
+                        productId: product.id,
+                        productName: product.name,
+                        variantTypeId: product.variantType?.id ?? null,
+                        variantTypeName: product.variantType?.name ?? null,
+                        variantValueId: selectedVariant?.id ?? null,
+                        variantValueName: selectedVariant?.value ?? null,
+                        quantity,
+                        unitPrice: parseFloat(computedPrice() ?? '0'),
+                      }).then(() => {
+                        window.dispatchEvent(new CustomEvent('cart-item-added', { detail: { name: product.name } }));
+                        setAddedFeedback(true);
+                        setTimeout(() => setAddedFeedback(false), 2000);
+                      });
+                    }}
+                    className="w-full py-4 uppercase tracking-[0.2em] text-white disabled:opacity-30 disabled:cursor-not-allowed transition-opacity hover:opacity-90"
+                    style={{
+                      backgroundColor: 'var(--pwa-accent)',
+                      borderRadius: 'var(--pwa-radius-button)',
+                      fontSize: '10px',
+                      fontWeight: 700,
+                      fontFamily: 'var(--pwa-font-body)',
+                    }}
+                    whileTap={{ scale: 0.98 }}
+                  >
+                    {addedFeedback ? '¡Añadido al carrito!' : canAddToCart ? 'Añadir al carrito' : 'Selecciona una opción'}
+                  </motion.button>
+                </>
+              )}
 
               {/* Description */}
               {product.description && (

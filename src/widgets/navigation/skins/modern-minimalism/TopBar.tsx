@@ -6,6 +6,7 @@ const ModernTopBar: React.FC<NavigationProps> = ({
   logoUrl,
   activeRoute,
   cartCount,
+  ordersEnabled,
   links,
   onNavigate,
 }) => {
@@ -66,48 +67,48 @@ const ModernTopBar: React.FC<NavigationProps> = ({
         })}
       </nav>
 
-      {/* Right: search icon + cart + hamburger */}
+      {/* Right: cart (only when orders enabled) */}
       <div style={{ flex: '0 0 auto', display: 'flex', alignItems: 'center', gap: '8px' }}>
-        {/* Cart */}
-        <button
-          type="button"
-          onClick={() => onNavigate('/cart')}
-          aria-label={`Carrito${cartCount > 0 ? `, ${cartCount} artículos` : ''}`}
-          style={{
-            background: 'none',
-            border: 'none',
-            cursor: 'pointer',
-            position: 'relative',
-            color: 'var(--pwa-text)',
-            padding: '4px',
-            display: 'flex',
-            alignItems: 'center',
-            fontSize: '18px',
-          }}
-        >
-          <span aria-hidden="true">🛍</span>
-          {cartCount > 0 && (
-            <span style={{
-              position: 'absolute',
-              top: 0,
-              right: 0,
-              minWidth: '15px',
-              height: '15px',
-              borderRadius: '50%',
-              backgroundColor: 'var(--pwa-accent)',
-              color: 'var(--pwa-on-accent)',
-              fontSize: '9px',
-              fontWeight: 700,
+        {ordersEnabled && (
+          <button
+            type="button"
+            onClick={() => onNavigate('/cart')}
+            aria-label={`Carrito${cartCount > 0 ? `, ${cartCount} artículos` : ''}`}
+            style={{
+              background: 'none',
+              border: 'none',
+              cursor: 'pointer',
+              position: 'relative',
+              color: 'var(--pwa-text)',
+              padding: '4px',
               display: 'flex',
               alignItems: 'center',
-              justifyContent: 'center',
-              padding: '0 3px',
-            }}>
-              {cartCount > 9 ? '9+' : cartCount}
-            </span>
-          )}
-        </button>
-
+              fontSize: '18px',
+            }}
+          >
+            <span aria-hidden="true">🛍</span>
+            {cartCount > 0 && (
+              <span style={{
+                position: 'absolute',
+                top: 0,
+                right: 0,
+                minWidth: '15px',
+                height: '15px',
+                borderRadius: '50%',
+                backgroundColor: 'var(--pwa-accent)',
+                color: 'var(--pwa-on-accent)',
+                fontSize: '9px',
+                fontWeight: 700,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                padding: '0 3px',
+              }}>
+                {cartCount > 9 ? '9+' : cartCount}
+              </span>
+            )}
+          </button>
+        )}
       </div>
     </header>
   );

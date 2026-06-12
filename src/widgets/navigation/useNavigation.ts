@@ -11,6 +11,7 @@ export interface NavLink {
 export interface NavigationProps {
   activeRoute: string;
   cartCount: number;
+  ordersEnabled: boolean;
   companyName: string;
   logoUrl: string | null;
   isDrawerOpen: boolean;
@@ -20,13 +21,15 @@ export interface NavigationProps {
   onNavigate: (path: string) => void;
 }
 
-const LINKS: NavLink[] = [
+const BASE_LINKS: NavLink[] = [
   { label: 'Inicio', path: '/catalog' },
+  { label: 'Citas', path: '/appointments' },
   { label: 'Nosotros', path: '/about' },
 ];
 
 function resolveActiveRoute(pathname: string): string {
   if (pathname.startsWith('/products/')) return '/catalog';
+  if (pathname === '/book') return '/appointments';
   return pathname;
 }
 
@@ -55,13 +58,20 @@ export function useNavigation(): NavigationProps {
     [navigate],
   );
 
+  const bookingsEnabled = branding.featuresEnabled?.bookings === true;
+  const ordersEnabled = branding.featuresEnabled?.orders === true;
+  const links = bookingsEnabled
+    ? BASE_LINKS
+    : BASE_LINKS.filter((l) => l.path !== '/appointments');
+
   return {
     activeRoute: resolveActiveRoute(location.pathname),
     cartCount,
+    ordersEnabled,
     companyName: branding.companyName,
     logoUrl: branding.logoUrl,
     isDrawerOpen,
-    links: LINKS,
+    links,
     onToggleDrawer,
     onCloseDrawer,
     onNavigate,

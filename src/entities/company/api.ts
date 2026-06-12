@@ -13,6 +13,8 @@ export interface BrandingData {
   servicePercentage: number;
   associationName?: string | null;
   currency: 'USD' | 'CRC';
+  vapidPublicKey: string | null;
+  featuresEnabled: Record<string, boolean>;
 }
 
 export async function getBranding(slug: string): Promise<BrandingData> {
