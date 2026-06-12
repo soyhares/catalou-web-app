@@ -164,9 +164,11 @@ export function BookingForm({ slug, onSuccess, onCancel }: BookingFormProps) {
       // Get visitor's current push subscription endpoint (if any)
       let visitorPushEndpoint: string | undefined;
       try {
-        const reg = await navigator.serviceWorker.ready;
-        const sub = await reg.pushManager.getSubscription();
-        visitorPushEndpoint = sub?.endpoint;
+        const reg = await navigator.serviceWorker?.getRegistration();
+        if (reg) {
+          const sub = await reg.pushManager.getSubscription();
+          visitorPushEndpoint = sub?.endpoint;
+        }
       } catch {
         // not supported or no subscription — omit silently
       }
