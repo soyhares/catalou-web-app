@@ -35,12 +35,12 @@ export function usePushSubscription(): PushSubscriptionHook {
     if (!isSupported) return;
     setPermission(Notification.permission);
 
-    // Check if already subscribed
-    void navigator.serviceWorker.ready.then((reg) =>
-      reg.pushManager.getSubscription().then((sub) => {
+    void navigator.serviceWorker.getRegistration().then((reg) => {
+      if (!reg) return;
+      void reg.pushManager.getSubscription().then((sub) => {
         setIsSubscribed(sub !== null);
-      }),
-    );
+      });
+    });
   }, [isSupported]);
 
   const subscribe = async (): Promise<void> => {
@@ -50,7 +50,9 @@ export function usePushSubscription(): PushSubscriptionHook {
     setPermission(perm);
     if (perm !== 'granted') return;
 
-    const reg = await navigator.serviceWorker.ready;
+    const reg = await navigator.serviceWorker.getRegistration();
+    if (!reg) return;
+
     const subscription = await reg.pushManager.subscribe({
       userVisibleOnly: true,
       applicationServerKey: urlBase64ToUint8Array(vapidPublicKey).buffer as ArrayBuffer,
@@ -72,7 +74,9 @@ export function usePushSubscription(): PushSubscriptionHook {
   const unsubscribe = async (): Promise<void> => {
     if (!isSupported) return;
 
-    const reg = await navigator.serviceWorker.ready;
+    const reg = await navigator.serviceWorker.getRegistration();
+    if (!reg) return;
+
     const subscription = await reg.pushManager.getSubscription();
     if (!subscription) return;
 
