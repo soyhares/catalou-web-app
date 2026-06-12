@@ -1,114 +1,7 @@
-import { useState } from 'react';
-import { AnimatePresence, motion } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
 import { useBranding } from '@app/BrandingContext';
-import { BookingForm } from '@features/booking/BookingForm';
-import { BookingConfirmation } from '@features/booking/BookingConfirmation';
-import { PushPermissionModal } from '@features/push-notifications/PushPermissionModal';
 import { AppointmentCard } from '@features/appointments/AppointmentCard';
 import { useAppointments } from '@features/appointments/useAppointments';
-import { saveBookingRef } from '@shared/lib/bookings-storage';
-import type { BookingConfirmation as BookingConfirmationType } from '@features/booking/useBooking';
-
-function BookingModal({ slug, onClose, onCreated }: { slug: string; onClose: () => void; onCreated: () => void }) {
-  const [confirmation, setConfirmation] = useState<BookingConfirmationType | null>(null);
-  const [showPushPrompt, setShowPushPrompt] = useState(false);
-
-  function handleSuccess(booking: BookingConfirmationType) {
-    saveBookingRef(slug, { id: booking.id, createdAt: new Date().toISOString() });
-    setConfirmation(booking);
-  }
-
-  if (showPushPrompt) {
-    return <PushPermissionModal isOpen slug={slug} onClose={() => { onCreated(); onClose(); }} />;
-  }
-
-  return (
-    <AnimatePresence>
-      <motion.div
-        key="booking-backdrop"
-        style={{
-          position: 'fixed',
-          inset: 0,
-          zIndex: 9999,
-          display: 'flex',
-          alignItems: 'flex-end',
-          justifyContent: 'center',
-          backgroundColor: 'rgba(0,0,0,0.55)',
-        }}
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
-        transition={{ duration: 0.2 }}
-        onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}
-      >
-        <motion.div
-          key="booking-card"
-          style={{
-            width: '100%',
-            maxWidth: '512px',
-            marginLeft: 'auto',
-            marginRight: 'auto',
-            borderRadius: '16px 16px 0 0',
-            overflowY: 'auto',
-            backgroundColor: 'var(--pwa-surface)',
-            maxHeight: '92dvh',
-          }}
-          initial={{ y: 48, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          exit={{ y: 48, opacity: 0 }}
-          transition={{ duration: 0.3, ease: 'easeOut' }}
-        >
-          {!confirmation && (
-            <div
-              style={{
-                position: 'sticky',
-                top: 0,
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                padding: '16px 20px',
-                borderBottom: '1px solid var(--pwa-border)',
-                backgroundColor: 'var(--pwa-surface)',
-              }}
-            >
-              <h2 style={{
-                fontSize: '16px',
-                fontWeight: 600,
-                fontFamily: 'var(--pwa-font-heading)',
-                color: 'var(--pwa-text)',
-                margin: 0,
-              }}>
-                Agendar consulta
-              </h2>
-              <button
-                type="button"
-                onClick={onClose}
-                aria-label="Cerrar"
-                style={{
-                  background: 'none',
-                  border: 'none',
-                  cursor: 'pointer',
-                  padding: '6px',
-                  color: 'var(--pwa-text-secondary)',
-                  borderRadius: '8px',
-                }}
-              >
-                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                  <path d="M3 3L13 13M13 3L3 13" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-                </svg>
-              </button>
-            </div>
-          )}
-          <div style={{ padding: '20px' }}>
-            {confirmation
-              ? <BookingConfirmation booking={confirmation} onClose={() => setShowPushPrompt(true)} />
-              : <BookingForm slug={slug} onSuccess={handleSuccess} onCancel={onClose} />}
-          </div>
-        </motion.div>
-      </motion.div>
-    </AnimatePresence>
-  );
-}
 
 function SkeletonCard() {
   return (
@@ -127,18 +20,11 @@ function SkeletonCard() {
 }
 
 export default function AppointmentsPage() {
+  const navigate = useNavigate();
   const { slug } = useBranding();
   const { bookings, isLoading, refetch } = useAppointments(slug);
-  const [showBooking, setShowBooking] = useState(false);
 
-  function handleCancel(id: string) {
-    refetch();
-    // optimistically mark as rejected in local state without full refetch
-    void id;
-    refetch();
-  }
-
-  function handleCreated() {
+  function handleCancel() {
     refetch();
   }
 
@@ -195,7 +81,7 @@ export default function AppointmentsPage() {
           </p>
           <button
             type="button"
-            onClick={() => setShowBooking(true)}
+            onClick={() => navigate('/book')}
             style={{
               backgroundColor: 'var(--pwa-accent)',
               color: 'var(--pwa-on-accent)',
@@ -224,7 +110,7 @@ export default function AppointmentsPage() {
       {!isLoading && bookings.length > 0 && (
         <button
           type="button"
-          onClick={() => setShowBooking(true)}
+          onClick={() => navigate('/book')}
           style={{
             display: 'block',
             width: '100%',
@@ -244,15 +130,6 @@ export default function AppointmentsPage() {
         >
           Nueva cita
         </button>
-      )}
-
-      {/* Booking modal */}
-      {showBooking && (
-        <BookingModal
-          slug={slug}
-          onClose={() => setShowBooking(false)}
-          onCreated={handleCreated}
-        />
       )}
 
       {/* Pulse keyframe */}

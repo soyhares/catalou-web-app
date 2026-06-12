@@ -143,6 +143,53 @@ body {
   box-shadow: 0 0 0 3px rgba(239,68,68,0.15);
 }
 
+/* ── Per-skin booking form overrides ────────────────────────────────────── */
+
+/* luxury-minimalism: editorial underline-only inputs */
+[data-pwa-theme="luxury-minimalism"] .pwa-book-form .pwa-input {
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid var(--pwa-border);
+  border-radius: 0;
+  padding: 10px 0;
+  font-size: 1rem;
+}
+[data-pwa-theme="luxury-minimalism"] .pwa-book-form .pwa-input:focus {
+  border-bottom-color: var(--pwa-accent);
+  box-shadow: none;
+}
+[data-pwa-theme="luxury-minimalism"] .pwa-book-form .pwa-input--error {
+  border-color: transparent;
+  border-bottom-color: #8B3A3A;
+}
+[data-pwa-theme="luxury-minimalism"] .pwa-book-form label {
+  font-size: 8px !important;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  font-weight: 600;
+  color: var(--pwa-text-secondary) !important;
+}
+
+/* neo-luxury: dark glowing inputs */
+[data-pwa-theme="neo-luxury"] .pwa-book-form .pwa-input {
+  background: rgba(255, 255, 255, 0.04);
+  border-color: rgba(167, 139, 250, 0.22);
+}
+[data-pwa-theme="neo-luxury"] .pwa-book-form .pwa-input:focus {
+  border-color: #E879F9;
+  box-shadow: 0 0 0 3px rgba(232, 121, 249, 0.12), 0 0 20px rgba(232, 121, 249, 0.06);
+}
+[data-pwa-theme="neo-luxury"] .pwa-book-form .pwa-input::placeholder {
+  color: rgba(167, 139, 250, 0.35);
+  opacity: 1;
+}
+[data-pwa-theme="neo-luxury"] .pwa-book-form label {
+  font-size: 9px !important;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  font-weight: 600;
+}
+
 @keyframes pwa-slideUp {
   from { transform: translateY(100%); opacity: 0; }
   to   { transform: translateY(0);    opacity: 1; }

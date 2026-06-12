@@ -25,12 +25,10 @@ const STATUS_COLORS: Record<AppointmentItem['status'], { bg: string; color: stri
 };
 
 function formatDate(dateStr: string): string {
-  const date = new Date(`${dateStr}T12:00:00`);
-  return date.toLocaleDateString('es-CR', {
-    weekday: 'long',
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
+  const bare = dateStr.split('T')[0];
+  const [y, m, d] = bare.split('-').map(Number);
+  return new Date(y, m - 1, d).toLocaleDateString('es-CR', {
+    weekday: 'long', year: 'numeric', month: 'long', day: 'numeric',
   });
 }
 

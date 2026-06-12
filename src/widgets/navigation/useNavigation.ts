@@ -28,6 +28,7 @@ const LINKS: NavLink[] = [
 
 function resolveActiveRoute(pathname: string): string {
   if (pathname.startsWith('/products/')) return '/catalog';
+  if (pathname === '/book') return '/appointments';
   return pathname;
 }
 
