@@ -6,6 +6,7 @@ const LuxuryTopBar: React.FC<NavigationProps> = ({
   logoUrl,
   activeRoute,
   cartCount,
+  ordersEnabled,
   links,
   onNavigate,
 }) => {
@@ -80,41 +81,42 @@ const LuxuryTopBar: React.FC<NavigationProps> = ({
         })}
       </nav>
 
-      {/* Right: Cart + Hamburger */}
+      {/* Right: Cart (only when orders enabled) */}
       <div style={{ flex: '0 0 auto', minWidth: '120px', display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: '20px' }}>
-        <button
-          type="button"
-          onClick={() => onNavigate('/cart')}
-          style={{
-            background: 'none',
-            border: 'none',
-            cursor: 'pointer',
-            fontFamily: 'var(--pwa-font-body)',
-            fontSize: '9px',
-            textTransform: 'uppercase',
-            letterSpacing: '0.16em',
-            color: activeRoute === '/cart' ? 'var(--pwa-accent)' : 'var(--pwa-text)',
-            opacity: activeRoute === '/cart' ? 1 : 0.55,
-            fontWeight: 600,
-            display: 'flex',
-            alignItems: 'center',
-            gap: '6px',
-            padding: 0,
-          }}
-        >
-          Carrito
-          {cartCount > 0 && (
-            <span style={{
-              fontStyle: 'italic',
-              fontFamily: 'var(--pwa-font-heading)',
-              color: 'var(--pwa-accent)',
-              fontSize: '10px',
-            }}>
-              ({cartCount})
-            </span>
-          )}
-        </button>
-
+        {ordersEnabled && (
+          <button
+            type="button"
+            onClick={() => onNavigate('/cart')}
+            style={{
+              background: 'none',
+              border: 'none',
+              cursor: 'pointer',
+              fontFamily: 'var(--pwa-font-body)',
+              fontSize: '9px',
+              textTransform: 'uppercase',
+              letterSpacing: '0.16em',
+              color: activeRoute === '/cart' ? 'var(--pwa-accent)' : 'var(--pwa-text)',
+              opacity: activeRoute === '/cart' ? 1 : 0.55,
+              fontWeight: 600,
+              display: 'flex',
+              alignItems: 'center',
+              gap: '6px',
+              padding: 0,
+            }}
+          >
+            Carrito
+            {cartCount > 0 && (
+              <span style={{
+                fontStyle: 'italic',
+                fontFamily: 'var(--pwa-font-heading)',
+                color: 'var(--pwa-accent)',
+                fontSize: '10px',
+              }}>
+                ({cartCount})
+              </span>
+            )}
+          </button>
+        )}
       </div>
     </header>
   );

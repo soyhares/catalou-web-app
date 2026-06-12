@@ -11,6 +11,7 @@ export interface NavLink {
 export interface NavigationProps {
   activeRoute: string;
   cartCount: number;
+  ordersEnabled: boolean;
   companyName: string;
   logoUrl: string | null;
   isDrawerOpen: boolean;
@@ -58,6 +59,7 @@ export function useNavigation(): NavigationProps {
   );
 
   const bookingsEnabled = branding.featuresEnabled?.bookings === true;
+  const ordersEnabled = branding.featuresEnabled?.orders === true;
   const links = bookingsEnabled
     ? BASE_LINKS
     : BASE_LINKS.filter((l) => l.path !== '/appointments');
@@ -65,6 +67,7 @@ export function useNavigation(): NavigationProps {
   return {
     activeRoute: resolveActiveRoute(location.pathname),
     cartCount,
+    ordersEnabled,
     companyName: branding.companyName,
     logoUrl: branding.logoUrl,
     isDrawerOpen,

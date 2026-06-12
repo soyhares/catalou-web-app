@@ -44,6 +44,7 @@ const ModernMinimalismSkin: React.FC<CatalogPageProps> = ({
   searchQuery,
   isLoading,
   error,
+  ordersEnabled,
   cartCount: _cartCount,
   companyName: _companyName,
   logoUrl: _logoUrl,
@@ -400,26 +401,29 @@ const ModernMinimalismSkin: React.FC<CatalogPageProps> = ({
                     </p>
                   )}
 
-                  {/* Add to cart button */}
+                  {/* Add to cart / view more button */}
                   <button
                     type="button"
-                    onClick={(e) => { e.stopPropagation(); onQuote(product.id); }}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      if (ordersEnabled) { onQuote(product.id); } else { void navigate(`/products/${product.id}`); }
+                    }}
                     style={{
                       width: '100%',
                       fontFamily: 'var(--pwa-font-body)',
                       fontSize: '11px',
                       fontWeight: 600,
                       letterSpacing: '0.04em',
-                      color: 'var(--pwa-bg)',
-                      backgroundColor: 'var(--pwa-accent)',
-                      border: 'none',
+                      color: ordersEnabled ? 'var(--pwa-bg)' : 'var(--pwa-accent)',
+                      backgroundColor: ordersEnabled ? 'var(--pwa-accent)' : 'transparent',
+                      border: ordersEnabled ? 'none' : '1px solid var(--pwa-border)',
                       borderRadius: 'var(--pwa-radius-sm)',
                       padding: '7px 0',
                       cursor: 'pointer',
                       textAlign: 'center' as const,
                     }}
                   >
-                    Agregar
+                    {ordersEnabled ? 'Agregar' : 'Ver más'}
                   </button>
                 </div>
               </article>

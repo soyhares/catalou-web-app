@@ -29,6 +29,7 @@ const LuxuryMinimalismSkin: React.FC<CatalogPageProps> = ({
   searchQuery,
   isLoading,
   error,
+  ordersEnabled,
   cartCount,
   companyName,
   logoUrl,
@@ -99,35 +100,37 @@ const LuxuryMinimalismSkin: React.FC<CatalogPageProps> = ({
             </span>
           </div>
 
-          {/* Cart icon */}
-          <button
-            type="button"
-            onClick={onCartClick}
-            aria-label={`Carrito (${cartCount} artículos)`}
-            style={{ position: 'relative', color: 'var(--pwa-text)', background: 'none', border: 'none', cursor: 'pointer', padding: '4px' }}
-          >
-            <IconBag />
-            {cartCount > 0 && (
-              <span style={{
-                position: 'absolute',
-                top: '-2px',
-                right: '-2px',
-                backgroundColor: 'var(--pwa-accent)',
-                color: 'var(--pwa-bg)',
-                fontSize: '9px',
-                fontWeight: 600,
-                minWidth: '14px',
-                height: '14px',
-                borderRadius: '7px',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                padding: '0 2px',
-              }}>
-                {cartCount}
-              </span>
-            )}
-          </button>
+          {/* Cart icon — only when orders enabled */}
+          {ordersEnabled && (
+            <button
+              type="button"
+              onClick={onCartClick}
+              aria-label={`Carrito (${cartCount} artículos)`}
+              style={{ position: 'relative', color: 'var(--pwa-text)', background: 'none', border: 'none', cursor: 'pointer', padding: '4px' }}
+            >
+              <IconBag />
+              {cartCount > 0 && (
+                <span style={{
+                  position: 'absolute',
+                  top: '-2px',
+                  right: '-2px',
+                  backgroundColor: 'var(--pwa-accent)',
+                  color: 'var(--pwa-bg)',
+                  fontSize: '9px',
+                  fontWeight: 600,
+                  minWidth: '14px',
+                  height: '14px',
+                  borderRadius: '7px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  padding: '0 2px',
+                }}>
+                  {cartCount}
+                </span>
+              )}
+            </button>
+          )}
         </div>
 
         {/* Category chips */}
@@ -432,7 +435,10 @@ const LuxuryMinimalismSkin: React.FC<CatalogPageProps> = ({
                   )}
                   <button
                     type="button"
-                    onClick={(e) => { e.stopPropagation(); onQuote(product.id); }}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      if (ordersEnabled) { onQuote(product.id); } else { void navigate(`/products/${product.id}`); }
+                    }}
                     style={{
                       fontFamily: 'var(--pwa-font-body)',
                       fontSize: '9px',
@@ -447,7 +453,7 @@ const LuxuryMinimalismSkin: React.FC<CatalogPageProps> = ({
                       cursor: 'pointer',
                     }}
                   >
-                    Agregar
+                    {ordersEnabled ? 'Agregar' : 'Ver más'}
                   </button>
                 </div>
               </article>

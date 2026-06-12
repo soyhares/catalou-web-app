@@ -27,6 +27,12 @@ function BookingsGuard({ children }: { children: ReactNode }) {
   return <>{children}</>;
 }
 
+function OrdersGuard({ children }: { children: ReactNode }) {
+  const { branding } = useBranding();
+  if (!branding.featuresEnabled?.orders) return <Navigate to="/catalog" replace />;
+  return <>{children}</>;
+}
+
 function AnimatedRoutes() {
   const location = useLocation();
   return (
@@ -36,9 +42,9 @@ function AnimatedRoutes() {
           <Route path="/" element={<PageTransition><HeroPage /></PageTransition>} />
           <Route path="/catalog" element={<PageTransition><CatalogPage /></PageTransition>} />
           <Route path="/products/:id" element={<PageTransition><ProductDetailPage /></PageTransition>} />
-          <Route path="/cart" element={<PageTransition><CartPage /></PageTransition>} />
-          <Route path="/checkout" element={<PageTransition><CheckoutPage /></PageTransition>} />
-          <Route path="/order-confirmed" element={<PageTransition><OrderConfirmedPage /></PageTransition>} />
+          <Route path="/cart" element={<OrdersGuard><PageTransition><CartPage /></PageTransition></OrdersGuard>} />
+          <Route path="/checkout" element={<OrdersGuard><PageTransition><CheckoutPage /></PageTransition></OrdersGuard>} />
+          <Route path="/order-confirmed" element={<OrdersGuard><PageTransition><OrderConfirmedPage /></PageTransition></OrdersGuard>} />
           <Route path="/confirm-association" element={<PageTransition><ConfirmAssociationPage /></PageTransition>} />
           <Route path="/about" element={<PageTransition><AboutPage /></PageTransition>} />
           <Route path="/appointments" element={<BookingsGuard><PageTransition><AppointmentsPage /></PageTransition></BookingsGuard>} />

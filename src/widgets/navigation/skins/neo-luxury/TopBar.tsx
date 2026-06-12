@@ -5,6 +5,7 @@ const NeoLuxuryTopBar: React.FC<NavigationProps> = ({
   companyName,
   logoUrl,
   cartCount,
+  ordersEnabled,
   activeRoute,
   onNavigate,
 }) => {
@@ -66,47 +67,48 @@ const NeoLuxuryTopBar: React.FC<NavigationProps> = ({
         </span>
       </div>
 
-      {/* Cart icon right */}
+      {/* Cart icon right — only when orders enabled */}
       <div style={{ flex: '0 0 auto', display: 'flex', alignItems: 'center', gap: '12px' }}>
-        <button
-          type="button"
-          onClick={() => onNavigate('/cart')}
-          aria-label={`Carrito${cartCount > 0 ? `, ${cartCount} artículos` : ''}`}
-          style={{
-            background: 'none',
-            border: 'none',
-            cursor: 'pointer',
-            position: 'relative',
-            color: activeRoute === '/cart' ? 'var(--pwa-accent)' : 'var(--pwa-text-secondary)',
-            padding: '4px',
-            display: 'flex',
-            alignItems: 'center',
-          }}
-        >
-          <span style={{ fontSize: '18px' }} aria-hidden="true">◻</span>
-          {cartCount > 0 && (
-            <span style={{
-              position: 'absolute',
-              top: 0,
-              right: 0,
-              minWidth: '15px',
-              height: '15px',
-              borderRadius: '50%',
-              backgroundColor: 'var(--pwa-accent)',
-              color: 'var(--pwa-on-accent)',
-              fontSize: '9px',
-              fontWeight: 700,
+        {ordersEnabled && (
+          <button
+            type="button"
+            onClick={() => onNavigate('/cart')}
+            aria-label={`Carrito${cartCount > 0 ? `, ${cartCount} artículos` : ''}`}
+            style={{
+              background: 'none',
+              border: 'none',
+              cursor: 'pointer',
+              position: 'relative',
+              color: activeRoute === '/cart' ? 'var(--pwa-accent)' : 'var(--pwa-text-secondary)',
+              padding: '4px',
               display: 'flex',
               alignItems: 'center',
-              justifyContent: 'center',
-              padding: '0 3px',
-              boxShadow: '0 0 6px var(--pwa-accent)',
-            }}>
-              {cartCount > 9 ? '9+' : cartCount}
-            </span>
-          )}
-        </button>
-
+            }}
+          >
+            <span style={{ fontSize: '18px' }} aria-hidden="true">◻</span>
+            {cartCount > 0 && (
+              <span style={{
+                position: 'absolute',
+                top: 0,
+                right: 0,
+                minWidth: '15px',
+                height: '15px',
+                borderRadius: '50%',
+                backgroundColor: 'var(--pwa-accent)',
+                color: 'var(--pwa-on-accent)',
+                fontSize: '9px',
+                fontWeight: 700,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                padding: '0 3px',
+                boxShadow: '0 0 6px var(--pwa-accent)',
+              }}>
+                {cartCount > 9 ? '9+' : cartCount}
+              </span>
+            )}
+          </button>
+        )}
       </div>
     </header>
   );
