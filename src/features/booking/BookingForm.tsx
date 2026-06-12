@@ -155,11 +155,22 @@ export function BookingForm({ slug, onSuccess, onCancel }: BookingFormProps) {
     setSubmitError(null);
 
     try {
+      // Get visitor's current push subscription endpoint (if any)
+      let visitorPushEndpoint: string | undefined;
+      try {
+        const reg = await navigator.serviceWorker.ready;
+        const sub = await reg.pushManager.getSubscription();
+        visitorPushEndpoint = sub?.endpoint;
+      } catch {
+        // not supported or no subscription — omit silently
+      }
+
       const result = await publicFetch<BookingConfirmation>(`/companies/${slug}/bookings`, {
         method: 'POST',
         body: JSON.stringify({
           ...formData,
           message: formData.message ?? null,
+          ...(visitorPushEndpoint ? { visitorPushEndpoint } : {}),
         }),
       });
       saveBookingRef(slug, { id: result.id, createdAt: new Date().toISOString() });
