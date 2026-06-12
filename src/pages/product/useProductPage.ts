@@ -24,6 +24,7 @@ export interface ProductPageProps {
   showPrices: boolean;
   currency: 'USD' | 'CRC';
   companyName: string;
+  ordersEnabled: boolean;
 }
 
 export function useProductPage(): ProductPageProps {
@@ -132,5 +133,6 @@ export function useProductPage(): ProductPageProps {
     showPrices,
     currency: branding.currency ?? 'CRC',
     companyName: branding.companyName,
+    ordersEnabled: branding.featuresEnabled?.orders === true,
   };
 }

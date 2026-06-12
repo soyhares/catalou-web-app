@@ -37,6 +37,7 @@ const LuxuryMinimalismProductSkin: React.FC<ProductPageProps> = (props) => {
     showPrices,
     currency,
     companyName,
+    ordersEnabled,
   } = props;
 
   const { isMobile } = useTheme();
@@ -278,57 +279,60 @@ const LuxuryMinimalismProductSkin: React.FC<ProductPageProps> = (props) => {
               </div>
             )}
 
-            {/* Quantity — minimal +/– with wide spacing */}
-            <div style={{ display: 'flex', alignItems: 'center', gap: '24px', marginBottom: '24px' }}>
-              <span style={{ fontFamily: 'var(--pwa-font-body)', fontSize: '9px', letterSpacing: '0.14em', textTransform: 'uppercase', fontWeight: 700, color: 'var(--pwa-text-secondary)', opacity: 0.5 }}>
-                Cantidad
-              </span>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '20px', borderBottom: '1px solid var(--pwa-border)', paddingBottom: '4px' }}>
-                <button
-                  type="button"
-                  onClick={() => onQuantityChange(quantity - 1)}
-                  style={{ fontFamily: 'var(--pwa-font-body)', fontSize: '18px', color: 'var(--pwa-text)', background: 'none', border: 'none', cursor: 'pointer', opacity: 0.5, lineHeight: 1, padding: '0 4px' }}
-                >
-                  −
-                </button>
-                <span style={{ fontFamily: 'var(--pwa-font-body)', fontSize: '14px', color: 'var(--pwa-text)', minWidth: '24px', textAlign: 'center' }}>
-                  {quantity}
-                </span>
-                <button
-                  type="button"
-                  onClick={() => onQuantityChange(quantity + 1)}
-                  style={{ fontFamily: 'var(--pwa-font-body)', fontSize: '18px', color: 'var(--pwa-text)', background: 'none', border: 'none', cursor: 'pointer', opacity: 0.5, lineHeight: 1, padding: '0 4px' }}
-                >
-                  +
-                </button>
-              </div>
-            </div>
+            {/* Quantity + CTA — only when orders enabled */}
+            {ordersEnabled && (
+              <>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '24px', marginBottom: '24px' }}>
+                  <span style={{ fontFamily: 'var(--pwa-font-body)', fontSize: '9px', letterSpacing: '0.14em', textTransform: 'uppercase', fontWeight: 700, color: 'var(--pwa-text-secondary)', opacity: 0.5 }}>
+                    Cantidad
+                  </span>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '20px', borderBottom: '1px solid var(--pwa-border)', paddingBottom: '4px' }}>
+                    <button
+                      type="button"
+                      onClick={() => onQuantityChange(quantity - 1)}
+                      style={{ fontFamily: 'var(--pwa-font-body)', fontSize: '18px', color: 'var(--pwa-text)', background: 'none', border: 'none', cursor: 'pointer', opacity: 0.5, lineHeight: 1, padding: '0 4px' }}
+                    >
+                      −
+                    </button>
+                    <span style={{ fontFamily: 'var(--pwa-font-body)', fontSize: '14px', color: 'var(--pwa-text)', minWidth: '24px', textAlign: 'center' }}>
+                      {quantity}
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => onQuantityChange(quantity + 1)}
+                      style={{ fontFamily: 'var(--pwa-font-body)', fontSize: '18px', color: 'var(--pwa-text)', background: 'none', border: 'none', cursor: 'pointer', opacity: 0.5, lineHeight: 1, padding: '0 4px' }}
+                    >
+                      +
+                    </button>
+                  </div>
+                </div>
 
-            {/* CTA — "Cotizar", full width, large radius, accent background */}
-            <button
-              type="button"
-              disabled={!canAddToCart}
-              onClick={onAddToCart}
-              style={{
-                fontFamily: 'var(--pwa-font-body)',
-                fontSize: '10px',
-                letterSpacing: '0.2em',
-                textTransform: 'uppercase',
-                fontWeight: 700,
-                color: 'var(--pwa-bg)',
-                backgroundColor: 'var(--pwa-accent)',
-                border: 'none',
-                borderRadius: 'var(--pwa-radius-button)',
-                padding: '16px 24px',
-                width: '100%',
-                cursor: canAddToCart ? 'pointer' : 'not-allowed',
-                opacity: canAddToCart ? 1 : 0.3,
-                transition: 'opacity 0.2s',
-                marginBottom: '32px',
-              }}
-            >
-              {addedFeedback ? '¡Añadido!' : canAddToCart ? 'Agregar' : 'Selecciona una opción'}
-            </button>
+                <button
+                  type="button"
+                  disabled={!canAddToCart}
+                  onClick={onAddToCart}
+                  style={{
+                    fontFamily: 'var(--pwa-font-body)',
+                    fontSize: '10px',
+                    letterSpacing: '0.2em',
+                    textTransform: 'uppercase',
+                    fontWeight: 700,
+                    color: 'var(--pwa-bg)',
+                    backgroundColor: 'var(--pwa-accent)',
+                    border: 'none',
+                    borderRadius: 'var(--pwa-radius-button)',
+                    padding: '16px 24px',
+                    width: '100%',
+                    cursor: canAddToCart ? 'pointer' : 'not-allowed',
+                    opacity: canAddToCart ? 1 : 0.3,
+                    transition: 'opacity 0.2s',
+                    marginBottom: '32px',
+                  }}
+                >
+                  {addedFeedback ? '¡Añadido!' : canAddToCart ? 'Agregar' : 'Selecciona una opción'}
+                </button>
+              </>
+            )}
 
             {/* Description — serif body, generous line height */}
             {product.description && (
