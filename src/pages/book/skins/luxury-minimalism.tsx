@@ -101,7 +101,7 @@ export default function LuxuryBookSkin({ slug, confirmation, onSuccess, onBack, 
               margin: '0 0 28px',
               letterSpacing: '-0.01em',
             }}>
-              Solicitar<br />consulta
+              Agendar<br />cita
             </motion.h1>
 
             {/* Gold separator */}

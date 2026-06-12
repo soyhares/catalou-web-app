@@ -237,7 +237,7 @@ export default function LuxuryAppointmentsSkin({ slug, bookings, isLoading, onCa
                 cursor: 'pointer',
               }}
             >
-              Solicitar consulta
+              Agendar cita
             </button>
           </motion.div>
         ) : (
@@ -280,7 +280,7 @@ export default function LuxuryAppointmentsSkin({ slug, bookings, isLoading, onCa
                   cursor: 'pointer',
                 }}
               >
-                Nueva consulta
+                Nueva cita
               </button>
             </div>
           </>
