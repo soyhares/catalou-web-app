@@ -33,7 +33,8 @@
     "offlineUnavailable": "Este producto no está disponible sin conexión. Conéctate a internet e inténtalo de nuevo.",
     "variants": "Opciones",
     "selectVariant": "Selecciona una opción",
-    "noImage": "Sin imagen disponible"
+    "noImage": "Sin imagen disponible",
+    "priceDisclaimer": "Precio de referencia. El costo final puede variar según las condiciones del convenio con tu organización."
   },
   "cart": {
     "navLabel": "Cotizar",
@@ -84,7 +85,11 @@
     "emptyCart": "No tienes productos en el carrito.",
     "errorRequired": "Este campo es obligatorio",
     "errorEmail": "Ingresa un correo electrónico válido",
-    "submitError": "No se pudo enviar el pedido. Inténtalo de nuevo."
+    "submitError": "No se pudo enviar el pedido. Inténtalo de nuevo.",
+    "affiliateNumber": "Número de afiliado / membresía",
+    "affiliateNumberPlaceholder": "Ej: 12345",
+    "associated": "Por mi asociación",
+    "associatedDesc": "Tu solicitud pasa por tu asociación, quien la aprueba y coordina el pedido."
   },
   "confirm": {
     "loading": "Cargando…",
