@@ -1,5 +1,16 @@
 # catalou-web-app
 
+## Contexto de negocio y diseño
+
+Antes de trabajar en este repo, leer en este orden:
+1. `../catalou-platform-core/business/value_proposition.md` — qué es Catalou, usuarios, modelos de negocio, regla `showPrices × businessModel` (disclaimer obligatorio cuando ambos son true)
+2. `../catalou-platform-core/design/` — especificación técnica de los 3 skins: `modern-minimalism` (Minimalista), `luxury-minimalism` (Premium), `neo-luxury` (Innovadora). CSS variables, palette, guía de implementación en React + Tailwind
+3. `../catalou-platform-core/architecture/system_overview.md` — mapa de los 4 repos
+
+Tipos de API: `src/generated/api-types.ts` — generados desde `../catalou-platform-core/contracts/openapi/`. Nunca definir tipos de API manualmente.
+
+---
+
 ## Role
 Customer-facing PWA. This is the public catalog that end users of each
 Catalou tenant see and interact with.
