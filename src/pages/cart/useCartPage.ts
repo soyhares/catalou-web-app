@@ -15,6 +15,7 @@ export interface CartPageProps {
   isLoading: boolean;
   showPrices: boolean;
   currency: 'USD' | 'CRC';
+  businessModel: 'DIRECT' | 'ASSOCIATED';
   onUpdateQuantity: (id: string, qty: number) => void;
   onRemove: (id: string) => void;
   onClear: () => void;
@@ -73,6 +74,7 @@ export function useCartPage(): CartPageProps {
     isLoading,
     showPrices: branding.showPrices ?? false,
     currency,
+    businessModel: branding.businessModel ?? 'DIRECT',
     onUpdateQuantity,
     onRemove,
     onClear,

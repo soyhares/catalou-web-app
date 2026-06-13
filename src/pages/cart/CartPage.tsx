@@ -5,6 +5,7 @@ import { useBranding } from '@app/BrandingContext';
 import { useCart } from '@shared/lib/use-cart';
 import { clearCart } from '@shared/lib/cart-store';
 import { formatPrice } from '@shared/lib/formatPrice';
+import { PriceDisclaimer } from '@shared/ui';
 
 function IconChevronLeft() {
   return (
@@ -48,6 +49,7 @@ export default function CartPage() {
   const servicePercentage = branding.servicePercentage ?? 0;
   const serviceAmount = (subtotal * servicePercentage) / 100;
   const grandTotal = subtotal + serviceAmount;
+  const businessModel = branding.businessModel ?? 'DIRECT';
   const isEmpty = items.length === 0;
 
   async function handleClear() {
@@ -302,6 +304,10 @@ export default function CartPage() {
                     </span>
                   </div>
                 </div>
+              )}
+
+              {branding.showPrices && businessModel === 'ASSOCIATED' && (
+                <PriceDisclaimer className="mt-2" />
               )}
 
               {/* CTA — full width, elegant */}

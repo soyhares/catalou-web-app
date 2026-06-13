@@ -1,6 +1,7 @@
 import React from 'react';
 import { useTheme } from '@shared/ui/ThemeProvider';
 import { formatPrice } from '@shared/lib/formatPrice';
+import { PriceDisclaimer } from '@shared/ui';
 import type { CartPageProps } from '../useCartPage';
 
 /* ── Icons ──────────────────────────────────────────────────────────────── */
@@ -36,6 +37,7 @@ const LuxuryMinimalismCartSkin: React.FC<CartPageProps> = ({
   total,
   showPrices,
   currency,
+  businessModel,
   onUpdateQuantity,
   onRemove,
   onClear,
@@ -270,6 +272,10 @@ const LuxuryMinimalismCartSkin: React.FC<CartPageProps> = ({
                   </span>
                 </div>
               </div>
+            )}
+
+            {showPrices && businessModel === 'ASSOCIATED' && (
+              <PriceDisclaimer className="mt-2" />
             )}
 
             {/* CTA */}
