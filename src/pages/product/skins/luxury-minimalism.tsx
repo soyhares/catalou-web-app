@@ -2,6 +2,7 @@ import React from 'react';
 import { CatalogFooter } from '@shared/ui/CatalogFooter';
 import { useTheme } from '@shared/ui/ThemeProvider';
 import { formatPrice } from '@shared/lib/formatPrice';
+import { PriceDisclaimer } from '@shared/ui';
 import type { ProductPageProps } from '../useProductPage';
 
 /* ── Icons ───────────────────────────────────────────────────────────────── */
@@ -36,6 +37,7 @@ const LuxuryMinimalismProductSkin: React.FC<ProductPageProps> = (props) => {
     onImageSelect,
     showPrices,
     currency,
+    businessModel,
     companyName,
     ordersEnabled,
   } = props;
@@ -235,6 +237,9 @@ const LuxuryMinimalismProductSkin: React.FC<ProductPageProps> = (props) => {
                   </span>
                 )}
               </p>
+            )}
+            {showPrices && businessModel === 'ASSOCIATED' && computedPrice && (
+              <PriceDisclaimer className="mb-6" />
             )}
 
             {/* Divider */}

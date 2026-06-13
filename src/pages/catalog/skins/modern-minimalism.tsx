@@ -4,6 +4,7 @@ import { OfflineBanner } from '@shared/ui/OfflineBanner';
 import { CatalogFooter } from '@shared/ui/CatalogFooter';
 import { useTheme } from '@shared/ui/ThemeProvider';
 import { formatPrice } from '@shared/lib/formatPrice';
+import { PriceDisclaimer } from '@shared/ui';
 import type { CatalogPageProps } from '../useCatalogPage';
 
 /* ── Icons ──────────────────────────────────────────────────────────────── */
@@ -39,6 +40,7 @@ const ModernMinimalismSkin: React.FC<CatalogPageProps> = ({
   categories,
   showPrices,
   currency,
+  businessModel,
   selectedCategory,
   selectedSubcategoryId,
   searchQuery,
@@ -399,6 +401,9 @@ const ModernMinimalismSkin: React.FC<CatalogPageProps> = ({
                     }}>
                       {formatPrice(product.basePrice, currency)}
                     </p>
+                  )}
+                  {showPrices && businessModel === 'ASSOCIATED' && product.basePrice && (
+                    <PriceDisclaimer className="mt-1 mb-2" />
                   )}
 
                   {/* Add to cart / view more button */}

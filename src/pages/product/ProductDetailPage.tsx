@@ -6,6 +6,7 @@ import { fetchProduct } from '@entities/product/api';
 import { fetchCatalog } from '@entities/catalog/api';
 import { useCart } from '@shared/lib/use-cart';
 import { CatalogFooter } from '@shared/ui/CatalogFooter';
+import { PriceDisclaimer } from '@shared/ui';
 import { formatPrice } from '@shared/lib/formatPrice';
 import type { ProductPublic, VariantValuePublic } from '@entities/product/api';
 
@@ -34,6 +35,7 @@ export default function ProductDetailPage() {
   const { add: addToCart } = useCart(slug);
 
   const ordersEnabled = branding.featuresEnabled?.orders === true;
+  const businessModel = branding.businessModel ?? 'DIRECT';
 
   const [product, setProduct] = useState<ProductPublic | null>(null);
   const [showPrices, setShowPrices] = useState(true);
@@ -297,6 +299,9 @@ export default function ProductDetailPage() {
                     </span>
                   )}
                 </p>
+              )}
+              {showPrices && businessModel === 'ASSOCIATED' && (
+                <PriceDisclaimer className="mt-1 mb-4" />
               )}
 
               {/* Divider */}
