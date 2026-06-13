@@ -1,6 +1,7 @@
 import React from 'react';
 import { useTheme } from '@shared/ui/ThemeProvider';
 import { formatPrice } from '@shared/lib/formatPrice';
+import { PriceDisclaimer } from '@shared/ui';
 import type { CartPageProps } from '../useCartPage';
 
 /* ── Icons ──────────────────────────────────────────────────────────────── */
@@ -45,6 +46,7 @@ const ModernMinimalismCartSkin: React.FC<CartPageProps> = ({
   subtotal,
   showPrices,
   currency,
+  businessModel,
   onUpdateQuantity,
   onRemove,
   onCheckout,
@@ -261,6 +263,10 @@ const ModernMinimalismCartSkin: React.FC<CartPageProps> = ({
                   <span style={{ fontSize: '15px', fontWeight: 700, color: 'var(--pwa-accent)' }}>{total}</span>
                 </div>
               </div>
+            )}
+
+            {showPrices && businessModel === 'ASSOCIATED' && (
+              <PriceDisclaimer className="mt-2" />
             )}
 
             {/* CTA */}

@@ -33,7 +33,8 @@
     "offlineUnavailable": "This product isn't available offline. Connect to the internet and try again.",
     "variants": "Options",
     "selectVariant": "Select an option",
-    "noImage": "No image available"
+    "noImage": "No image available",
+    "priceDisclaimer": "Reference price. The final cost may vary according to the terms of the agreement with your organization."
   },
   "cart": {
     "navLabel": "Quote",
@@ -84,7 +85,11 @@
     "emptyCart": "Your cart is empty.",
     "errorRequired": "This field is required",
     "errorEmail": "Please enter a valid email address",
-    "submitError": "Could not place the order. Please try again."
+    "submitError": "Could not place the order. Please try again.",
+    "affiliateNumber": "Affiliate / membership number",
+    "affiliateNumberPlaceholder": "e.g. 12345",
+    "associated": "Through my association",
+    "associatedDesc": "Your request goes through your association, who approves and coordinates the order."
   },
   "confirm": {
     "loading": "Loading…",

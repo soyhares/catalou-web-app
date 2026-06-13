@@ -1,6 +1,8 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { useTheme } from '@shared/ui/ThemeProvider';
 import { formatPrice } from '@shared/lib/formatPrice';
+import { PriceDisclaimer } from '@shared/ui';
 import type { CheckoutPageProps } from '../useCheckoutPage';
 
 /* ── Skin ───────────────────────────────────────────────────────────────── */
@@ -17,11 +19,13 @@ const NeoLuxuryCheckoutSkin: React.FC<CheckoutPageProps> = ({
   isOnline,
   orderType,
   hasBothOrderTypes,
+  businessModel,
   onFieldChange,
   onOrderTypeChange,
   onSubmit,
   onBack,
 }) => {
+  const { t } = useTranslation();
   const { isMobile } = useTheme();
 
   if (items.length === 0) {
@@ -146,7 +150,7 @@ const NeoLuxuryCheckoutSkin: React.FC<CheckoutPageProps> = ({
                   transition: 'all var(--pwa-motion)',
                 }}
               >
-                {type === 'DIRECT' ? 'Pedido directo' : 'Pedido por envío'}
+                {type === 'DIRECT' ? t('checkout.direct') : t('checkout.associated')}
               </button>
             ))}
           </div>
@@ -224,6 +228,23 @@ const NeoLuxuryCheckoutSkin: React.FC<CheckoutPageProps> = ({
             />
           </div>
 
+          {/* Affiliate number — only for FINANCED orders */}
+          {orderType === 'FINANCED' && (
+            <div>
+              <label style={labelStyle}>{t('checkout.affiliateNumber')} *</label>
+              <input
+                type="text"
+                value={form.affiliateNumber}
+                onChange={(e) => onFieldChange('affiliateNumber', e.target.value)}
+                placeholder={t('checkout.affiliateNumberPlaceholder')}
+                style={{ ...inputStyle, borderColor: errors.affiliateNumber ? 'var(--pwa-error)' : 'var(--pwa-border)' }}
+              />
+              {errors.affiliateNumber && (
+                <p style={{ fontSize: '11px', color: 'var(--pwa-error)', marginTop: '4px' }}>{errors.affiliateNumber}</p>
+              )}
+            </div>
+          )}
+
           {/* Order summary */}
           {showPrices && (
             <div style={{
@@ -251,6 +272,9 @@ const NeoLuxuryCheckoutSkin: React.FC<CheckoutPageProps> = ({
                 <span style={{ fontSize: '14px', fontWeight: 700, color: 'var(--pwa-accent)', textShadow: '0 0 8px var(--pwa-accent)' }}>{total}</span>
               </div>
             </div>
+          )}
+          {showPrices && businessModel === 'ASSOCIATED' && (
+            <PriceDisclaimer className="mt-2" />
           )}
 
           {submitError && (

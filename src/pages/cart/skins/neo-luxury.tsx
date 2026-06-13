@@ -1,6 +1,7 @@
 import React from 'react';
 import { useTheme } from '@shared/ui/ThemeProvider';
 import { formatPrice } from '@shared/lib/formatPrice';
+import { PriceDisclaimer } from '@shared/ui';
 import type { CartPageProps } from '../useCartPage';
 
 /* ── Icons ──────────────────────────────────────────────────────────────── */
@@ -44,6 +45,7 @@ const NeoLuxuryCartSkin: React.FC<CartPageProps> = ({
   total,
   showPrices,
   currency,
+  businessModel,
   onUpdateQuantity,
   onRemove,
   onClear,
@@ -275,6 +277,10 @@ const NeoLuxuryCartSkin: React.FC<CartPageProps> = ({
                   {total}
                 </span>
               </div>
+            )}
+
+            {showPrices && businessModel === 'ASSOCIATED' && (
+              <PriceDisclaimer className="mt-2" />
             )}
 
             {/* Glowing CTA */}

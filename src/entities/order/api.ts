@@ -15,6 +15,7 @@ export interface SubmitOrderInput {
   visitorPhone: string;
   visitorEmail: string;
   deliveryAddress: string;
+  affiliateNumber?: string;
   items: SubmitOrderItem[];
 }
 

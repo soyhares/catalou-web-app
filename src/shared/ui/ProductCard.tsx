@@ -1,5 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import { formatPrice } from '@shared/lib/formatPrice';
+import { PriceDisclaimer } from '@shared/ui/PriceDisclaimer';
 
 interface ProductCardProps {
   id: string;
@@ -8,10 +9,11 @@ interface ProductCardProps {
   price: number | null;
   showPrices: boolean;
   currency?: 'USD' | 'CRC';
+  businessModel: 'DIRECT' | 'ASSOCIATED';
   onQuote: (id: string) => void;
 }
 
-export function ProductCard({ id, name, imageUrl, price, showPrices, currency = 'CRC', onQuote }: ProductCardProps) {
+export function ProductCard({ id, name, imageUrl, price, showPrices, currency = 'CRC', businessModel, onQuote }: ProductCardProps) {
   const navigate = useNavigate();
 
   function handleCardClick() {
@@ -83,6 +85,9 @@ export function ProductCard({ id, name, imageUrl, price, showPrices, currency = 
           </button>
         </div>
       </div>
+      {showPrices && businessModel === 'ASSOCIATED' && price !== null && (
+        <PriceDisclaimer className="px-0.5 mt-0" />
+      )}
 
       {/* Name in Cormorant Garamond italic */}
       <div className="px-0.5">
