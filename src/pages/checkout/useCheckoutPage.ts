@@ -16,6 +16,7 @@ export interface CheckoutForm {
   email: string;
   deliveryAddress: string;
   notes: string;
+  affiliateNumber: string;
 }
 
 export interface CheckoutPageProps {
@@ -30,6 +31,7 @@ export interface CheckoutPageProps {
   isOnline: boolean;
   orderType: OrderType;
   hasBothOrderTypes: boolean;
+  businessModel: 'DIRECT' | 'ASSOCIATED';
   onFieldChange: (field: keyof CheckoutForm, value: string) => void;
   onOrderTypeChange: (type: OrderType) => void;
   onSubmit: () => void;
@@ -52,6 +54,7 @@ export function useCheckoutPage(): CheckoutPageProps {
     email: '',
     deliveryAddress: '',
     notes: '',
+    affiliateNumber: '',
   });
   const [errors, setErrors] = useState<Partial<Record<keyof CheckoutForm, string>>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -80,6 +83,9 @@ export function useCheckoutPage(): CheckoutPageProps {
       errs.email = 'Correo inválido';
     }
     if (!form.deliveryAddress.trim()) errs.deliveryAddress = 'Campo requerido';
+    if (orderType === 'FINANCED' && !form.affiliateNumber.trim()) {
+      errs.affiliateNumber = 'Campo requerido';
+    }
     setErrors(errs);
     return Object.keys(errs).length === 0;
   }
@@ -94,6 +100,7 @@ export function useCheckoutPage(): CheckoutPageProps {
       visitorPhone: form.phone.trim(),
       visitorEmail: form.email.trim(),
       deliveryAddress: form.deliveryAddress.trim(),
+      affiliateNumber: orderType === 'FINANCED' ? form.affiliateNumber.trim() : undefined,
       items: items.map((item) => ({
         productId: item.productId,
         variantValueId: item.variantValueId,
@@ -130,6 +137,7 @@ export function useCheckoutPage(): CheckoutPageProps {
     isOnline,
     orderType,
     hasBothOrderTypes: branding.orderType === 'BOTH',
+    businessModel: branding.businessModel ?? 'DIRECT',
     onFieldChange,
     onOrderTypeChange,
     onSubmit,

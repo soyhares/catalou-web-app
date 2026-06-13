@@ -7,6 +7,7 @@ import { clearCart } from '@shared/lib/cart-store';
 import { useOnlineStatus } from '@shared/hooks/useOnlineStatus';
 import { submitOrder, type OrderType } from '@entities/order/api';
 import { formatPrice } from '@shared/lib/formatPrice';
+import { PriceDisclaimer } from '@shared/ui';
 
 type Step = 'type' | 'form';
 
@@ -124,7 +125,9 @@ export default function CheckoutPage() {
   const [step, setStep] = useState<Step>(branding.orderType === 'BOTH' ? 'type' : 'form');
   const [selectedType, setSelectedType] = useState<OrderType>('DIRECT');
   const orderType: OrderType = branding.orderType === 'BOTH' ? selectedType : branding.orderType;
+  const businessModel = branding.businessModel ?? 'DIRECT';
   const [visitorName, setVisitorName] = useState('');
+  const [affiliateNumber, setAffiliateNumber] = useState('');
   const [visitorPhone, setVisitorPhone] = useState('');
   const [visitorEmail, setVisitorEmail] = useState('');
   const [deliveryAddress, setDeliveryAddress] = useState('');
@@ -157,6 +160,9 @@ export default function CheckoutPage() {
       errs.visitorEmail = t('checkout.errorEmail');
     }
     if (!deliveryAddress.trim()) errs.deliveryAddress = t('checkout.errorRequired');
+    if (orderType === 'FINANCED' && !affiliateNumber.trim()) {
+      errs.affiliateNumber = t('checkout.errorRequired');
+    }
     setErrors(errs);
     return Object.keys(errs).length === 0;
   }
@@ -173,6 +179,7 @@ export default function CheckoutPage() {
         visitorPhone: visitorPhone.trim(),
         visitorEmail: visitorEmail.trim(),
         deliveryAddress: deliveryAddress.trim(),
+        affiliateNumber: orderType === 'FINANCED' ? affiliateNumber.trim() : undefined,
         items: items.map((item) => ({
           productId: item.productId,
           variantValueId: item.variantValueId,
@@ -201,7 +208,7 @@ export default function CheckoutPage() {
           <div className="flex flex-col gap-3">
             {[
               { type: 'DIRECT' as OrderType, title: t('checkout.direct'), desc: t('checkout.directDesc'), icon: '→' },
-              { type: 'FINANCED' as OrderType, title: `${t('checkout.financed')} — ${branding.associationName ?? t('checkout.association')}`, desc: t('checkout.financedDesc'), icon: '◇' },
+              { type: 'FINANCED' as OrderType, title: `${t('checkout.associated')} — ${branding.associationName ?? t('checkout.association')}`, desc: t('checkout.associatedDesc'), icon: '◇' },
             ].map((opt) => (
               <button
                 key={opt.type}
@@ -285,6 +292,17 @@ export default function CheckoutPage() {
                   placeholder="correo@ejemplo.com"
                 />
               </FormField>
+              {orderType === 'FINANCED' && (
+                <FormField label={t('checkout.affiliateNumber')} error={errors.affiliateNumber} required>
+                  <input
+                    type="text"
+                    value={affiliateNumber}
+                    onChange={(e) => setAffiliateNumber(e.target.value)}
+                    className={`pwa-input${errors.affiliateNumber ? ' pwa-input--error' : ''}`}
+                    placeholder={t('checkout.affiliateNumberPlaceholder')}
+                  />
+                </FormField>
+              )}
             </div>
           </div>
 
@@ -339,6 +357,9 @@ export default function CheckoutPage() {
                   <span>{t('checkout.total')}</span>
                   <span style={{ color: 'var(--pwa-accent)' }}>{formatPrice(subtotal, branding.currency ?? 'CRC')}</span>
                 </div>
+              )}
+              {branding.showPrices && businessModel === 'ASSOCIATED' && (
+                <PriceDisclaimer className="mt-3" />
               )}
             </div>
           </div>
