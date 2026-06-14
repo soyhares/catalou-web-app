@@ -66,10 +66,7 @@ export function BrandingProvider({ children }: BrandingProviderProps) {
         applyBrandingCssVars(data);
         injectDynamicManifest(data);
         void i18n.changeLanguage(data.language.toLowerCase());
-        // FINANCED and BOTH both imply the tenant operates under the ASSOCIATED model.
-        const businessModel = data.businessModel ??
-          (data.orderType === 'DIRECT' ? 'DIRECT' : 'ASSOCIATED');
-        setBranding({ ...data, businessModel });
+        setBranding(data);
         setLoadState('ready');
       })
       .catch((err: unknown) => {

@@ -453,7 +453,7 @@ const NeoLuxurySkin: React.FC<CatalogPageProps> = ({
                       {ordersEnabled ? '+' : '›'}
                     </button>
                   </div>
-                  {showPrices && businessModel === 'ASSOCIATED' && product.basePrice && (
+                  {showPrices && (businessModel === 'ASSOCIATED' || businessModel === 'BOTH') && product.basePrice && (
                     <PriceDisclaimer className="mt-1" />
                   )}
                 </div>

@@ -280,7 +280,7 @@ const ModernMinimalismCheckoutSkin: React.FC<CheckoutPageProps> = ({
               </div>
             </section>
           )}
-          {showPrices && businessModel === 'ASSOCIATED' && (
+          {showPrices && (businessModel === 'ASSOCIATED' || businessModel === 'BOTH') && (
             <PriceDisclaimer className="mt-2" />
           )}
 

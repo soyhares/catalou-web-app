@@ -9,7 +9,7 @@ interface ProductCardProps {
   price: number | null;
   showPrices: boolean;
   currency?: 'USD' | 'CRC';
-  businessModel: 'DIRECT' | 'ASSOCIATED';
+  businessModel: 'DIRECT' | 'ASSOCIATED' | 'BOTH';
   onQuote: (id: string) => void;
 }
 
@@ -85,7 +85,7 @@ export function ProductCard({ id, name, imageUrl, price, showPrices, currency = 
           </button>
         </div>
       </div>
-      {showPrices && businessModel === 'ASSOCIATED' && price !== null && (
+      {showPrices && (businessModel === 'ASSOCIATED' || businessModel === 'BOTH') && price !== null && (
         <PriceDisclaimer className="px-0.5 mt-0" />
       )}
 
