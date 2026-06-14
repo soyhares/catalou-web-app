@@ -92,6 +92,11 @@ export interface components {
             showPrices?: boolean;
             /** @enum {string} */
             orderType?: "DIRECT" | "FINANCED" | "BOTH";
+            /**
+             * @description Tenant-level business model. DIRECT = sells directly to end users. ASSOCIATED = operates through an association (orders require affiliate membership number and go through an association approval flow). BOTH = tenant operates under both models simultaneously. When showPrices is true and businessModel is ASSOCIATED or BOTH, a mandatory non-customizable price disclaimer must appear at all price touchpoints in the PWA.
+             * @enum {string}
+             */
+            businessModel?: "DIRECT" | "ASSOCIATED" | "BOTH";
         };
         CatalogResponse: {
             categories: components["schemas"]["CategoryWithSubcategories"][];
@@ -155,6 +160,8 @@ export interface components {
             visitorPhone: string;
             /** Format: email */
             visitorEmail: string;
+            /** @description Required when orderType is FINANCED. Identifies the member within the association for the tripartite approval flow. */
+            affiliateNumber?: string;
             items: {
                 /** Format: uuid */
                 productId: string;
