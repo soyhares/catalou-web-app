@@ -263,7 +263,7 @@ const LuxuryMinimalismCheckoutSkin: React.FC<CheckoutPageProps> = ({
               </div>
             </div>
           )}
-          {showPrices && businessModel === 'ASSOCIATED' && (
+          {showPrices && (businessModel === 'ASSOCIATED' || businessModel === 'BOTH') && (
             <PriceDisclaimer className="mt-2" />
           )}
 

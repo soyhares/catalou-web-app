@@ -279,7 +279,7 @@ const NeoLuxuryCartSkin: React.FC<CartPageProps> = ({
               </div>
             )}
 
-            {showPrices && businessModel === 'ASSOCIATED' && (
+            {showPrices && (businessModel === 'ASSOCIATED' || businessModel === 'BOTH') && (
               <PriceDisclaimer className="mt-2" />
             )}
 

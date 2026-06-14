@@ -23,7 +23,7 @@ export interface ProductPageProps {
   onImageSelect: (url: string) => void;
   showPrices: boolean;
   currency: 'USD' | 'CRC';
-  businessModel: 'DIRECT' | 'ASSOCIATED';
+  businessModel: 'DIRECT' | 'ASSOCIATED' | 'BOTH';
   companyName: string;
   ordersEnabled: boolean;
 }
@@ -133,7 +133,7 @@ export function useProductPage(): ProductPageProps {
     onImageSelect,
     showPrices,
     currency: branding.currency ?? 'CRC',
-    businessModel: branding.businessModel ?? 'DIRECT',
+    businessModel: branding.businessModel,
     companyName: branding.companyName,
     ordersEnabled: branding.featuresEnabled?.orders === true,
   };

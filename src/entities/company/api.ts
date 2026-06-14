@@ -10,7 +10,7 @@ export interface BrandingData {
   language: 'ES' | 'EN';
   showPrices: boolean;
   orderType: 'DIRECT' | 'FINANCED' | 'BOTH';
-  businessModel?: 'DIRECT' | 'ASSOCIATED';
+  businessModel: 'DIRECT' | 'ASSOCIATED' | 'BOTH';
   servicePercentage: number;
   associationName?: string | null;
   currency: 'USD' | 'CRC';

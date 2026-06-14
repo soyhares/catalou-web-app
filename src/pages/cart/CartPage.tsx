@@ -49,7 +49,7 @@ export default function CartPage() {
   const servicePercentage = branding.servicePercentage ?? 0;
   const serviceAmount = (subtotal * servicePercentage) / 100;
   const grandTotal = subtotal + serviceAmount;
-  const businessModel = branding.businessModel ?? 'DIRECT';
+  const businessModel = branding.businessModel;
   const isEmpty = items.length === 0;
 
   async function handleClear() {
@@ -306,7 +306,7 @@ export default function CartPage() {
                 </div>
               )}
 
-              {branding.showPrices && businessModel === 'ASSOCIATED' && (
+              {branding.showPrices && (businessModel === 'ASSOCIATED' || businessModel === 'BOTH') && (
                 <PriceDisclaimer className="mt-2" />
               )}
 

@@ -435,7 +435,7 @@ const LuxuryMinimalismSkin: React.FC<CatalogPageProps> = ({
                       {formatPrice(product.basePrice, currency)}
                     </p>
                   )}
-                  {showPrices && businessModel === 'ASSOCIATED' && product.basePrice && (
+                  {showPrices && (businessModel === 'ASSOCIATED' || businessModel === 'BOTH') && product.basePrice && (
                     <PriceDisclaimer className="mt-1 mb-2" />
                   )}
                   <button

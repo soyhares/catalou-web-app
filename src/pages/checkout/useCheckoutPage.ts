@@ -31,7 +31,7 @@ export interface CheckoutPageProps {
   isOnline: boolean;
   orderType: OrderType;
   hasBothOrderTypes: boolean;
-  businessModel: 'DIRECT' | 'ASSOCIATED';
+  businessModel: 'DIRECT' | 'ASSOCIATED' | 'BOTH';
   onFieldChange: (field: keyof CheckoutForm, value: string) => void;
   onOrderTypeChange: (type: OrderType) => void;
   onSubmit: () => void;
@@ -137,7 +137,7 @@ export function useCheckoutPage(): CheckoutPageProps {
     isOnline,
     orderType,
     hasBothOrderTypes: branding.orderType === 'BOTH',
-    businessModel: branding.businessModel ?? 'DIRECT',
+    businessModel: branding.businessModel,
     onFieldChange,
     onOrderTypeChange,
     onSubmit,

@@ -125,7 +125,7 @@ export default function CheckoutPage() {
   const [step, setStep] = useState<Step>(branding.orderType === 'BOTH' ? 'type' : 'form');
   const [selectedType, setSelectedType] = useState<OrderType>('DIRECT');
   const orderType: OrderType = branding.orderType === 'BOTH' ? selectedType : branding.orderType;
-  const businessModel = branding.businessModel ?? 'DIRECT';
+  const businessModel = branding.businessModel;
   const [visitorName, setVisitorName] = useState('');
   const [affiliateNumber, setAffiliateNumber] = useState('');
   const [visitorPhone, setVisitorPhone] = useState('');
@@ -358,7 +358,7 @@ export default function CheckoutPage() {
                   <span style={{ color: 'var(--pwa-accent)' }}>{formatPrice(subtotal, branding.currency ?? 'CRC')}</span>
                 </div>
               )}
-              {branding.showPrices && businessModel === 'ASSOCIATED' && (
+              {branding.showPrices && (businessModel === 'ASSOCIATED' || businessModel === 'BOTH') && (
                 <PriceDisclaimer className="mt-3" />
               )}
             </div>

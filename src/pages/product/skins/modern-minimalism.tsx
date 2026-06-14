@@ -234,7 +234,7 @@ const ModernMinimalismProductSkin: React.FC<ProductPageProps> = (props) => {
                 )}
               </p>
             )}
-            {showPrices && businessModel === 'ASSOCIATED' && computedPrice && (
+            {showPrices && (businessModel === 'ASSOCIATED' || businessModel === 'BOTH') && computedPrice && (
               <PriceDisclaimer className="mb-6" />
             )}
 

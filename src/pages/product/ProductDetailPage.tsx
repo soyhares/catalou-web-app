@@ -35,7 +35,7 @@ export default function ProductDetailPage() {
   const { add: addToCart } = useCart(slug);
 
   const ordersEnabled = branding.featuresEnabled?.orders === true;
-  const businessModel = branding.businessModel ?? 'DIRECT';
+  const businessModel = branding.businessModel;
 
   const [product, setProduct] = useState<ProductPublic | null>(null);
   const [showPrices, setShowPrices] = useState(true);
@@ -300,7 +300,7 @@ export default function ProductDetailPage() {
                   )}
                 </p>
               )}
-              {showPrices && businessModel === 'ASSOCIATED' && (
+              {showPrices && (businessModel === 'ASSOCIATED' || businessModel === 'BOTH') && (
                 <PriceDisclaimer className="mt-1 mb-4" />
               )}
 
