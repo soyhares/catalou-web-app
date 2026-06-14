@@ -93,10 +93,10 @@ export interface components {
             /** @enum {string} */
             orderType?: "DIRECT" | "FINANCED" | "BOTH";
             /**
-             * @description Tenant-level business model. DIRECT = sells directly to end users. ASSOCIATED = operates through an association (orders require affiliate membership number and go through an association approval flow). When showPrices is true and businessModel is ASSOCIATED, a mandatory non-customizable price disclaimer must appear at all price touchpoints in the PWA.
+             * @description Tenant-level business model. DIRECT = sells directly to end users. ASSOCIATED = operates through an association (orders require affiliate membership number and go through an association approval flow). BOTH = tenant operates under both models simultaneously. When showPrices is true and businessModel is ASSOCIATED or BOTH, a mandatory non-customizable price disclaimer must appear at all price touchpoints in the PWA.
              * @enum {string}
              */
-            businessModel?: "DIRECT" | "ASSOCIATED";
+            businessModel?: "DIRECT" | "ASSOCIATED" | "BOTH";
         };
         CatalogResponse: {
             categories: components["schemas"]["CategoryWithSubcategories"][];
