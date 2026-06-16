@@ -1,103 +1,52 @@
-import { motion } from 'framer-motion';
-import type { BookingConfirmation as BookingConfirmationType } from './useBooking';
+import { useTranslation } from 'react-i18next';
+import type { SelectedService } from '@entities/booking/types';
 
-interface BookingConfirmationProps {
-  booking: BookingConfirmationType;
+interface Props {
+  bookingId: string;
+  preferredDate: string;
+  preferredTime: string;
+  services: SelectedService[];
+  bookingNoun: string;
   onClose: () => void;
 }
 
-function formatDate(isoDate: string): string {
-  const [year, month, day] = isoDate.slice(0, 10).split('-').map(Number);
-  const d = new Date(year, month - 1, day);
-  return d.toLocaleDateString('es-CR', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
-}
+export function BookingConfirmation({ bookingId, preferredDate, preferredTime, services, bookingNoun, onClose }: Props) {
+  const { t }         = useTranslation();
+  const totalDuration = services.reduce((sum, s) => sum + s.durationMinutes * s.quantity, 0);
+  const shortId       = bookingId.slice(0, 8).toUpperCase();
+  const dateLabel     = new Date(`${preferredDate}T12:00:00`).toLocaleDateString('es', { weekday: 'long', day: 'numeric', month: 'long' });
 
-function formatTime(time: string): string {
-  const [h, m] = time.split(':').map(Number);
-  const ampm = h >= 12 ? 'p.m.' : 'a.m.';
-  const hour = h % 12 === 0 ? 12 : h % 12;
-  return `${hour}:${String(m).padStart(2, '0')} ${ampm}`;
-}
-
-export function BookingConfirmation({ booking, onClose }: BookingConfirmationProps) {
   return (
-    <motion.div
-      initial={{ opacity: 0, scale: 0.95 }}
-      animate={{ opacity: 1, scale: 1 }}
-      transition={{ duration: 0.3, ease: 'easeOut' }}
-      className="flex flex-col items-center text-center px-2 py-4"
-    >
-      {/* Success icon */}
-      <div
-        className="w-16 h-16 rounded-full flex items-center justify-center mb-5"
-        style={{ backgroundColor: 'color-mix(in srgb, var(--pwa-accent) 12%, transparent)' }}
-      >
-        <svg width="32" height="32" viewBox="0 0 32 32" fill="none" style={{ color: 'var(--pwa-accent)' }}>
-          <circle cx="16" cy="16" r="15" stroke="currentColor" strokeWidth="1.5" fill="none" />
-          <path d="M10 16L14 20L22 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+    <div style={{ minHeight: '100vh', background: 'var(--pwa-bg)', display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '60px 24px 40px', textAlign: 'center' }}>
+      <div style={{ width: '64px', height: '64px', borderRadius: '50%', background: 'color-mix(in srgb, var(--pwa-accent) 12%, var(--pwa-bg))', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '20px' }}>
+        <svg width="28" height="28" viewBox="0 0 28 28" fill="none" aria-hidden="true">
+          <path d="M5 14L11 20L23 8" stroke="var(--pwa-accent)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
         </svg>
       </div>
-
-      <h2
-        className="text-xl font-bold mb-2"
-        style={{ color: 'var(--pwa-text)', fontFamily: 'var(--pwa-font-heading)' }}
-      >
-        ¡Solicitud enviada!
-      </h2>
-
-      <p className="text-sm mb-6" style={{ color: 'var(--pwa-text-secondary)', lineHeight: 1.6 }}>
-        El equipo te contactará para confirmar tu cita.
+      <h1 style={{ fontSize: '22px', fontWeight: 700, color: 'var(--pwa-text)', margin: '0 0 8px', textTransform: 'capitalize' }}>
+        {t('booking.pendingTitle', { noun: bookingNoun })}
+      </h1>
+      <p style={{ fontSize: '14px', color: 'var(--pwa-muted)', maxWidth: '300px', lineHeight: 1.6, margin: '0 0 32px' }}>
+        {t('booking.pendingBody')}
       </p>
-
-      {/* Date & time detail */}
-      <div
-        className="w-full rounded-xl border p-4 mb-6 text-left"
-        style={{ borderColor: 'var(--pwa-border)', backgroundColor: 'var(--pwa-surface-secondary)' }}
-      >
-        <div className="flex flex-col gap-3">
-          <div className="flex items-center gap-3">
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" style={{ color: 'var(--pwa-accent)', flexShrink: 0 }}>
-              <rect x="2" y="3" width="12" height="11" rx="1.5" stroke="currentColor" strokeWidth="1.2" fill="none" />
-              <path d="M5 1.5V4M11 1.5V4M2 6.5H14" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" />
-            </svg>
-            <div>
-              <p className="text-xs font-medium uppercase tracking-wide" style={{ color: 'var(--pwa-text-secondary)' }}>
-                Fecha solicitada
-              </p>
-              <p className="text-sm font-semibold capitalize" style={{ color: 'var(--pwa-text)' }}>
-                {formatDate(booking.preferredDate)}
-              </p>
-            </div>
+      <div style={{ width: '100%', maxWidth: '360px', borderRadius: '14px', border: '1.5px solid var(--pwa-border)', padding: '16px', textAlign: 'left', marginBottom: '32px' }}>
+        <p style={{ margin: '0 0 12px', fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em', color: 'var(--pwa-muted)' }}>
+          {t('booking.bookingNumber', { noun: bookingNoun })} #{shortId}
+        </p>
+        {services.map(s => (
+          <div key={s.itemId} style={{ display: 'flex', justifyContent: 'space-between', fontSize: '13px', marginBottom: '6px' }}>
+            <span style={{ color: 'var(--pwa-text)' }}>{s.name}</span>
+            <span style={{ color: 'var(--pwa-muted)' }}>{s.durationMinutes} min</span>
           </div>
-
-          <div className="flex items-center gap-3">
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" style={{ color: 'var(--pwa-accent)', flexShrink: 0 }}>
-              <circle cx="8" cy="8" r="6" stroke="currentColor" strokeWidth="1.2" fill="none" />
-              <path d="M8 5V8.5L10.5 10" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" />
-            </svg>
-            <div>
-              <p className="text-xs font-medium uppercase tracking-wide" style={{ color: 'var(--pwa-text-secondary)' }}>
-                Hora solicitada
-              </p>
-              <p className="text-sm font-semibold" style={{ color: 'var(--pwa-text)' }}>
-                {formatTime(booking.preferredTime)}
-              </p>
-            </div>
-          </div>
+        ))}
+        <div style={{ borderTop: '1px solid var(--pwa-border)', marginTop: '10px', paddingTop: '10px', fontSize: '13px', color: 'var(--pwa-muted)', textTransform: 'capitalize' }}>
+          {dateLabel} · {preferredTime} · {totalDuration} min
         </div>
       </div>
-
-      <button
-        type="button"
-        onClick={onClose}
-        className="w-full py-3 text-sm font-semibold text-white transition-opacity hover:opacity-90 active:scale-[0.98]"
-        style={{
-          backgroundColor: 'var(--pwa-accent)',
-          borderRadius: 'var(--pwa-radius-button)',
-        }}
-      >
-        Cerrar
+      <button type="button" onClick={onClose}
+        style={{ padding: '14px 32px', borderRadius: '12px', border: '1.5px solid var(--pwa-border)', background: 'transparent', color: 'var(--pwa-text)', fontSize: '15px', fontWeight: 600, cursor: 'pointer' }}>
+        {t('common.close')}
       </button>
-    </motion.div>
+    </div>
   );
 }
