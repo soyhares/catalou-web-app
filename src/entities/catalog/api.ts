@@ -18,6 +18,8 @@ export interface PublicProduct {
   mainImageUrl: string | null;
   subcategoryId: string;
   categoryId: string;
+  type: 'product' | 'service';
+  durationMinutes: number | null;
 }
 
 export interface CatalogData {
