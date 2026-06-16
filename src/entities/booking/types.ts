@@ -36,6 +36,8 @@ export interface BookingPublicResponse {
   status: 'pending';
   preferredDate: string;
   preferredTime: string;
+  services: BookingServiceDetail[];
+  totalDurationMinutes: number;
 }
 
 export interface SelectedService {
