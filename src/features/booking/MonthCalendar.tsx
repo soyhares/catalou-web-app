@@ -28,8 +28,14 @@ function localTodayStr(): string {
 
 export function MonthCalendar({ slug, totalDuration, selected, onSelect }: Props) {
   const now = new Date();
-  const [viewYear, setViewYear] = useState(now.getFullYear());
-  const [viewMonth, setViewMonth] = useState(now.getMonth());
+  const [viewYear, setViewYear] = useState(() => {
+    if (selected) return new Date(`${selected}T12:00:00`).getFullYear();
+    return now.getFullYear();
+  });
+  const [viewMonth, setViewMonth] = useState(() => {
+    if (selected) return new Date(`${selected}T12:00:00`).getMonth();
+    return now.getMonth();
+  });
   const [availMap, setAvailMap] = useState<Record<string, boolean>>({});
   const [loading, setLoading] = useState(false);
 

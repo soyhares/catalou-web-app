@@ -3,7 +3,6 @@ import { useTranslation } from 'react-i18next';
 import { getAvailableSlots } from '@entities/booking/api';
 import type { SelectedService } from '@entities/booking/types';
 import { NextSlotBanner } from './NextSlotBanner';
-import { DayScrubber } from './DayScrubber';
 import { SlotGrid } from './SlotGrid';
 import { MonthCalendar } from './MonthCalendar';
 
@@ -28,11 +27,6 @@ function nextNDays(n: number): string[] {
   });
 }
 
-function dayChipLabel(dateStr: string): string {
-  const d = new Date(`${dateStr}T12:00:00`);
-  return `${d.toLocaleDateString('es', { weekday: 'narrow' })} ${d.getDate()} ${d.toLocaleDateString('es', { month: 'short' })}`;
-}
-
 function useIsDesktop() {
   const [isDesktop, setIsDesktop] = useState(() => window.innerWidth >= 640);
   useEffect(() => {
@@ -54,15 +48,13 @@ export function Step2DateTimePicker({ slug, services, bookingNoun, onSelect }: P
 
   const [bannerLoading, setBannerLoading] = useState(true);
   const [nextSlot, setNextSlot]           = useState<{ date: string; time: string } | null>(null);
-  const [bannerDismissed, setBannerDismissed] = useState(false);
   const [showCalendar, setShowCalendar]   = useState(false);
-  const [dayChips, setDayChips]           = useState<{ date: string; label: string; hasSlots: boolean }[]>([]);
   const [selectedDate, setSelectedDate]   = useState<string | null>(null);
   const [selectedTime, setSelectedTime]   = useState<string | null>(null);
   const [daySlots, setDaySlots]           = useState<{ time: string; available: boolean }[]>([]);
   const [slotsLoading, setSlotsLoading]   = useState(false);
 
-  // Initial load: find next slot + populate 14-day chips
+  // Find the next available slot
   useEffect(() => {
     const dates = nextNDays(14);
     let cancelled = false;
@@ -70,12 +62,6 @@ export function Step2DateTimePicker({ slug, services, bookingNoun, onSelect }: P
       dates.map(date => getAvailableSlots(slug, date, totalDuration).catch(() => null)),
     ).then(results => {
       if (cancelled) return;
-      const chips = dates.map((date, i) => ({
-        date,
-        label: dayChipLabel(date),
-        hasSlots: results[i]?.slots.some(s => s.available) ?? false,
-      }));
-      setDayChips(chips);
       for (let i = 0; i < results.length; i++) {
         const first = results[i]?.slots.find(s => s.available);
         if (first) { setNextSlot({ date: dates[i], time: first.time }); break; }
@@ -85,7 +71,7 @@ export function Step2DateTimePicker({ slug, services, bookingNoun, onSelect }: P
     return () => { cancelled = true; };
   }, [slug, totalDuration]);
 
-  // Load time slots when a date is selected
+  // Load time slots for the selected date
   useEffect(() => {
     if (!selectedDate) return;
     let cancelled = false;
@@ -97,7 +83,7 @@ export function Step2DateTimePicker({ slug, services, bookingNoun, onSelect }: P
     return () => { cancelled = true; };
   }, [selectedDate, slug, totalDuration]);
 
-  // Scroll slots into view on mobile after selecting a date
+  // Scroll slots into view on mobile after a date is selected
   useEffect(() => {
     if (!selectedDate || isDesktop) return;
     const id = setTimeout(() => {
@@ -111,7 +97,15 @@ export function Step2DateTimePicker({ slug, services, bookingNoun, onSelect }: P
     setSelectedTime(null);
   }
 
-  // ── Banner section ──────────────────────────────────────────────────────────
+  function handleShowCalendar() {
+    setShowCalendar(true);
+    // Pre-select the suggested date so slots load immediately
+    if (nextSlot && !selectedDate) {
+      handleDateSelect(nextSlot.date);
+    }
+  }
+
+  // ── Banner ──────────────────────────────────────────────────────────────────
 
   const bannerSection = (() => {
     if (bannerLoading) {
@@ -123,54 +117,47 @@ export function Step2DateTimePicker({ slug, services, bookingNoun, onSelect }: P
               <animateTransform attributeName="transform" type="rotate" values="0 12 12;360 12 12" dur="0.8s" repeatCount="indefinite"/>
             </path>
           </svg>
-          <span style={{ fontSize: '14px', color: 'var(--pwa-muted)' }}>
-            Buscando disponibilidad…
-          </span>
+          <span style={{ fontSize: '14px', color: 'var(--pwa-muted)' }}>Buscando disponibilidad…</span>
         </div>
       );
     }
-    if (!bannerDismissed && nextSlot) {
+
+    if (!showCalendar && nextSlot) {
       return (
         <NextSlotBanner
           date={nextSlot.date}
           time={nextSlot.time}
           endTime={addMinutes(nextSlot.time, totalDuration)}
           onAccept={() => onSelect(nextSlot.date, nextSlot.time)}
-          onExpand={() => setBannerDismissed(true)}
+          onExpand={handleShowCalendar}
         />
       );
     }
+
+    if (!showCalendar && !nextSlot) {
+      // No availability found — go straight to calendar
+      return (
+        <div style={{ margin: '16px 20px 0' }}>
+          <button
+            type="button"
+            onClick={handleShowCalendar}
+            style={{ width: '100%', padding: '14px', borderRadius: '14px', border: '1.5px dashed var(--pwa-border)', background: 'transparent', color: 'var(--pwa-accent)', fontSize: '15px', fontWeight: 600, cursor: 'pointer' }}
+          >
+            Ver fechas disponibles →
+          </button>
+        </div>
+      );
+    }
+
     return null;
   })();
 
-  // ── Date picker section ─────────────────────────────────────────────────────
-  // Hidden while loading. After load: chips → "Ver más fechas" → MonthCalendar
+  // ── Slots panel ─────────────────────────────────────────────────────────────
 
-  const datePickerSection = bannerLoading ? null : (
-    showCalendar ? (
-      <MonthCalendar
-        slug={slug}
-        totalDuration={totalDuration}
-        selected={selectedDate}
-        onSelect={handleDateSelect}
-      />
-    ) : (
-      <DayScrubber
-        days={dayChips}
-        selected={selectedDate}
-        onSelect={handleDateSelect}
-        onMoreDates={() => setShowCalendar(true)}
-      />
-    )
-  );
-
-  // ── Slots section ───────────────────────────────────────────────────────────
-
-  const slotsSection = (() => {
+  const slotsPanel = (() => {
     if (!selectedDate) {
-      if (!isDesktop || showCalendar) return null;
-      return (
-        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100%', minHeight: '180px', gap: '10px', color: 'var(--pwa-muted)' }}>
+      return isDesktop ? (
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100%', minHeight: '200px', gap: '10px', color: 'var(--pwa-muted)' }}>
           <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
             <rect x="3" y="4" width="18" height="18" rx="2"/>
             <line x1="16" y1="2" x2="16" y2="6"/>
@@ -179,8 +166,9 @@ export function Step2DateTimePicker({ slug, services, bookingNoun, onSelect }: P
           </svg>
           <p style={{ fontSize: '14px', margin: 0 }}>Selecciona una fecha</p>
         </div>
-      );
+      ) : null;
     }
+
     if (slotsLoading) {
       return (
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '100px', color: 'var(--pwa-muted)', fontSize: '14px' }}>
@@ -188,6 +176,7 @@ export function Step2DateTimePicker({ slug, services, bookingNoun, onSelect }: P
         </div>
       );
     }
+
     if (daySlots.length > 0 && !daySlots.some(s => s.available)) {
       return (
         <div style={{ padding: '24px 20px', textAlign: 'center', color: 'var(--pwa-muted)', fontSize: '14px' }}>
@@ -195,6 +184,7 @@ export function Step2DateTimePicker({ slug, services, bookingNoun, onSelect }: P
         </div>
       );
     }
+
     return (
       <SlotGrid
         slots={daySlots}
@@ -205,8 +195,6 @@ export function Step2DateTimePicker({ slug, services, bookingNoun, onSelect }: P
     );
   })();
 
-  // ── Desktop: two-column when calendar is open ───────────────────────────────
-
   const title = (
     <div style={{ padding: '20px 20px 4px' }}>
       <h2 style={{ fontSize: '20px', fontWeight: 700, color: 'var(--pwa-text)', margin: 0 }}>
@@ -215,37 +203,50 @@ export function Step2DateTimePicker({ slug, services, bookingNoun, onSelect }: P
     </div>
   );
 
+  // ── Desktop two-column (calendar open) ──────────────────────────────────────
+
   if (isDesktop && showCalendar) {
     return (
       <div>
         {title}
-        {bannerSection}
-        <div style={{ display: 'grid', gridTemplateColumns: '340px 1fr', borderTop: '1px solid var(--pwa-border)', marginTop: '12px' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: '340px 1fr', borderTop: '1px solid var(--pwa-border)', marginTop: '16px' }}>
           <div style={{ borderRight: '1px solid var(--pwa-border)', paddingTop: '8px' }}>
-            {datePickerSection}
+            <MonthCalendar
+              slug={slug}
+              totalDuration={totalDuration}
+              selected={selectedDate}
+              onSelect={handleDateSelect}
+            />
           </div>
           <div style={{ paddingTop: '16px' }}>
-            {selectedDate && !slotsLoading && (
+            {selectedDate && !slotsLoading && daySlots.some(s => s.available) && (
               <p style={{ padding: '0 20px 8px', fontSize: '12px', fontWeight: 600, color: 'var(--pwa-muted)', textTransform: 'uppercase', letterSpacing: '0.06em', margin: 0 }}>
                 Horarios disponibles
               </p>
             )}
-            {slotsSection}
+            {slotsPanel}
           </div>
         </div>
       </div>
     );
   }
 
-  // ── Mobile + desktop without calendar: stacked ──────────────────────────────
+  // ── Mobile / stacked ────────────────────────────────────────────────────────
 
   return (
     <div>
       {title}
       {bannerSection}
-      {datePickerSection}
+      {showCalendar && (
+        <MonthCalendar
+          slug={slug}
+          totalDuration={totalDuration}
+          selected={selectedDate}
+          onSelect={handleDateSelect}
+        />
+      )}
       <div ref={slotsRef}>
-        {slotsSection}
+        {slotsPanel}
       </div>
     </div>
   );
