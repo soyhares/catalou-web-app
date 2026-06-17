@@ -24,6 +24,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/companies/{slug}/availability/slots": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get available booking slots for a given date and total duration */
+        get: operations["getAvailableSlots"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/companies/{slug}/bookings": {
         parameters: {
             query?: never;
@@ -227,6 +244,11 @@ export interface components {
             slotDuration?: number;
             /** @example America/Costa_Rica */
             timezone?: string;
+            /**
+             * @default cita
+             * @example cita
+             */
+            bookingNoun: string;
         } | null;
         CreateBookingRequest: {
             /** @example María González */
@@ -242,6 +264,12 @@ export interface components {
             /** @example 10:00 */
             preferredTime: string;
             message?: string | null;
+            /** @description List of services to include in this booking. Total duration = Σ(item.durationMinutes × quantity). */
+            services?: {
+                /** Format: uuid */
+                itemId: string;
+                quantity: number;
+            }[];
         };
         BookingPublicResponse: {
             /** Format: uuid */
@@ -250,6 +278,14 @@ export interface components {
             /** Format: date */
             preferredDate: string;
             preferredTime: string;
+            services?: {
+                /** Format: uuid */
+                itemId: string;
+                name: string;
+                durationMinutes: number;
+                quantity: number;
+            }[];
+            totalDurationMinutes?: number | null;
         };
         PushSubscriptionRequest: {
             /** Format: uri */
@@ -278,6 +314,14 @@ export interface components {
             proposedDate?: string | null;
             proposedTime?: string | null;
             rejectionReason?: string | null;
+            services?: {
+                /** Format: uuid */
+                itemId: string;
+                name: string;
+                durationMinutes: number;
+                quantity: number;
+            }[];
+            totalDurationMinutes?: number | null;
             /** Format: date-time */
             createdAt: string;
             /** Format: date-time */
@@ -305,6 +349,11 @@ export interface components {
             endTime?: string;
             slotDuration?: number;
             timezone?: string;
+            /**
+             * @default cita
+             * @example cita
+             */
+            bookingNoun: string;
             /** Format: date-time */
             updatedAt?: string;
         } | null;
@@ -316,6 +365,11 @@ export interface components {
             slotDuration: number;
             /** @default America/Costa_Rica */
             timezone: string;
+            /**
+             * @default cita
+             * @example cita
+             */
+            bookingNoun: string;
         };
         NotificationItem: {
             /** Format: uuid */
@@ -334,6 +388,21 @@ export interface components {
         };
         UnreadCountResponse: {
             count: number;
+        };
+        AvailableSlotsResponse: {
+            /** Format: date */
+            date: string;
+            slots: {
+                /** @description Slot start time (HH:MM) */
+                time: string;
+                /** @description False = slot exists but block doesn't fit (show crossed out) */
+                available: boolean;
+            }[];
+            nextAvailableSlot?: {
+                /** Format: date */
+                date: string;
+                time: string;
+            } | null;
         };
     };
     responses: {
@@ -398,6 +467,42 @@ export interface operations {
                 };
             };
             404: components["responses"]["NotFound"];
+        };
+    };
+    getAvailableSlots: {
+        parameters: {
+            query: {
+                /** @description Date to query (YYYY-MM-DD) */
+                date: string;
+                /** @description Total booking duration in minutes */
+                totalDuration: number;
+            };
+            header?: never;
+            path: {
+                /** @description Company slug (public identifier) */
+                slug: components["parameters"]["slug"];
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Available slots */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AvailableSlotsResponse"];
+                };
+            };
+            400: components["responses"]["BadRequest"];
+            /** @description Company not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
         };
     };
     createBooking: {
