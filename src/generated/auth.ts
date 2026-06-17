@@ -169,6 +169,11 @@ export interface components {
             country: string;
             /** @enum {string} */
             language: "ES" | "EN";
+            /**
+             * @description Subscription plan chosen at registration. Defaults to 'starter' if omitted.
+             * @enum {string}
+             */
+            tier?: "starter" | "pro" | "business";
             /** @description Optional feature flags to enable at registration. Omitted keys use backend defaults. */
             featuresEnabled?: {
                 orders?: boolean;
@@ -177,6 +182,20 @@ export interface components {
                 analytics?: boolean;
                 loyalty?: boolean;
             };
+            /**
+             * @default USD
+             * @enum {string}
+             */
+            currency: "CRC" | "USD";
+            contactPhone?: string;
+            adminName?: string;
+            /** @description Name of the intermediary organization (required when businessModel is asociado) */
+            associationName?: string;
+            /**
+             * Format: email
+             * @description Email of the intermediary organization for approval notifications
+             */
+            associationEmail?: string;
         };
         LoginRequest: {
             /** Format: email */

@@ -127,6 +127,13 @@ export interface components {
             categoryId: string;
             /** Format: uuid */
             subcategoryId: string;
+            /**
+             * @default product
+             * @enum {string}
+             */
+            type: "product" | "service";
+            /** @description Only relevant when type is service */
+            durationMinutes?: number | null;
         };
         ProductDetail: components["schemas"]["ProductCard"] & {
             description?: string | null;
