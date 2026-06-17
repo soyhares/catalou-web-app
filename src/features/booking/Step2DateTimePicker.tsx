@@ -5,6 +5,7 @@ import type { SelectedService } from '@entities/booking/types';
 import { NextSlotBanner } from './NextSlotBanner';
 import { DayScrubber } from './DayScrubber';
 import { SlotGrid } from './SlotGrid';
+import { MonthCalendar } from './MonthCalendar';
 
 interface Props {
   slug: string;
@@ -119,13 +120,12 @@ export function Step2DateTimePicker({ slug, services, bookingNoun, onSelect }: P
             />
           )}
           {showCalendar && (
-            <div style={{ padding: '12px 20px' }}>
-              <input
-                type="date"
-                style={{ width: '100%', padding: '12px', borderRadius: '10px', border: '1.5px solid var(--pwa-border)', background: 'var(--pwa-bg)', color: 'var(--pwa-text)', fontSize: '15px' }}
-                onChange={e => { setSelectedDate(e.target.value); setSelectedTime(null); setShowCalendar(false); }}
-              />
-            </div>
+            <MonthCalendar
+              slug={slug}
+              totalDuration={totalDuration}
+              selected={selectedDate}
+              onSelect={date => { setSelectedDate(date); setSelectedTime(null); setShowCalendar(false); }}
+            />
           )}
         </>
       )}
