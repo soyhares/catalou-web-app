@@ -82,20 +82,41 @@ export function Step3ContactForm({ services, date, time, showPrices, bookingNoun
 
         <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
           <span style={{ fontSize: '13px', fontWeight: 600, color: 'var(--pwa-text)' }}>{t('booking.fieldContactType')}</span>
-          <div style={{ display: 'flex', gap: '4px', background: 'color-mix(in srgb, var(--pwa-muted) 10%, var(--pwa-bg))', borderRadius: '10px', padding: '3px' }}>
-            {(['email', 'phone'] as const).map(type => (
-              <button key={type} type="button" onClick={() => set('visitorContactType', type)}
-                style={{ flex: 1, padding: '8px', borderRadius: '8px', border: 'none', background: values.visitorContactType === type ? 'var(--pwa-bg)' : 'transparent', color: values.visitorContactType === type ? 'var(--pwa-text)' : 'var(--pwa-muted)', fontWeight: values.visitorContactType === type ? 700 : 500, fontSize: '13px', cursor: 'pointer' }}>
-                {type === 'email' ? t('booking.contactEmail') : t('booking.contactPhone')}
-              </button>
-            ))}
+          <div style={{ display: 'flex', gap: '4px', background: 'color-mix(in srgb, var(--pwa-muted) 15%, var(--pwa-bg))', borderRadius: '10px', padding: '3px' }}>
+            {(['email', 'phone'] as const).map(type => {
+              const active = values.visitorContactType === type;
+              return (
+                <button
+                  key={type}
+                  type="button"
+                  onClick={() => { set('visitorContactType', type); set('visitorContact', ''); }}
+                  style={{
+                    flex: 1, padding: '9px 8px', borderRadius: '8px', border: 'none',
+                    background: active ? 'var(--pwa-accent)' : 'transparent',
+                    color: active ? 'var(--pwa-accent-text, #fff)' : 'var(--pwa-muted)',
+                    fontWeight: active ? 700 : 500, fontSize: '13px', cursor: 'pointer',
+                    transition: 'background 0.15s, color 0.15s',
+                  }}
+                >
+                  {type === 'email' ? t('booking.contactEmail') : t('booking.contactPhone')}
+                </button>
+              );
+            })}
           </div>
         </div>
 
         <label style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-          <span style={{ fontSize: '13px', fontWeight: 600, color: 'var(--pwa-text)' }}>{t('booking.fieldContact')}</span>
-          <input type={values.visitorContactType === 'email' ? 'email' : 'tel'} required value={values.visitorContact} onChange={e => set('visitorContact', e.target.value)}
-            style={{ padding: '12px 14px', borderRadius: '10px', border: '1.5px solid var(--pwa-border)', background: 'var(--pwa-bg)', color: 'var(--pwa-text)', fontSize: '15px' }} />
+          <span style={{ fontSize: '13px', fontWeight: 600, color: 'var(--pwa-text)' }}>
+            {values.visitorContactType === 'email' ? t('booking.contactEmail') : t('booking.contactPhone')}
+          </span>
+          <input
+            type={values.visitorContactType === 'email' ? 'email' : 'tel'}
+            required
+            value={values.visitorContact}
+            onChange={e => set('visitorContact', e.target.value)}
+            placeholder={values.visitorContactType === 'email' ? 'nombre@ejemplo.com' : '+506 8888 0000'}
+            style={{ padding: '12px 14px', borderRadius: '10px', border: '1.5px solid var(--pwa-border)', background: 'var(--pwa-bg)', color: 'var(--pwa-text)', fontSize: '15px' }}
+          />
         </label>
 
         <label style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
