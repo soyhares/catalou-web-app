@@ -72,7 +72,7 @@ export function BookingWizard({ slug, categories, products, showPrices, bookingN
 
   return (
     <div style={{ minHeight: '100vh', background: 'var(--pwa-bg)' }}>
-    <div style={{ maxWidth: '860px', margin: '0 auto' }}>
+    <div style={{ maxWidth: '860px', margin: '0 auto', paddingBottom: '88px' }}>
       {/* Progress bar */}
       <div style={{ display: 'flex', gap: '4px', padding: '16px 20px 0' }}>
         {STEP_ORDER.map((s, i) => (
