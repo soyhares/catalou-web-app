@@ -44,13 +44,19 @@ export function usePushSubscription(): PushSubscriptionHook {
   }, [isSupported]);
 
   const subscribe = async (): Promise<void> => {
-    if (!isSupported || !vapidPublicKey) return;
+    console.log('[push:pwa] subscribe() called | isSupported', isSupported, '| vapidPublicKey', vapidPublicKey ? `SET (${vapidPublicKey.slice(0, 10)}...)` : 'MISSING');
+    if (!isSupported || !vapidPublicKey) {
+      console.log('[push:pwa] early return — isSupported:', isSupported, 'vapidPublicKey:', vapidPublicKey ? 'set' : 'missing');
+      return;
+    }
 
     const perm = await Notification.requestPermission();
     setPermission(perm);
+    console.log('[push:pwa] permission result:', perm);
     if (perm !== 'granted') return;
 
     const reg = await navigator.serviceWorker.getRegistration();
+    console.log('[push:pwa] SW registration:', reg ? 'found' : 'NOT FOUND');
     if (!reg) return;
 
     const subscription = await reg.pushManager.subscribe({
@@ -62,11 +68,13 @@ export function usePushSubscription(): PushSubscriptionHook {
     const endpoint = subscription.endpoint;
     const auth = json.keys?.['auth'] ?? '';
     const p256dh = json.keys?.['p256dh'] ?? '';
+    console.log('[push:pwa] subscribed endpoint:', endpoint.slice(0, 60));
 
     await publicFetch<void>(`/companies/${slug}/push-subscriptions`, {
       method: 'POST',
       body: JSON.stringify({ endpoint, keys: { auth, p256dh } }),
     });
+    console.log('[push:pwa] subscription registered with API OK');
 
     setIsSubscribed(true);
   };
