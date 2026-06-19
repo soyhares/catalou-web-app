@@ -13,7 +13,7 @@ interface PushSubscriptionHook {
   isSupported: boolean;
   permission: NotificationPermission;
   isSubscribed: boolean;
-  subscribe: () => Promise<void>;
+  subscribe: (bookingId?: string) => Promise<void>;
   unsubscribe: () => Promise<void>;
 }
 
@@ -43,7 +43,7 @@ export function usePushSubscription(): PushSubscriptionHook {
     });
   }, [isSupported]);
 
-  const subscribe = async (): Promise<void> => {
+  const subscribe = async (bookingId?: string): Promise<void> => {
     console.log('[push:pwa] subscribe() called | isSupported', isSupported, '| vapidPublicKey', vapidPublicKey ? `SET (${vapidPublicKey.slice(0, 10)}...)` : 'MISSING');
     if (!isSupported || !vapidPublicKey) {
       console.log('[push:pwa] early return — isSupported:', isSupported, 'vapidPublicKey:', vapidPublicKey ? 'set' : 'missing');
@@ -72,9 +72,9 @@ export function usePushSubscription(): PushSubscriptionHook {
 
     await publicFetch<void>(`/companies/${slug}/push-subscriptions`, {
       method: 'POST',
-      body: JSON.stringify({ endpoint, keys: { auth, p256dh } }),
+      body: JSON.stringify({ endpoint, keys: { auth, p256dh }, ...(bookingId ? { bookingId } : {}) }),
     });
-    console.log('[push:pwa] subscription registered with API OK');
+    console.log('[push:pwa] subscription registered with API OK', bookingId ? `(linked to booking ${bookingId})` : '');
 
     setIsSubscribed(true);
   };
