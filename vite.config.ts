@@ -21,10 +21,7 @@ export default defineConfig(({ mode }) => {
           navigateFallbackDenylist: [/^\/api\//],
           runtimeCaching: [
             {
-              urlPattern: ({ url }: { url: URL }) =>
-                url.href.startsWith(apiUrl) &&
-                url.pathname.includes('/companies/') &&
-                url.pathname.endsWith('/branding'),
+              urlPattern: /\/companies\/[^/]+\/branding$/,
               handler: 'StaleWhileRevalidate' as const,
               options: {
                 cacheName: 'branding-cache',
@@ -32,8 +29,7 @@ export default defineConfig(({ mode }) => {
               },
             },
             {
-              urlPattern: ({ url }: { url: URL }) =>
-                url.href.startsWith(apiUrl) && url.pathname.includes('/catalog'),
+              urlPattern: /\/catalog/,
               handler: 'StaleWhileRevalidate' as const,
               options: {
                 cacheName: 'catalog-cache',
