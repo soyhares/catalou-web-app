@@ -16,5 +16,6 @@ export async function publicFetch<T>(path: string, options: RequestInit = {}): P
     headers: { 'Content-Type': 'application/json', ...options.headers },
   });
   if (!res.ok) throw new ApiError(res.status, `Request failed: ${res.status}`);
-  return res.json() as Promise<T>;
+  const text = await res.text();
+  return (text ? JSON.parse(text) : undefined) as T;
 }

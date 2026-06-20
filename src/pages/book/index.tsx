@@ -32,6 +32,7 @@ export default function BookPage() {
   const { theme }       = useTheme();
   const { slug, branding } = useBranding();
   const [showPushPrompt, setShowPushPrompt] = useState(false);
+  const [confirmedBookingId, setConfirmedBookingId] = useState<string | undefined>();
   const [categories, setCategories]         = useState<PublicCategory[]>([]);
   const [products, setProducts]             = useState<PublicProduct[]>([]);
   const [bookingNoun, setBookingNoun]       = useState('cita');
@@ -59,6 +60,7 @@ export default function BookPage() {
 
   function handleConfirmed(booking: BookingPublicResponse) {
     saveBookingRef(slug, { id: booking.id, createdAt: new Date().toISOString() });
+    setConfirmedBookingId(booking.id);
     setShowPushPrompt(true);
   }
 
@@ -67,6 +69,7 @@ export default function BookPage() {
       <PushPermissionModal
         isOpen
         slug={slug}
+        bookingId={confirmedBookingId}
         onClose={() => navigate('/appointments', { replace: true })}
       />
     );

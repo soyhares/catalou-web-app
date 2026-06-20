@@ -165,12 +165,11 @@ export function BookingForm({ slug, onSuccess, onCancel }: BookingFormProps) {
       let visitorPushEndpoint: string | undefined;
       try {
         const reg = await navigator.serviceWorker?.getRegistration();
-        if (reg) {
-          const sub = await reg.pushManager.getSubscription();
-          visitorPushEndpoint = sub?.endpoint;
-        }
-      } catch {
-        // not supported or no subscription — omit silently
+        const sub = reg ? await reg.pushManager.getSubscription() : null;
+        visitorPushEndpoint = sub?.endpoint;
+        console.log('[push:booking] SW registration:', reg ? 'found' : 'NOT FOUND', '| subscription endpoint:', visitorPushEndpoint ? visitorPushEndpoint.slice(0, 60) : 'none');
+      } catch (err) {
+        console.log('[push:booking] error reading SW subscription:', err);
       }
 
       const result = await publicFetch<BookingConfirmation>(`/companies/${slug}/bookings`, {

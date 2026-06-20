@@ -5,9 +5,10 @@ interface PushPermissionModalProps {
   isOpen: boolean;
   onClose: () => void;
   slug: string;
+  bookingId?: string;
 }
 
-export function PushPermissionModal({ isOpen, onClose }: PushPermissionModalProps) {
+export function PushPermissionModal({ isOpen, onClose, bookingId }: PushPermissionModalProps) {
   const { isSupported, permission, subscribe } = usePushSubscription();
   const [isLoading, setIsLoading] = useState(false);
   const [isDenied, setIsDenied] = useState(false);
@@ -18,7 +19,7 @@ export function PushPermissionModal({ isOpen, onClose }: PushPermissionModalProp
   const handleActivate = async (): Promise<void> => {
     setIsLoading(true);
     try {
-      await subscribe();
+      await subscribe(bookingId);
       const currentPermission = Notification.permission;
       if (currentPermission === 'denied') {
         setIsDenied(true);
