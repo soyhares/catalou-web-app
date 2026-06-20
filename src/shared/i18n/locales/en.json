@@ -148,6 +148,7 @@
     "step1Title":       "What service do you need?",
     "step1Subtitle":    "Select one or more services",
     "step1Cta":         "Choose date & time",
+    "viewDetails":      "View details",
     "step2Title":       "When do you want your {{noun}}?",
     "nextSlotLabel":    "Next availability",
     "nextSlotCta":      "Book this slot",

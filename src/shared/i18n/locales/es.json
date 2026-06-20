@@ -148,6 +148,7 @@
     "step1Title":       "¿Qué servicio necesitas?",
     "step1Subtitle":    "Selecciona uno o más servicios",
     "step1Cta":         "Elegir fecha y hora",
+    "viewDetails":      "Ver detalle",
     "step2Title":       "¿Cuándo quieres tu {{noun}}?",
     "nextSlotLabel":    "Próxima disponibilidad",
     "nextSlotCta":      "Reservar este horario",

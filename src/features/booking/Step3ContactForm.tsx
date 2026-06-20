@@ -10,6 +10,7 @@ interface FormValues {
 }
 
 interface Props {
+  slug: string;
   services: SelectedService[];
   date: string;
   time: string;
@@ -25,10 +26,33 @@ function formatDate(dateStr: string): string {
   });
 }
 
-export function Step3ContactForm({ services, date, time, showPrices, bookingNoun, isLoading, onSubmit }: Props) {
+function loadContactDraft(slug: string): Partial<FormValues> {
+  try {
+    const raw = localStorage.getItem(`booking-contact-${slug}`);
+    return raw ? (JSON.parse(raw) as Partial<FormValues>) : {};
+  } catch {
+    return {};
+  }
+}
+
+function saveContactDraft(slug: string, values: Pick<FormValues, 'visitorName' | 'visitorContact' | 'visitorContactType'>) {
+  try {
+    localStorage.setItem(`booking-contact-${slug}`, JSON.stringify(values));
+  } catch {
+    // storage unavailable — continue silently
+  }
+}
+
+export function Step3ContactForm({ slug, services, date, time, showPrices, bookingNoun, isLoading, onSubmit }: Props) {
   const { t } = useTranslation();
-  const [values, setValues] = useState<FormValues>({
-    visitorName: '', visitorContact: '', visitorContactType: 'email', message: '',
+  const [values, setValues] = useState<FormValues>(() => {
+    const draft = loadContactDraft(slug);
+    return {
+      visitorName: draft.visitorName ?? '',
+      visitorContact: draft.visitorContact ?? '',
+      visitorContactType: draft.visitorContactType ?? 'email',
+      message: '',
+    };
   });
 
   const totalDuration = services.reduce((sum, s) => sum + s.durationMinutes * s.quantity, 0);
@@ -40,7 +64,7 @@ export function Step3ContactForm({ services, date, time, showPrices, bookingNoun
   }
 
   return (
-    <form onSubmit={e => { e.preventDefault(); onSubmit(values); }} style={{ padding: '20px' }}>
+    <form onSubmit={e => { e.preventDefault(); saveContactDraft(slug, { visitorName: values.visitorName, visitorContact: values.visitorContact, visitorContactType: values.visitorContactType }); onSubmit(values); }} style={{ padding: '20px' }}>
       <h2 style={{ fontSize: '20px', fontWeight: 700, color: 'var(--pwa-text)', margin: '0 0 20px' }}>
         {t('booking.step3Title')}
       </h2>

@@ -110,6 +110,7 @@ export function BookingWizard({ slug, categories, products, showPrices, bookingN
       )}
       {step === 'contact' && (
         <Step3ContactForm
+          slug={slug}
           services={selected}
           date={date}
           time={time}
