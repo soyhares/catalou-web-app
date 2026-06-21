@@ -4,46 +4,11 @@ import { useBranding } from '@app/BrandingContext';
 import {
   getOrderByToken,
   confirmAssociation,
+  rejectAssociation,
   type OrderSummaryForAssociation,
 } from '@entities/order/api';
 import { formatPrice } from '@shared/lib/formatPrice';
-
-function IconCheck() {
-  return (
-    <svg width="28" height="28" viewBox="0 0 28 28" fill="none" aria-hidden="true">
-      <circle cx="14" cy="14" r="12" stroke="currentColor" strokeWidth="1.3" fill="none"/>
-      <path d="M8 14.5L12 18.5L20 10" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-    </svg>
-  );
-}
-
-function IconWarning() {
-  return (
-    <svg width="28" height="28" viewBox="0 0 28 28" fill="none" aria-hidden="true">
-      <path d="M14 3L26 24H2L14 3Z" stroke="currentColor" strokeWidth="1.3" strokeLinejoin="round" fill="none"/>
-      <path d="M14 11V16" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
-      <circle cx="14" cy="20" r="1" fill="currentColor"/>
-    </svg>
-  );
-}
-
-function IconX() {
-  return (
-    <svg width="28" height="28" viewBox="0 0 28 28" fill="none" aria-hidden="true">
-      <circle cx="14" cy="14" r="12" stroke="currentColor" strokeWidth="1.3" fill="none"/>
-      <path d="M9 9L19 19M19 9L9 19" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
-    </svg>
-  );
-}
-
-function IconClock() {
-  return (
-    <svg width="28" height="28" viewBox="0 0 28 28" fill="none" aria-hidden="true">
-      <circle cx="14" cy="14" r="12" stroke="currentColor" strokeWidth="1.3" fill="none"/>
-      <path d="M14 8V14L18 17" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-    </svg>
-  );
-}
+import { IconCheck, IconWarning, IconX, IconClock, StatusBlock } from '@shared/ui/confirmation-page-icons';
 
 type PageState =
   | { kind: 'loading' }
@@ -52,38 +17,9 @@ type PageState =
   | { kind: 'expired' }
   | { kind: 'invalid' }
   | { kind: 'confirmed' }
+  | { kind: 'rejected' }
+  | { kind: 'rejecting' }
   | { kind: 'error'; message: string };
-
-interface StatusBlockProps {
-  icon: React.ReactElement;
-  color: string;
-  title: string;
-  message: string;
-}
-
-function StatusBlock({ icon, color, title, message }: StatusBlockProps) {
-  return (
-    <div className="text-center py-4">
-      <div className="flex justify-center mb-4" style={{ color }}>
-        {icon}
-      </div>
-      <h1
-        style={{
-          fontFamily: 'var(--pwa-font-heading)',
-          fontStyle: 'italic',
-          fontSize: '1.3rem',
-          color: 'var(--pwa-text)',
-          marginBottom: '8px',
-        }}
-      >
-        {title}
-      </h1>
-      <p className="text-sm" style={{ color: 'var(--pwa-text)', opacity: 0.6, lineHeight: 1.6 }}>
-        {message}
-      </p>
-    </div>
-  );
-}
 
 export default function ConfirmAssociationPage() {
   const { t } = useTranslation();
@@ -92,6 +28,9 @@ export default function ConfirmAssociationPage() {
   const token = new URLSearchParams(window.location.search).get('token') ?? '';
   const [state, setState] = useState<PageState>({ kind: 'loading' });
   const [confirming, setConfirming] = useState(false);
+  const [rejectionReason, setRejectionReason] = useState('');
+  const [showRejectForm, setShowRejectForm] = useState(false);
+  const [rejecting, setRejecting] = useState(false);
 
   useEffect(() => {
     if (!token) { setState({ kind: 'invalid' }); return; }
@@ -105,6 +44,19 @@ export default function ConfirmAssociationPage() {
         else setState({ kind: 'error', message: t('confirm.loadError') });
       });
   }, [slug, token, t]);
+
+  async function handleReject() {
+    if (!rejectionReason.trim()) return;
+    setRejecting(true);
+    try {
+      await rejectAssociation(slug, token, rejectionReason.trim());
+      setState({ kind: 'rejected' });
+    } catch {
+      setState({ kind: 'error', message: t('confirm.rejectError') });
+    } finally {
+      setRejecting(false);
+    }
+  }
 
   async function handleConfirm() {
     setConfirming(true);
@@ -162,6 +114,13 @@ export default function ConfirmAssociationPage() {
           <StatusBlock
             icon={<IconCheck />} color="var(--pwa-accent)"
             title={t('confirm.successTitle')} message={t('confirm.successMessage')}
+          />
+        )}
+
+        {state.kind === 'rejected' && (
+          <StatusBlock
+            icon={<IconCheck />} color="var(--pwa-text-secondary)"
+            title={t('confirm.rejectedTitle')} message={t('confirm.rejectedMessage')}
           />
         )}
 
@@ -257,6 +216,89 @@ export default function ConfirmAssociationPage() {
             >
               {confirming ? t('confirm.confirming') : t('confirm.confirmButton')}
             </button>
+
+            {!showRejectForm ? (
+              <button
+                type="button"
+                onClick={() => setShowRejectForm(true)}
+                style={{
+                  marginTop: '12px',
+                  width: '100%',
+                  padding: '14px',
+                  border: '1.5px solid var(--pwa-border)',
+                  background: 'transparent',
+                  color: 'var(--pwa-text)',
+                  borderRadius: 'var(--pwa-radius-button)',
+                  fontSize: '10px',
+                  fontWeight: 700,
+                  fontFamily: 'var(--pwa-font-body)',
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.18em',
+                  cursor: 'pointer',
+                }}
+              >
+                {t('confirm.rejectButton')}
+              </button>
+            ) : (
+              <div style={{ marginTop: '12px' }}>
+                <textarea
+                  value={rejectionReason}
+                  onChange={e => setRejectionReason(e.target.value)}
+                  placeholder={t('confirm.rejectReasonPlaceholder')}
+                  rows={3}
+                  style={{
+                    width: '100%',
+                    padding: '12px 14px',
+                    border: '1.5px solid var(--pwa-border)',
+                    borderRadius: 'var(--pwa-radius-sm)',
+                    background: 'var(--pwa-bg)',
+                    color: 'var(--pwa-text)',
+                    fontSize: '14px',
+                    resize: 'none',
+                    boxSizing: 'border-box',
+                  }}
+                />
+                <button
+                  type="button"
+                  onClick={() => { void handleReject(); }}
+                  disabled={!rejectionReason.trim() || rejecting}
+                  style={{
+                    marginTop: '8px',
+                    width: '100%',
+                    padding: '14px',
+                    background: '#EF4444',
+                    color: '#fff',
+                    border: 'none',
+                    borderRadius: 'var(--pwa-radius-button)',
+                    fontSize: '10px',
+                    fontWeight: 700,
+                    fontFamily: 'var(--pwa-font-body)',
+                    textTransform: 'uppercase',
+                    letterSpacing: '0.18em',
+                    cursor: rejectionReason.trim() && !rejecting ? 'pointer' : 'default',
+                    opacity: !rejectionReason.trim() || rejecting ? 0.5 : 1,
+                  }}
+                >
+                  {rejecting ? t('confirm.rejecting') : t('confirm.confirmReject')}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => { setShowRejectForm(false); setRejectionReason(''); }}
+                  style={{
+                    marginTop: '6px',
+                    width: '100%',
+                    padding: '10px',
+                    background: 'transparent',
+                    color: 'var(--pwa-text-secondary)',
+                    border: 'none',
+                    fontSize: '12px',
+                    cursor: 'pointer',
+                  }}
+                >
+                  {t('confirm.cancelReject')}
+                </button>
+              </div>
+            )}
           </>
         )}
       </div>

@@ -7,6 +7,7 @@ interface FormValues {
   visitorContact: string;
   visitorContactType: 'email' | 'phone';
   message: string;
+  affiliateNumber: string;
 }
 
 interface Props {
@@ -17,6 +18,7 @@ interface Props {
   showPrices: boolean;
   bookingNoun: string;
   isLoading: boolean;
+  businessModel?: 'DIRECT' | 'ASSOCIATED' | 'BOTH';
   onSubmit: (values: FormValues) => void;
 }
 
@@ -43,7 +45,7 @@ function saveContactDraft(slug: string, values: Pick<FormValues, 'visitorName' |
   }
 }
 
-export function Step3ContactForm({ slug, services, date, time, showPrices, bookingNoun, isLoading, onSubmit }: Props) {
+export function Step3ContactForm({ slug, services, date, time, showPrices, bookingNoun, isLoading, businessModel, onSubmit }: Props) {
   const { t } = useTranslation();
   const [values, setValues] = useState<FormValues>(() => {
     const draft = loadContactDraft(slug);
@@ -52,12 +54,14 @@ export function Step3ContactForm({ slug, services, date, time, showPrices, booki
       visitorContact: draft.visitorContact ?? '',
       visitorContactType: draft.visitorContactType ?? 'email',
       message: '',
+      affiliateNumber: '',
     };
   });
 
   const totalDuration = services.reduce((sum, s) => sum + s.durationMinutes * s.quantity, 0);
   const totalPrice    = services.reduce((sum, s) => sum + (s.basePrice ?? 0) * s.quantity, 0);
-  const canSubmit     = values.visitorName.trim().length > 0 && values.visitorContact.trim().length > 0;
+  const requiresAffiliate = businessModel === 'ASSOCIATED' || businessModel === 'BOTH';
+  const canSubmit     = values.visitorName.trim().length > 0 && values.visitorContact.trim().length > 0 && (!requiresAffiliate || values.affiliateNumber.trim().length > 0);
 
   function set<K extends keyof FormValues>(key: K, value: FormValues[K]) {
     setValues(prev => ({ ...prev, [key]: value }));
@@ -142,6 +146,22 @@ export function Step3ContactForm({ slug, services, date, time, showPrices, booki
             style={{ padding: '12px 14px', borderRadius: '10px', border: '1.5px solid var(--pwa-border)', background: 'var(--pwa-bg)', color: 'var(--pwa-text)', fontSize: '15px' }}
           />
         </label>
+
+        {(businessModel === 'ASSOCIATED' || businessModel === 'BOTH') && (
+          <label style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+            <span style={{ fontSize: '13px', fontWeight: 600, color: 'var(--pwa-text)' }}>
+              {t('booking.fieldAffiliateNumber')} <span style={{ color: '#EF4444' }}>*</span>
+            </span>
+            <input
+              type="text"
+              required
+              value={values.affiliateNumber}
+              onChange={e => set('affiliateNumber', e.target.value)}
+              placeholder={t('booking.fieldAffiliateNumberPlaceholder')}
+              style={{ padding: '12px 14px', borderRadius: '10px', border: '1.5px solid var(--pwa-border)', background: 'var(--pwa-bg)', color: 'var(--pwa-text)', fontSize: '15px' }}
+            />
+          </label>
+        )}
 
         <label style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
           <span style={{ fontSize: '13px', fontWeight: 600, color: 'var(--pwa-text)' }}>{t('booking.fieldMessage')}</span>

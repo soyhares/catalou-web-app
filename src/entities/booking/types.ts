@@ -28,6 +28,7 @@ export interface CreateBookingPayload {
   preferredDate: string;
   preferredTime: string;
   message?: string;
+  affiliateNumber?: string;
   services: BookingServiceItem[];
 }
 

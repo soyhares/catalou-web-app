@@ -65,6 +65,18 @@ export async function confirmAssociation(
   );
 }
 
+export async function rejectAssociation(
+  slug: string,
+  token: string,
+  reason: string,
+): Promise<{ rejected: boolean }> {
+  return publicFetch<{ rejected: boolean }>(`/catalog/${slug}/reject-association`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ token, reason }),
+  });
+}
+
 export async function submitOrder(
   slug: string,
   input: SubmitOrderInput,

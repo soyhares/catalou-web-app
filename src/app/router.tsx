@@ -16,6 +16,9 @@ const OrderConfirmedPage = lazy(() => import('@pages/order-confirmed'));
 const ConfirmAssociationPage = lazy(
   () => import('@pages/confirm-association/ConfirmAssociationPage'),
 );
+const ConfirmBookingPage = lazy(
+  () => import('@pages/confirm-booking/ConfirmBookingPage'),
+);
 const AboutPage = lazy(() => import('@pages/about'));
 const PrivacyPolicyPage = lazy(() => import('@pages/privacy-policy/PrivacyPolicyPage'));
 const AppointmentsPage = lazy(() => import('@pages/appointments'));
@@ -46,6 +49,7 @@ function AnimatedRoutes() {
           <Route path="/checkout" element={<OrdersGuard><PageTransition><CheckoutPage /></PageTransition></OrdersGuard>} />
           <Route path="/order-confirmed" element={<OrdersGuard><PageTransition><OrderConfirmedPage /></PageTransition></OrdersGuard>} />
           <Route path="/confirm-association" element={<PageTransition><ConfirmAssociationPage /></PageTransition>} />
+          <Route path="/confirm-booking" element={<PageTransition><ConfirmBookingPage /></PageTransition>} />
           <Route path="/about" element={<PageTransition><AboutPage /></PageTransition>} />
           <Route path="/appointments" element={<BookingsGuard><PageTransition><AppointmentsPage /></PageTransition></BookingsGuard>} />
           <Route path="/book" element={<BookingsGuard><BookPage /></BookingsGuard>} />
