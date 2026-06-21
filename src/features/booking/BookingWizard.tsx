@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { createBooking } from '@entities/booking/api';
 import type { PublicCategory, PublicProduct } from '@entities/catalog/api';
 import type { SelectedService, BookingPublicResponse } from '@entities/booking/types';
+import { useBranding } from '@app/BrandingContext';
 import { Step1ServiceSelect } from './Step1ServiceSelect';
 import { Step2DateTimePicker } from './Step2DateTimePicker';
 import { Step3ContactForm } from './Step3ContactForm';
@@ -22,6 +23,7 @@ interface Props {
 }
 
 export function BookingWizard({ slug, categories, products, showPrices, bookingNoun, preselectedItemId, onBack, onConfirmed }: Props) {
+  const { branding } = useBranding();
   const [step, setStep]           = useState<Step>('services');
   const [selected, setSelected]   = useState<SelectedService[]>(() => {
     if (!preselectedItemId) return [];
@@ -34,14 +36,18 @@ export function BookingWizard({ slug, categories, products, showPrices, bookingN
   const [isLoading, setIsLoading] = useState(false);
   const [confirmed, setConfirmed] = useState<BookingPublicResponse | null>(null);
 
-  async function handleSubmit(contact: { visitorName: string; visitorContact: string; visitorContactType: 'email' | 'phone'; message: string }) {
+  async function handleSubmit(contact: { visitorName: string; visitorContact: string; visitorContactType: 'email' | 'phone'; message: string; affiliateNumber: string }) {
     setIsLoading(true);
     try {
       const booking = await createBooking(slug, {
-        ...contact,
+        visitorName: contact.visitorName,
+        visitorContact: contact.visitorContact,
+        visitorContactType: contact.visitorContactType,
+        message: contact.message,
         preferredDate: date,
         preferredTime: time,
         services: selected.map(s => ({ itemId: s.itemId, quantity: s.quantity })),
+        affiliateNumber: contact.affiliateNumber || undefined,
       });
       setConfirmed(booking);
       setStep('confirmed');
@@ -117,6 +123,7 @@ export function BookingWizard({ slug, categories, products, showPrices, bookingN
           showPrices={showPrices}
           bookingNoun={bookingNoun}
           isLoading={isLoading}
+          businessModel={branding.businessModel as 'DIRECT' | 'ASSOCIATED' | 'BOTH' | undefined}
           onSubmit={handleSubmit}
         />
       )}
