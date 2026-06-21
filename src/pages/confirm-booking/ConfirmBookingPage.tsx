@@ -86,7 +86,6 @@ export default function ConfirmBookingPage() {
 
   function handleCancelRejectForm() {
     setRejectionReason('');
-    // If we came here from action=reject param, reload summary; otherwise go back to ready
     setState({ kind: 'loading' });
   }
 
