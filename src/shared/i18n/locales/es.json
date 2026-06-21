@@ -217,7 +217,9 @@
     "footerDuration":   "{{duration}} min en total",
     "footerPrice":      "${{price}} en total",
     "fieldAffiliateNumber": "Número de afiliado / membresía",
-    "fieldAffiliateNumberPlaceholder": "Ej: AF-00123"
+    "fieldAffiliateNumberPlaceholder": "Ej: AF-00123",
+    "affiliateNumberHint": "Lo encuentras en tu tarjeta o documentos de {{name}}",
+    "associationReviewNote": "Tu solicitud será revisada por {{name}}. Te notificaremos por {{channel}} si es aprobada o rechazada."
   },
   "errors": {
     "storeNotFound": "Esta tienda no existe",
