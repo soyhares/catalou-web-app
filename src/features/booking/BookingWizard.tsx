@@ -124,6 +124,7 @@ export function BookingWizard({ slug, categories, products, showPrices, bookingN
           bookingNoun={bookingNoun}
           isLoading={isLoading}
           businessModel={branding.businessModel as 'DIRECT' | 'ASSOCIATED' | 'BOTH' | undefined}
+          associationName={branding.associationName ?? undefined}
           onSubmit={handleSubmit}
         />
       )}

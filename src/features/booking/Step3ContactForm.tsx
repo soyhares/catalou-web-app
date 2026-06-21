@@ -19,6 +19,7 @@ interface Props {
   bookingNoun: string;
   isLoading: boolean;
   businessModel?: 'DIRECT' | 'ASSOCIATED' | 'BOTH';
+  associationName?: string;
   onSubmit: (values: FormValues) => void;
 }
 
@@ -45,7 +46,7 @@ function saveContactDraft(slug: string, values: Pick<FormValues, 'visitorName' |
   }
 }
 
-export function Step3ContactForm({ slug, services, date, time, showPrices, bookingNoun, isLoading, businessModel, onSubmit }: Props) {
+export function Step3ContactForm({ slug, services, date, time, showPrices, bookingNoun, isLoading, businessModel, associationName, onSubmit }: Props) {
   const { t } = useTranslation();
   const [values, setValues] = useState<FormValues>(() => {
     const draft = loadContactDraft(slug);
@@ -160,6 +161,9 @@ export function Step3ContactForm({ slug, services, date, time, showPrices, booki
               placeholder={t('booking.fieldAffiliateNumberPlaceholder')}
               style={{ padding: '12px 14px', borderRadius: '10px', border: '1.5px solid var(--pwa-border)', background: 'var(--pwa-bg)', color: 'var(--pwa-text)', fontSize: '15px' }}
             />
+            <span style={{ fontSize: '11px', color: 'var(--pwa-text)', opacity: 0.5, marginTop: '4px' }}>
+              {t('booking.affiliateNumberHint', { name: associationName || 'la Asociación' })}
+            </span>
           </label>
         )}
 
@@ -169,6 +173,15 @@ export function Step3ContactForm({ slug, services, date, time, showPrices, booki
             style={{ padding: '12px 14px', borderRadius: '10px', border: '1.5px solid var(--pwa-border)', background: 'var(--pwa-bg)', color: 'var(--pwa-text)', fontSize: '15px', resize: 'none' }} />
         </label>
       </div>
+
+      {requiresAffiliate && (
+        <p style={{ fontSize: '12px', color: 'var(--pwa-text)', opacity: 0.6, lineHeight: 1.5, marginTop: '8px', padding: '10px 12px', borderRadius: '8px', background: 'rgba(0,0,0,0.04)' }}>
+          {t('booking.associationReviewNote', {
+            name: associationName || 'la Asociación',
+            channel: values.visitorContactType === 'email' ? 'correo electrónico' : 'WhatsApp',
+          })}
+        </p>
+      )}
 
       <button type="submit" disabled={!canSubmit || isLoading}
         style={{ marginTop: '24px', width: '100%', padding: '15px', borderRadius: '12px', border: 'none', background: canSubmit && !isLoading ? 'var(--pwa-accent)' : 'var(--pwa-border)', color: canSubmit && !isLoading ? 'var(--pwa-accent-text, #fff)' : 'var(--pwa-muted)', fontWeight: 700, fontSize: '15px', cursor: canSubmit && !isLoading ? 'pointer' : 'default' }}>

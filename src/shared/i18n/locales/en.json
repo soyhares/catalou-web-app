@@ -217,7 +217,9 @@
     "footerDuration":   "{{duration}} min total",
     "footerPrice":      "${{price}} total",
     "fieldAffiliateNumber": "Member / Affiliate number",
-    "fieldAffiliateNumberPlaceholder": "E.g.: AF-00123"
+    "fieldAffiliateNumberPlaceholder": "E.g.: AF-00123",
+    "affiliateNumberHint": "You can find it on your {{name}} membership card or documents",
+    "associationReviewNote": "Your request will be reviewed by {{name}}. We'll notify you via {{channel}} if approved or rejected."
   },
   "errors": {
     "storeNotFound": "Store not found",
