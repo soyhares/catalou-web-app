@@ -301,6 +301,9 @@ export default function CheckoutPage() {
                     className={`pwa-input${errors.affiliateNumber ? ' pwa-input--error' : ''}`}
                     placeholder={t('checkout.affiliateNumberPlaceholder')}
                   />
+                  <p className="text-xs mt-1" style={{ color: 'var(--pwa-text)', opacity: 0.5 }}>
+                    {t('checkout.affiliateNumberHint', { name: branding.associationName || 'la Asociación' })}
+                  </p>
                 </FormField>
               )}
             </div>
@@ -366,6 +369,12 @@ export default function CheckoutPage() {
 
           {submitError && (
             <p className="mb-4 text-sm text-red-600">{submitError}</p>
+          )}
+
+          {orderType === 'FINANCED' && (
+            <p className="text-xs text-center mb-3" style={{ color: 'var(--pwa-text)', opacity: 0.6, lineHeight: 1.5 }}>
+              {t('checkout.associationReviewNote', { name: branding.associationName || 'la Asociación' })}
+            </p>
           )}
 
           <button
