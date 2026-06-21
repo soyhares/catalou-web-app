@@ -89,7 +89,9 @@
     "affiliateNumber": "Número de afiliado / membresía",
     "affiliateNumberPlaceholder": "Ej: 12345",
     "associated": "Por mi asociación",
-    "associatedDesc": "Tu solicitud pasa por tu asociación, quien la aprueba y coordina el pedido."
+    "associatedDesc": "Tu solicitud pasa por tu asociación, quien la aprueba y coordina el pedido.",
+    "affiliateNumberHint": "Lo encuentras en tu tarjeta o documentos de {{name}}",
+    "associationReviewNote": "Tu pedido será revisado por {{name}} antes de ser procesado. Te notificaremos por correo si es aprobado o rechazado."
   },
   "confirm": {
     "loading": "Cargando…",

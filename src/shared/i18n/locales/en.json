@@ -89,7 +89,9 @@
     "affiliateNumber": "Affiliate / membership number",
     "affiliateNumberPlaceholder": "e.g. 12345",
     "associated": "Through my association",
-    "associatedDesc": "Your request goes through your association, who approves and coordinates the order."
+    "associatedDesc": "Your request goes through your association, who approves and coordinates the order.",
+    "affiliateNumberHint": "You can find it on your {{name}} membership card or documents",
+    "associationReviewNote": "Your order will be reviewed by {{name}} before processing. We'll notify you by email if approved or rejected."
   },
   "confirm": {
     "loading": "Loading…",
