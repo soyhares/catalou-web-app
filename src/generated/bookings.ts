@@ -99,6 +99,41 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/admin/availability/blocked-slots": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List manually blocked slots for a given date */
+        get: operations["listBlockedSlots"];
+        put?: never;
+        /** Manually block a time slot (CREADOR/ADMIN only) */
+        post: operations["createBlockedSlot"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/availability/blocked-slots/{slotId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /** Unblock a previously blocked slot (CREADOR/ADMIN only) */
+        delete: operations["deleteBlockedSlot"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/admin/bookings/{bookingId}/confirm": {
         parameters: {
             query?: never;
@@ -131,6 +166,26 @@ export interface paths {
         head?: never;
         /** Propose a new date/time for a booking */
         patch: operations["rescheduleBooking"];
+        trace?: never;
+    };
+    "/admin/bookings/{bookingId}/complete": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /**
+         * Mark a confirmed booking as completed (attended)
+         * @description Transitions booking from confirmed → completed. Requires CREADOR, ADMIN, or EDITOR role.
+         */
+        patch: operations["completeBooking"];
         trace?: never;
     };
     "/admin/bookings/{bookingId}/reject": {
@@ -224,7 +279,7 @@ export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
         /** @enum {string} */
-        BookingStatus: "pending" | "confirmed" | "rescheduled" | "rejected" | "completed";
+        BookingStatus: "pending" | "association_pending" | "confirmed" | "rescheduled" | "rejected" | "completed";
         /** @enum {string} */
         ContactType: "email" | "phone";
         ErrorResponse: {
@@ -264,6 +319,8 @@ export interface components {
             /** @example 10:00 */
             preferredTime: string;
             message?: string | null;
+            /** @description Required when the tenant operates under ASSOCIATED or BOTH business model. Identifies the visitor's membership within the association for the tripartite approval flow. */
+            affiliateNumber?: string | null;
             /** @description List of services to include in this booking. Total duration = Σ(item.durationMinutes × quantity). */
             services?: {
                 /** Format: uuid */
@@ -314,6 +371,8 @@ export interface components {
             proposedDate?: string | null;
             proposedTime?: string | null;
             rejectionReason?: string | null;
+            /** @description Affiliate/membership number submitted by the visitor at booking time. */
+            affiliateNumber?: string | null;
             services?: {
                 /** Format: uuid */
                 itemId: string;
@@ -389,6 +448,27 @@ export interface components {
         UnreadCountResponse: {
             count: number;
         };
+        BlockedSlot: {
+            /** Format: uuid */
+            id: string;
+            /** Format: date */
+            date: string;
+            time: string;
+            reason?: string | null;
+            /** Format: date-time */
+            createdAt: string;
+        };
+        BlockedSlotListResponse: {
+            /** Format: date */
+            date: string;
+            slots: components["schemas"]["BlockedSlot"][];
+        };
+        CreateBlockedSlotRequest: {
+            /** Format: date */
+            date: string;
+            time: string;
+            reason?: string | null;
+        };
         AvailableSlotsResponse: {
             /** Format: date */
             date: string;
@@ -398,11 +478,11 @@ export interface components {
                 /** @description False = slot exists but block doesn't fit (show crossed out) */
                 available: boolean;
             }[];
-            nextAvailableSlot?: {
+            nextAvailableSlot?: null | {
                 /** Format: date */
                 date: string;
                 time: string;
-            } | null;
+            };
         };
     };
     responses: {
@@ -622,6 +702,78 @@ export interface operations {
             401: components["responses"]["Unauthorized"];
         };
     };
+    listBlockedSlots: {
+        parameters: {
+            query: {
+                /** @description Date to query (YYYY-MM-DD) */
+                date: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description List of blocked slots for the given date */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BlockedSlotListResponse"];
+                };
+            };
+            401: components["responses"]["Unauthorized"];
+        };
+    };
+    createBlockedSlot: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CreateBlockedSlotRequest"];
+            };
+        };
+        responses: {
+            /** @description Slot blocked */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BlockedSlot"];
+                };
+            };
+            400: components["responses"]["BadRequest"];
+            401: components["responses"]["Unauthorized"];
+        };
+    };
+    deleteBlockedSlot: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                slotId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Slot unblocked */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            401: components["responses"]["Unauthorized"];
+            404: components["responses"]["NotFound"];
+        };
+    };
     confirmBooking: {
         parameters: {
             query?: never;
@@ -663,6 +815,31 @@ export interface operations {
         };
         responses: {
             /** @description Booking rescheduled */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BookingAdminResponse"];
+                };
+            };
+            400: components["responses"]["BadRequest"];
+            401: components["responses"]["Unauthorized"];
+            404: components["responses"]["NotFound"];
+        };
+    };
+    completeBooking: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                bookingId: components["parameters"]["bookingId"];
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Booking marked as completed */
             200: {
                 headers: {
                     [name: string]: unknown;
