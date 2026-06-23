@@ -4,6 +4,8 @@ import { useBranding } from '@app/BrandingContext';
 import { fetchCatalog, type CatalogData, type PublicProduct, type PublicCategory } from '@entities/catalog/api';
 import { useCart } from '@shared/lib/use-cart';
 
+export type TypeFilter = 'all' | 'product' | 'service';
+
 export interface CatalogPageProps {
   // Data
   products: PublicProduct[];
@@ -19,6 +21,10 @@ export interface CatalogPageProps {
   cartCount: number;
   companyName: string;
   logoUrl: string | null;
+  typeFilter: TypeFilter;
+  hasServices: boolean;
+  hasProductItems: boolean;
+  bookingsEnabled: boolean;
 
   // Actions
   ordersEnabled: boolean;
@@ -28,6 +34,7 @@ export interface CatalogPageProps {
   onCartClick: () => void;
   onQuote: (productId: string) => void;
   onRetry: () => void;
+  onTypeFilterChange: (t: TypeFilter) => void;
 }
 
 export function useCatalogPage(): CatalogPageProps {
@@ -41,6 +48,7 @@ export function useCatalogPage(): CatalogPageProps {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategoryId, setSelectedCategoryId] = useState<string | null>(null);
   const [selectedSubcategoryId, setSelectedSubcategoryId] = useState<string | null>(null);
+  const [typeFilter, setTypeFilter] = useState<TypeFilter>('all');
 
   const cartCount = cartItems.reduce((s, i) => s + i.quantity, 0);
 
@@ -103,14 +111,19 @@ export function useCatalogPage(): CatalogPageProps {
   }
 
   const activeCategory = catalog?.categories.find((c) => c.id === selectedCategoryId) ?? null;
+  const allApiProducts = catalog?.products ?? [];
+  const hasServices = allApiProducts.some((p) => p.type === 'service');
+  const hasProductItems = allApiProducts.some((p) => p.type === 'product');
+  const filteredProducts = typeFilter === 'all' ? allApiProducts : allApiProducts.filter((p) => p.type === typeFilter);
 
   return {
-    products: catalog?.products ?? [],
+    products: filteredProducts,
     categories: catalog?.categories ?? [],
     showPrices: catalog?.showPrices ?? false,
     currency: branding.currency ?? 'CRC',
     businessModel: branding.businessModel,
     ordersEnabled: branding.featuresEnabled?.orders === true,
+    bookingsEnabled: branding.featuresEnabled?.bookings === true,
     selectedCategory: activeCategory,
     selectedSubcategoryId,
     searchQuery,
@@ -119,11 +132,15 @@ export function useCatalogPage(): CatalogPageProps {
     cartCount,
     companyName: branding.companyName,
     logoUrl: branding.logoUrl,
+    typeFilter,
+    hasServices,
+    hasProductItems,
     onCategorySelect,
     onSubcategorySelect,
     onSearchChange,
     onCartClick,
     onQuote,
     onRetry: () => void load(),
+    onTypeFilterChange: setTypeFilter,
   };
 }

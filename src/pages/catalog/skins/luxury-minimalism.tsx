@@ -32,6 +32,10 @@ const LuxuryMinimalismSkin: React.FC<CatalogPageProps> = ({
   isLoading,
   error,
   ordersEnabled,
+  bookingsEnabled,
+  typeFilter,
+  hasServices,
+  hasProductItems,
   cartCount,
   companyName,
   logoUrl,
@@ -40,6 +44,7 @@ const LuxuryMinimalismSkin: React.FC<CatalogPageProps> = ({
   onCartClick,
   onQuote,
   onRetry,
+  onTypeFilterChange,
 }) => {
   const navigate = useNavigate();
   const { isMobile } = useTheme();
@@ -273,6 +278,34 @@ const LuxuryMinimalismSkin: React.FC<CatalogPageProps> = ({
 
       {/* ── Main Content ──────────────────────────────────────────────── */}
       <main style={{ padding: '32px 20px 0' }} id="lm-product-list">
+        {/* Type filter tabs */}
+        {hasServices && hasProductItems && (
+          <div style={{ display: 'flex', gap: '6px', marginBottom: '20px' }}>
+            {(['all', 'product', 'service'] as const).map((t) => (
+              <button
+                key={t}
+                type="button"
+                onClick={() => onTypeFilterChange(t)}
+                style={{
+                  fontFamily: 'var(--pwa-font-body)',
+                  fontSize: '9px',
+                  letterSpacing: '0.16em',
+                  textTransform: 'uppercase' as const,
+                  fontWeight: typeFilter === t ? 600 : 400,
+                  padding: '5px 14px',
+                  borderRadius: 'var(--pwa-radius-button)',
+                  border: `1px solid ${typeFilter === t ? 'var(--pwa-accent)' : 'var(--pwa-border)'}`,
+                  backgroundColor: typeFilter === t ? 'var(--pwa-accent-soft)' : 'transparent',
+                  color: typeFilter === t ? 'var(--pwa-accent)' : 'var(--pwa-text-secondary)',
+                  cursor: 'pointer',
+                }}
+              >
+                {t === 'all' ? 'Todo' : t === 'product' ? 'Productos' : 'Servicios'}
+              </button>
+            ))}
+          </div>
+        )}
+
         {/* Section label */}
         {hasProducts && (
           <p style={{
@@ -424,17 +457,18 @@ const LuxuryMinimalismSkin: React.FC<CatalogPageProps> = ({
                   }}>
                     {product.name}
                   </p>
-                  {showPrices && product.basePrice && (
-                    <p style={{
-                      fontFamily: 'var(--pwa-font-body)',
-                      fontSize: '0.95rem',
-                      fontWeight: 600,
-                      color: 'var(--pwa-accent)',
-                      marginBottom: '12px',
-                    }}>
-                      {formatPrice(product.basePrice, currency)}
-                    </p>
-                  )}
+                  <div style={{ display: 'flex', alignItems: 'baseline', gap: '8px', marginBottom: '12px' }}>
+                    {showPrices && product.basePrice && (
+                      <p style={{ fontFamily: 'var(--pwa-font-body)', fontSize: '0.95rem', fontWeight: 600, color: 'var(--pwa-accent)', margin: 0 }}>
+                        {formatPrice(product.basePrice, currency)}
+                      </p>
+                    )}
+                    {product.type === 'service' && product.durationMinutes && (
+                      <span style={{ fontFamily: 'var(--pwa-font-body)', fontSize: '10px', color: 'var(--pwa-text-secondary)', letterSpacing: '0.06em' }}>
+                        {product.durationMinutes} min
+                      </span>
+                    )}
+                  </div>
                   {showPrices && (businessModel === 'ASSOCIATED' || businessModel === 'BOTH') && product.basePrice && (
                     <PriceDisclaimer className="mt-1 mb-2" />
                   )}
@@ -442,7 +476,13 @@ const LuxuryMinimalismSkin: React.FC<CatalogPageProps> = ({
                     type="button"
                     onClick={(e) => {
                       e.stopPropagation();
-                      if (ordersEnabled) { onQuote(product.id); } else { void navigate(`/products/${product.id}`); }
+                      if (product.type === 'service' && bookingsEnabled) {
+                        void navigate('/book');
+                      } else if (product.type === 'product' && ordersEnabled) {
+                        onQuote(product.id);
+                      } else {
+                        void navigate(`/products/${product.id}`);
+                      }
                     }}
                     style={{
                       fontFamily: 'var(--pwa-font-body)',
@@ -458,7 +498,7 @@ const LuxuryMinimalismSkin: React.FC<CatalogPageProps> = ({
                       cursor: 'pointer',
                     }}
                   >
-                    {ordersEnabled ? 'Agregar' : 'Ver más'}
+                    {product.type === 'service' ? (bookingsEnabled ? 'Reservar' : 'Ver más') : (ordersEnabled ? 'Agregar' : 'Ver más')}
                   </button>
                 </div>
               </article>
