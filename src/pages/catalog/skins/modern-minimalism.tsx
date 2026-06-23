@@ -47,6 +47,10 @@ const ModernMinimalismSkin: React.FC<CatalogPageProps> = ({
   isLoading,
   error,
   ordersEnabled,
+  bookingsEnabled,
+  typeFilter,
+  hasServices,
+  hasProductItems,
   cartCount: _cartCount,
   companyName: _companyName,
   logoUrl: _logoUrl,
@@ -56,6 +60,7 @@ const ModernMinimalismSkin: React.FC<CatalogPageProps> = ({
   onCartClick: _onCartClick,
   onQuote,
   onRetry,
+  onTypeFilterChange,
 }) => {
   const navigate = useNavigate();
   const { isMobile } = useTheme();
@@ -250,6 +255,32 @@ const ModernMinimalismSkin: React.FC<CatalogPageProps> = ({
 
       {/* ── Main Content ──────────────────────────────────────────────── */}
       <main style={{ padding: '16px' }}>
+        {/* Type filter tabs — only shown when catalog has both products and services */}
+        {hasServices && hasProductItems && (
+          <div style={{ display: 'flex', gap: '6px', marginBottom: '16px' }}>
+            {(['all', 'product', 'service'] as const).map((t) => (
+              <button
+                key={t}
+                type="button"
+                onClick={() => onTypeFilterChange(t)}
+                style={{
+                  fontFamily: 'var(--pwa-font-body)',
+                  fontSize: '12px',
+                  fontWeight: typeFilter === t ? 600 : 400,
+                  padding: '6px 14px',
+                  borderRadius: 'var(--pwa-radius-chip)',
+                  border: `1.5px solid ${typeFilter === t ? 'var(--pwa-accent)' : 'var(--pwa-border)'}`,
+                  backgroundColor: typeFilter === t ? 'var(--pwa-accent)' : 'transparent',
+                  color: typeFilter === t ? 'var(--pwa-bg)' : 'var(--pwa-text-secondary)',
+                  cursor: 'pointer',
+                }}
+              >
+                {t === 'all' ? 'Todo' : t === 'product' ? 'Productos' : 'Servicios'}
+              </button>
+            ))}
+          </div>
+        )}
+
         {/* Loading skeleton — mirrors the 2-column card layout with shimmer */}
         {isLoading && (
           <div>
@@ -390,28 +421,35 @@ const ModernMinimalismSkin: React.FC<CatalogPageProps> = ({
                     {product.name}
                   </p>
 
-                  {/* Price */}
-                  {showPrices && product.basePrice && (
-                    <p style={{
-                      fontFamily: 'var(--pwa-font-body)',
-                      fontSize: '0.875rem',
-                      fontWeight: 700,
-                      color: 'var(--pwa-text)',
-                      marginBottom: '8px',
-                    }}>
-                      {formatPrice(product.basePrice, currency)}
-                    </p>
-                  )}
+                  {/* Price + duration */}
+                  <div style={{ display: 'flex', alignItems: 'baseline', gap: '6px', marginBottom: '8px' }}>
+                    {showPrices && product.basePrice && (
+                      <p style={{ fontFamily: 'var(--pwa-font-body)', fontSize: '0.875rem', fontWeight: 700, color: 'var(--pwa-text)', margin: 0 }}>
+                        {formatPrice(product.basePrice, currency)}
+                      </p>
+                    )}
+                    {product.type === 'service' && product.durationMinutes && (
+                      <span style={{ fontFamily: 'var(--pwa-font-body)', fontSize: '10px', color: 'var(--pwa-text-secondary)', fontWeight: 500 }}>
+                        {product.durationMinutes} min
+                      </span>
+                    )}
+                  </div>
                   {showPrices && (businessModel === 'ASSOCIATED' || businessModel === 'BOTH') && product.basePrice && (
                     <PriceDisclaimer className="mt-1 mb-2" />
                   )}
 
-                  {/* Add to cart / view more button */}
+                  {/* CTA button */}
                   <button
                     type="button"
                     onClick={(e) => {
                       e.stopPropagation();
-                      if (ordersEnabled) { onQuote(product.id); } else { void navigate(`/products/${product.id}`); }
+                      if (product.type === 'service' && bookingsEnabled) {
+                        void navigate('/book');
+                      } else if (product.type === 'product' && ordersEnabled) {
+                        onQuote(product.id);
+                      } else {
+                        void navigate(`/products/${product.id}`);
+                      }
                     }}
                     style={{
                       width: '100%',
@@ -419,16 +457,16 @@ const ModernMinimalismSkin: React.FC<CatalogPageProps> = ({
                       fontSize: '11px',
                       fontWeight: 600,
                       letterSpacing: '0.04em',
-                      color: ordersEnabled ? 'var(--pwa-bg)' : 'var(--pwa-accent)',
-                      backgroundColor: ordersEnabled ? 'var(--pwa-accent)' : 'transparent',
-                      border: ordersEnabled ? 'none' : '1px solid var(--pwa-border)',
+                      color: (product.type === 'service' && bookingsEnabled) || (product.type === 'product' && ordersEnabled) ? 'var(--pwa-bg)' : 'var(--pwa-accent)',
+                      backgroundColor: (product.type === 'service' && bookingsEnabled) || (product.type === 'product' && ordersEnabled) ? 'var(--pwa-accent)' : 'transparent',
+                      border: (product.type === 'service' && bookingsEnabled) || (product.type === 'product' && ordersEnabled) ? 'none' : '1px solid var(--pwa-border)',
                       borderRadius: 'var(--pwa-radius-sm)',
                       padding: '7px 0',
                       cursor: 'pointer',
                       textAlign: 'center' as const,
                     }}
                   >
-                    {ordersEnabled ? 'Agregar' : 'Ver más'}
+                    {product.type === 'service' ? (bookingsEnabled ? 'Reservar' : 'Ver más') : (ordersEnabled ? 'Agregar' : 'Ver más')}
                   </button>
                 </div>
               </article>

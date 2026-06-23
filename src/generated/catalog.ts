@@ -75,6 +75,30 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/catalog/{slug}/confirm-association": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get order details by association approval token
+         * @description Used by the association to preview the order before approving or rejecting. No authentication required — secured by the UUID token.
+         */
+        get: operations["getOrderByAssociationToken"];
+        put?: never;
+        /**
+         * Association approves a financed order
+         * @description Transitions order from PENDING to ASSOCIATION_CONFIRMED. Sends confirmation emails to visitor and business. No authentication required — secured by the UUID token.
+         */
+        post: operations["confirmOrderAssociation"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -183,7 +207,27 @@ export interface components {
             /** @enum {string} */
             orderType: "DIRECT" | "FINANCED";
             /** @enum {string} */
-            status: "PENDING";
+            status: "PENDING" | "ASSOCIATION_CONFIRMED";
+        };
+        OrderAssociationReview: {
+            /** Format: uuid */
+            orderId: string;
+            /** @enum {string} */
+            status: "PENDING" | "ASSOCIATION_CONFIRMED";
+            visitorName: string;
+            visitorPhone: string;
+            /** Format: email */
+            visitorEmail: string;
+            /** Format: decimal */
+            totalAmount: number;
+            alreadyConfirmed: boolean;
+            items: {
+                productNameSnapshot: string;
+                variantSnapshot?: string | null;
+                quantity: number;
+                /** Format: decimal */
+                unitPriceSnapshot: number;
+            }[];
         };
         ErrorResponse: {
             message: string;
@@ -248,6 +292,8 @@ export interface operations {
                 categoryId?: string;
                 /** @description Filter by subcategory UUID */
                 subcategoryId?: string;
+                /** @description Filter by item type */
+                type?: "product" | "service";
             };
             header?: never;
             path: {
@@ -343,6 +389,97 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["ValidationErrorResponse"];
+                };
+            };
+        };
+    };
+    getOrderByAssociationToken: {
+        parameters: {
+            query: {
+                token: string;
+            };
+            header?: never;
+            path: {
+                /** @description Company slug (e.g., "acme" for acme.catalou.com) */
+                slug: components["parameters"]["slug"];
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Order details for association review */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OrderAssociationReview"];
+                };
+            };
+            /** @description Token not found or expired */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Token already processed */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    confirmOrderAssociation: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description Company slug (e.g., "acme" for acme.catalou.com) */
+                slug: components["parameters"]["slug"];
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    /** Format: uuid */
+                    token: string;
+                };
+            };
+        };
+        responses: {
+            /** @description Order confirmed by association */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OrderConfirmation"];
+                };
+            };
+            /** @description Token not found or expired */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Token already processed */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
                 };
             };
         };

@@ -41,6 +41,10 @@ const NeoLuxurySkin: React.FC<CatalogPageProps> = ({
   isLoading,
   error,
   ordersEnabled,
+  bookingsEnabled,
+  typeFilter,
+  hasServices,
+  hasProductItems,
   cartCount,
   companyName,
   logoUrl,
@@ -50,6 +54,7 @@ const NeoLuxurySkin: React.FC<CatalogPageProps> = ({
   onCartClick,
   onQuote,
   onRetry,
+  onTypeFilterChange,
 }) => {
   const navigate = useNavigate();
   const { isMobile } = useTheme();
@@ -248,6 +253,33 @@ const NeoLuxurySkin: React.FC<CatalogPageProps> = ({
 
       {/* ── Main Content ──────────────────────────────────────────────── */}
       <main style={{ padding: '24px 16px 0' }}>
+        {/* Type filter tabs */}
+        {hasServices && hasProductItems && (
+          <div style={{ display: 'flex', gap: '6px', marginBottom: '16px' }}>
+            {(['all', 'product', 'service'] as const).map((t) => (
+              <button
+                key={t}
+                type="button"
+                onClick={() => onTypeFilterChange(t)}
+                style={{
+                  fontFamily: 'var(--pwa-font-body)',
+                  fontSize: '11px',
+                  fontWeight: typeFilter === t ? 700 : 400,
+                  letterSpacing: '0.06em',
+                  padding: '5px 14px',
+                  borderRadius: 'var(--pwa-radius-sm)',
+                  border: `1px solid ${typeFilter === t ? 'var(--pwa-accent)' : 'var(--pwa-border)'}`,
+                  backgroundColor: typeFilter === t ? 'var(--pwa-accent)' : 'transparent',
+                  color: typeFilter === t ? 'var(--pwa-bg)' : 'var(--pwa-text-secondary)',
+                  cursor: 'pointer',
+                }}
+              >
+                {t === 'all' ? 'Todo' : t === 'product' ? 'Productos' : 'Servicios'}
+              </button>
+            ))}
+          </div>
+        )}
+
         {/* Section title */}
         {hasProducts && (
           <h2 style={{
@@ -418,23 +450,31 @@ const NeoLuxurySkin: React.FC<CatalogPageProps> = ({
                     {product.name}
                   </p>
                   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                    {showPrices && product.basePrice ? (
-                      <p style={{
-                        fontFamily: 'var(--pwa-font-body)',
-                        fontSize: '0.95rem',
-                        fontWeight: 700,
-                        color: 'var(--pwa-text)',
-                      }}>
-                        {formatPrice(product.basePrice, currency)}
-                      </p>
-                    ) : (
-                      <span />
-                    )}
+                    <div style={{ display: 'flex', flexDirection: 'column' as const, gap: '2px' }}>
+                      {showPrices && product.basePrice ? (
+                        <p style={{ fontFamily: 'var(--pwa-font-body)', fontSize: '0.95rem', fontWeight: 700, color: 'var(--pwa-text)', margin: 0 }}>
+                          {formatPrice(product.basePrice, currency)}
+                        </p>
+                      ) : (
+                        <span />
+                      )}
+                      {product.type === 'service' && product.durationMinutes && (
+                        <span style={{ fontFamily: 'var(--pwa-font-body)', fontSize: '10px', color: 'var(--pwa-text-secondary)', fontWeight: 500 }}>
+                          {product.durationMinutes} min
+                        </span>
+                      )}
+                    </div>
                     <button
                       type="button"
                       onClick={(e) => {
                         e.stopPropagation();
-                        if (ordersEnabled) { onQuote(product.id); } else { void navigate(`/products/${product.id}`); }
+                        if (product.type === 'service' && bookingsEnabled) {
+                          void navigate('/book');
+                        } else if (product.type === 'product' && ordersEnabled) {
+                          onQuote(product.id);
+                        } else {
+                          void navigate(`/products/${product.id}`);
+                        }
                       }}
                       style={{
                         background: 'var(--pwa-accent)',
@@ -450,7 +490,7 @@ const NeoLuxurySkin: React.FC<CatalogPageProps> = ({
                         cursor: 'pointer',
                       }}
                     >
-                      {ordersEnabled ? '+' : '›'}
+                      {product.type === 'service' ? (bookingsEnabled ? '›' : '›') : (ordersEnabled ? '+' : '›')}
                     </button>
                   </div>
                   {showPrices && (businessModel === 'ASSOCIATED' || businessModel === 'BOTH') && product.basePrice && (
