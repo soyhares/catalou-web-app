@@ -227,6 +227,8 @@ export interface components {
             role: "CREADOR" | "ADMIN" | "EDITOR" | "VIEWER";
             /** Format: uuid */
             supabaseUserId: string;
+            /** @description Display name of the user (from shopper profile) */
+            adminName?: string;
         };
         InvitationDetails: {
             /** Format: email */

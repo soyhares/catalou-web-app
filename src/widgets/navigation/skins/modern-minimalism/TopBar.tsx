@@ -83,10 +83,12 @@ const ModernTopBar: React.FC<NavigationProps> = ({
               padding: '4px',
               display: 'flex',
               alignItems: 'center',
-              fontSize: '18px',
             }}
           >
-            <span aria-hidden="true">🛍</span>
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+              <path d="M4 6.5h12l-1.5 9H5.5L4 6.5Z" stroke="currentColor" strokeWidth="1.3" strokeLinejoin="round"/>
+              <path d="M7 6.5V5a3 3 0 0 1 6 0v1.5" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round"/>
+            </svg>
             {cartCount > 0 && (
               <span style={{
                 position: 'absolute',
