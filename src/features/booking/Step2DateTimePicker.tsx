@@ -141,7 +141,7 @@ export function Step2DateTimePicker({ slug, services, bookingNoun, onSelect }: P
           <button
             type="button"
             onClick={handleShowCalendar}
-            style={{ width: '100%', padding: '14px', borderRadius: '14px', border: '1.5px dashed var(--pwa-border)', background: 'transparent', color: 'var(--pwa-accent)', fontSize: '15px', fontWeight: 600, cursor: 'pointer' }}
+            style={{ width: '100%', maxWidth: '480px', display: 'block', padding: '14px', borderRadius: '14px', border: '1.5px dashed var(--pwa-border)', background: 'transparent', color: 'var(--pwa-accent)', fontSize: '15px', fontWeight: 600, cursor: 'pointer' }}
           >
             Ver fechas disponibles →
           </button>

@@ -22,6 +22,7 @@ export interface ProductImagePublic {
 export interface ProductPublic {
   id: string;
   name: string;
+  type: 'product' | 'service';
   description: string | null;
   technicalSpecs: string | null;
   basePrice: string;
