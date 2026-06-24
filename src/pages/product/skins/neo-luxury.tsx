@@ -275,8 +275,8 @@ const NeoLuxuryProductSkin: React.FC<ProductPageProps> = (props) => {
               </div>
             )}
 
-            {/* Quantity + CTA — only when orders enabled */}
-            {ordersEnabled && (
+            {/* Quantity + CTA — only for products (not services) when orders enabled */}
+            {ordersEnabled && product?.type !== 'service' && (
               <>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '20px' }}>
                   <span style={{ fontFamily: 'var(--pwa-font-body)', fontSize: '9px', letterSpacing: '0.14em', textTransform: 'uppercase', fontWeight: 700, color: 'var(--pwa-text-secondary)' }}>

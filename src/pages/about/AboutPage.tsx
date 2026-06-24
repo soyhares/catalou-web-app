@@ -81,7 +81,7 @@ const PLATFORM_LABELS: Record<SocialLink['platform'], string> = {
 };
 
 export default function AboutPage() {
-  const { slug } = useBranding();
+  const { slug, branding } = useBranding();
   const { t } = useTranslation();
   const [profile, setProfile] = useState<CatalogProfile | null>(null);
   const [loading, setLoading] = useState(true);
@@ -90,30 +90,20 @@ export default function AboutPage() {
     getCatalogProfile(slug).then(setProfile).catch(() => {}).finally(() => setLoading(false));
   }, [slug]);
 
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center pb-16" style={{ backgroundColor: 'var(--pwa-bg)' }} />
-    );
-  }
-
-  if (!profile) {
-    return (
-      <div className="min-h-screen pb-16" style={{ backgroundColor: 'var(--pwa-bg)' }} />
-    );
-  }
-
-  const hasContact = !!(profile.phone || profile.publicEmail || profile.whatsappNumber);
-  const hasLinks = profile.socialLinks && profile.socialLinks.length > 0;
+  const bannerSrc = branding.bannerUrl ?? profile?.photoUrl ?? null;
+  const displayName = profile?.displayName ?? branding.companyName;
+  const hasContact = !!(profile?.phone || profile?.publicEmail || profile?.whatsappNumber);
+  const hasLinks = !!(profile?.socialLinks && profile.socialLinks.length > 0);
 
   return (
     <div className="min-h-screen pb-20" style={{ backgroundColor: 'var(--pwa-bg)' }}>
-      {/* Hero banner */}
+      {/* Hero banner — always visible, uses company bannerUrl first */}
       <div
         className="relative w-full h-52 flex items-center justify-center overflow-hidden"
         style={{ backgroundColor: 'var(--pwa-accent)' }}
       >
-        {profile.photoUrl ? (
-          <img src={profile.photoUrl} alt={profile.displayName} className="absolute inset-0 w-full h-full object-cover" />
+        {bannerSrc ? (
+          <img src={bannerSrc} alt={displayName} className="absolute inset-0 w-full h-full object-cover" />
         ) : (
           <span
             style={{
@@ -125,11 +115,16 @@ export default function AboutPage() {
             }}
             aria-hidden="true"
           >
-            {profile.displayName.charAt(0).toUpperCase()}
+            {displayName.charAt(0).toUpperCase()}
           </span>
         )}
       </div>
 
+      {loading && (
+        <div className="h-1" />
+      )}
+
+      {!loading && profile && (
       <div className="px-5 py-8 max-w-xl mx-auto flex flex-col gap-8">
         {/* Name + Bio */}
         <div>
@@ -238,6 +233,7 @@ export default function AboutPage() {
           </div>
         )}
       </div>
+      )}
     </div>
   );
 }

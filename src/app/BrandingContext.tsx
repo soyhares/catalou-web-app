@@ -66,6 +66,16 @@ export function BrandingProvider({ children }: BrandingProviderProps) {
         applyBrandingCssVars(data);
         injectDynamicManifest(data);
         void i18n.changeLanguage(data.language.toLowerCase());
+
+        document.title = data.companyName;
+
+        if (data.logoUrl) {
+          const icon = document.querySelector<HTMLLinkElement>('link[rel="icon"]');
+          const apple = document.querySelector<HTMLLinkElement>('link[rel="apple-touch-icon"]');
+          if (icon) icon.href = data.logoUrl;
+          if (apple) apple.href = data.logoUrl;
+        }
+
         setBranding(data);
         setLoadState('ready');
       })
