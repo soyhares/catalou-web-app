@@ -282,8 +282,8 @@ const ModernMinimalismProductSkin: React.FC<ProductPageProps> = (props) => {
               </div>
             )}
 
-            {/* Quantity + CTA — only when orders enabled */}
-            {ordersEnabled && (
+            {/* Quantity + CTA — only for products (not services) when orders enabled */}
+            {ordersEnabled && product?.type !== 'service' && (
               <>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '16px' }}>
                   <span style={{ fontFamily: 'var(--pwa-font-body)', fontSize: '13px', fontWeight: 500, color: 'var(--pwa-text)' }}>

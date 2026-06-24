@@ -3,6 +3,7 @@ import { publicFetch } from '@shared/lib/api';
 export interface BrandingData {
   companyName: string;
   logoUrl: string | null;
+  bannerUrl: string | null;
   colorPrimary: string;
   colorSecondary: string;
   colorBackground: string;
