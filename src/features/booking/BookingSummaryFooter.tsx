@@ -21,12 +21,16 @@ export function BookingSummaryFooter({ services, showPrices, onContinue }: Props
       bottom: 0, left: 0, right: 0,
       background: 'var(--pwa-bg)',
       borderTop: '1px solid var(--pwa-border)',
+      zIndex: 20,
+    }}>
+    <div style={{
+      maxWidth: '860px',
+      margin: '0 auto',
       padding: '12px 20px',
       paddingBottom: 'calc(12px + env(safe-area-inset-bottom))',
       display: 'flex',
       flexDirection: 'column',
       gap: '10px',
-      zIndex: 20,
     }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '13px', color: 'var(--pwa-muted)' }}>
         <span>
@@ -57,6 +61,7 @@ export function BookingSummaryFooter({ services, showPrices, onContinue }: Props
       >
         {t('booking.step1Cta')}
       </button>
+    </div>
     </div>
   );
 }
