@@ -154,8 +154,7 @@ export default function ProductDetailPage() {
           </p>
           <Link
             to="/"
-            className="uppercase tracking-[0.14em]"
-            style={{ fontSize: '10px', color: 'var(--pwa-accent)', fontWeight: 600 }}
+            className="uppercase tracking-[0.14em] text-[10px] text-[var(--pwa-accent)] font-semibold"
           >
             Volver al catálogo
           </Link>
@@ -174,8 +173,7 @@ export default function ProductDetailPage() {
           <nav className="px-4 py-3 flex items-center gap-2">
             <Link
               to="/"
-              className="uppercase tracking-[0.1em] hover:opacity-100 transition-opacity"
-              style={{ fontSize: '9px', color: 'var(--pwa-accent)', fontWeight: 600, opacity: 0.7 }}
+              className="uppercase tracking-[0.1em] hover:opacity-100 transition-opacity text-[9px] text-[var(--pwa-accent)] font-semibold opacity-70"
             >
               Catálogo
             </Link>
