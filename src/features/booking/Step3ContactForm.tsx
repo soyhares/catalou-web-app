@@ -184,7 +184,7 @@ export function Step3ContactForm({ slug, services, date, time, showPrices, booki
       )}
 
       <button type="submit" disabled={!canSubmit || isLoading}
-        style={{ marginTop: '24px', width: '100%', padding: '15px', borderRadius: '12px', border: 'none', background: canSubmit && !isLoading ? 'var(--pwa-accent)' : 'var(--pwa-border)', color: canSubmit && !isLoading ? 'var(--pwa-accent-text, #fff)' : 'var(--pwa-muted)', fontWeight: 700, fontSize: '15px', cursor: canSubmit && !isLoading ? 'pointer' : 'default' }}>
+        style={{ marginTop: '24px', width: '100%', maxWidth: '480px', display: 'block', padding: '15px', borderRadius: '12px', border: 'none', background: canSubmit && !isLoading ? 'var(--pwa-accent)' : 'var(--pwa-border)', color: canSubmit && !isLoading ? 'var(--pwa-accent-text, #fff)' : 'var(--pwa-muted)', fontWeight: 700, fontSize: '15px', cursor: canSubmit && !isLoading ? 'pointer' : 'default' }}>
         {isLoading ? t('common.loading') : t('booking.confirmCta', { noun: bookingNoun })}
       </button>
     </form>

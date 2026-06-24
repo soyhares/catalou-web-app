@@ -346,8 +346,8 @@ export default function ProductDetailPage() {
                 </div>
               )}
 
-              {/* Quantity + Add to cart — only when orders enabled */}
-              {ordersEnabled && (
+              {/* Quantity + Add to cart — only for products (not services) when orders enabled */}
+              {ordersEnabled && product.type !== 'service' && (
                 <>
                   <div className="flex items-center gap-4 mb-5">
                     <span
