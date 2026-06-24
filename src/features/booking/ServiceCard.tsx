@@ -85,14 +85,7 @@ export function ServiceCard({ id, name, durationMinutes, basePrice, showPrices, 
       {/* Link al detalle del catálogo */}
       <Link
         to={`/products/${id}`}
-        style={{
-          flexShrink: 0,
-          fontSize: '12px',
-          color: 'var(--pwa-accent)',
-          textDecoration: 'none',
-          fontWeight: 500,
-          whiteSpace: 'nowrap',
-        }}
+        className="shrink-0 text-[12px] text-[var(--pwa-accent)] no-underline font-medium whitespace-nowrap"
         aria-label={t('booking.viewDetails', { name })}
       >
         {t('booking.viewDetails')} →

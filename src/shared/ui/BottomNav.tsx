@@ -67,8 +67,7 @@ export function BottomNav({ showAbout: _showAbout }: { showAbout?: boolean } = {
             key={item.to}
             to={item.to}
             end={item.end}
-            className="relative flex-1 flex flex-col items-center justify-center gap-1"
-            style={{ color: active ? 'var(--pwa-accent)' : 'var(--pwa-text-secondary)' }}
+            className={`relative flex-1 flex flex-col items-center justify-center gap-1 ${active ? 'text-[var(--pwa-accent)]' : 'text-[var(--pwa-text-secondary)]'}`}
           >
             <AnimatePresence>
               {active && (
