@@ -1,12 +1,70 @@
 import React from 'react';
 import type { AboutPageProps, CatalogProfile } from '../useAboutPage';
 
-const PLATFORM_ICONS: Record<string, string> = {
-  instagram: '📷',
-  facebook: '👤',
-  tiktok: '♪',
-  website: '🌐',
+function IconInstagram() {
+  return (
+    <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+      <rect x="1" y="1" width="12" height="12" rx="3.5" stroke="currentColor" strokeWidth="1.2"/>
+      <circle cx="7" cy="7" r="2.8" stroke="currentColor" strokeWidth="1.2"/>
+      <circle cx="10.5" cy="3.5" r="0.8" fill="currentColor"/>
+    </svg>
+  );
+}
+function IconFacebook() {
+  return (
+    <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+      <path d="M8.5 2H10V0.5H8.5C7 0.5 5.5 1.8 5.5 3.5V5H4V6.5H5.5V13.5H7V6.5H8.5L9 5H7V3.5C7 2.7 7.7 2 8.5 2Z" fill="currentColor"/>
+    </svg>
+  );
+}
+function IconTikTok() {
+  return (
+    <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+      <path d="M9 1h-1.5v8a1.5 1.5 0 1 1-1.5-1.5V6a3 3 0 1 0 3 3V4.5a4.5 4.5 0 0 0 2.5.8V3.8A3 3 0 0 1 9 1Z" fill="currentColor"/>
+    </svg>
+  );
+}
+function IconGlobe() {
+  return (
+    <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+      <circle cx="7" cy="7" r="5.5" stroke="currentColor" strokeWidth="1.2"/>
+      <path d="M7 1.5C7 1.5 9 4 9 7C9 10 7 12.5 7 12.5" stroke="currentColor" strokeWidth="1.2"/>
+      <path d="M7 1.5C7 1.5 5 4 5 7C5 10 7 12.5 7 12.5" stroke="currentColor" strokeWidth="1.2"/>
+      <path d="M1.5 7H12.5" stroke="currentColor" strokeWidth="1.2"/>
+    </svg>
+  );
+}
+
+const PLATFORM_SVG: Record<string, () => React.ReactElement> = {
+  instagram: IconInstagram,
+  facebook: IconFacebook,
+  tiktok: IconTikTok,
+  website: IconGlobe,
 };
+
+function IconPhone() {
+  return (
+    <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+      <path d="M3 1.5h2.5l1 2.5-1.5 1c.7 1.5 1.5 2.3 3 3L9.5 6.5l2.5 1V10c0 1-.5 1.5-1.5 1.5C4 11.5 2.5 4.5 3 3V1.5Z" stroke="currentColor" strokeWidth="1.1" strokeLinejoin="round"/>
+    </svg>
+  );
+}
+function IconWhatsApp() {
+  return (
+    <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+      <path d="M7 1a6 6 0 0 1 5.2 9l.8 3-3-.8A6 6 0 1 1 7 1Z" stroke="currentColor" strokeWidth="1.2" strokeLinejoin="round"/>
+      <path d="M5 5.5C5 5.5 5.5 8.5 9 8.5" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round"/>
+    </svg>
+  );
+}
+function IconEmail() {
+  return (
+    <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+      <rect x="1" y="3" width="12" height="8" rx="1.5" stroke="currentColor" strokeWidth="1.2"/>
+      <path d="M1 4L7 8L13 4" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round"/>
+    </svg>
+  );
+}
 
 const PLATFORM_LABELS: Record<string, string> = {
   instagram: 'Instagram',
@@ -129,7 +187,7 @@ const ModernMinimalismAboutSkin: React.FC<AboutPageProps> = ({
                     backgroundColor: 'var(--pwa-card)',
                   }}
                 >
-                  <span aria-hidden="true">{PLATFORM_ICONS[link.platform] ?? '↗'}</span>
+                  {(PLATFORM_SVG[link.platform] ?? (() => <span aria-hidden="true">↗</span>))()}
                   {PLATFORM_LABELS[link.platform] ?? link.platform}
                 </a>
               ))}
@@ -175,7 +233,7 @@ const ModernMinimalismAboutSkin: React.FC<AboutPageProps> = ({
                     fontSize: '0.875rem',
                   }}
                 >
-                  <span aria-hidden="true">📞</span>
+                  <IconPhone />
                   {p.phone}
                 </a>
               )}
@@ -196,7 +254,7 @@ const ModernMinimalismAboutSkin: React.FC<AboutPageProps> = ({
                     fontSize: '0.875rem',
                   }}
                 >
-                  <span aria-hidden="true">💬</span>
+                  <IconWhatsApp />
                   {p.whatsappNumber}
                 </a>
               )}
@@ -214,7 +272,7 @@ const ModernMinimalismAboutSkin: React.FC<AboutPageProps> = ({
                     fontSize: '0.875rem',
                   }}
                 >
-                  <span aria-hidden="true">✉</span>
+                  <IconEmail />
                   {p.publicEmail}
                 </a>
               )}
