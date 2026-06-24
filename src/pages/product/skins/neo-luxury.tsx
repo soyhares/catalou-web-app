@@ -3,6 +3,7 @@ import { CatalogFooter } from '@shared/ui/CatalogFooter';
 import { useTheme } from '@shared/ui/ThemeProvider';
 import { formatPrice } from '@shared/lib/formatPrice';
 import { PriceDisclaimer } from '@shared/ui';
+import { WhatsAppProductConsultButton } from '@shared/ui/WhatsAppProductConsultButton';
 import type { ProductPageProps } from '../useProductPage';
 
 /* ── Icons ───────────────────────────────────────────────────────────────── */
@@ -361,6 +362,8 @@ const NeoLuxuryProductSkin: React.FC<ProductPageProps> = (props) => {
                 </p>
               </div>
             )}
+
+            <WhatsAppProductConsultButton productName={product.name} />
           </div>
         </div>
 
