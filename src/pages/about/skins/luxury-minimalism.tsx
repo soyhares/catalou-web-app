@@ -10,6 +10,7 @@ const PLATFORM_LABELS: Record<string, string> = {
 
 const LuxuryMinimalismAboutSkin: React.FC<AboutPageProps> = ({
   profile,
+  bannerUrl,
   isLoading,
   error,
   companyName,
@@ -37,16 +38,17 @@ const LuxuryMinimalismAboutSkin: React.FC<AboutPageProps> = ({
   }
 
   const p: CatalogProfile | null = profile;
+  const heroSrc = bannerUrl ?? p?.photoUrl ?? null;
 
   return (
     <div style={{ minHeight: '100vh', backgroundColor: 'var(--pwa-bg)', paddingBottom: '88px' }}>
 
       {/* Large hero photo or blank accent bar */}
-      {p?.photoUrl ? (
+      {heroSrc ? (
         <div style={{ width: '100%', height: '320px', overflow: 'hidden', position: 'relative' }}>
           <img
-            src={p.photoUrl}
-            alt={p.displayName}
+            src={heroSrc}
+            alt={p?.displayName ?? companyName}
             style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
           />
           {/* Gradient overlay */}

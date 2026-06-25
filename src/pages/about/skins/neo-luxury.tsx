@@ -74,6 +74,7 @@ const PLATFORM_LABELS: Record<string, string> = {
 
 const NeoLuxuryAboutSkin: React.FC<AboutPageProps> = ({
   profile,
+  bannerUrl,
   isLoading,
   error,
   companyName,
@@ -101,6 +102,7 @@ const NeoLuxuryAboutSkin: React.FC<AboutPageProps> = ({
   }
 
   const p: CatalogProfile | null = profile;
+  const heroSrc = bannerUrl ?? p?.photoUrl ?? null;
 
   return (
     <div style={{ minHeight: '100vh', backgroundColor: 'var(--pwa-bg)', paddingBottom: '88px' }}>
@@ -112,7 +114,7 @@ const NeoLuxuryAboutSkin: React.FC<AboutPageProps> = ({
         padding: '48px 28px 36px',
       }}>
         <div style={{ maxWidth: '560px', margin: '0 auto' }}>
-          {p?.photoUrl && (
+          {heroSrc && (
             <div style={{
               width: '96px',
               height: '96px',
@@ -123,8 +125,8 @@ const NeoLuxuryAboutSkin: React.FC<AboutPageProps> = ({
               marginBottom: '24px',
             }}>
               <img
-                src={p.photoUrl}
-                alt={p.displayName}
+                src={heroSrc}
+                alt={p?.displayName ?? companyName}
                 style={{ width: '100%', height: '100%', objectFit: 'cover' }}
               />
             </div>

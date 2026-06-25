@@ -75,6 +75,7 @@ const PLATFORM_LABELS: Record<string, string> = {
 
 const ModernMinimalismAboutSkin: React.FC<AboutPageProps> = ({
   profile,
+  bannerUrl,
   isLoading,
   error,
   companyName,
@@ -102,6 +103,7 @@ const ModernMinimalismAboutSkin: React.FC<AboutPageProps> = ({
   }
 
   const p: CatalogProfile | null = profile;
+  const heroSrc = bannerUrl ?? p?.photoUrl ?? null;
 
   return (
     <div style={{ minHeight: '100vh', backgroundColor: 'var(--pwa-bg)', paddingBottom: '88px' }}>
@@ -109,7 +111,7 @@ const ModernMinimalismAboutSkin: React.FC<AboutPageProps> = ({
       <div style={{ maxWidth: '560px', margin: '0 auto', padding: '32px 20px 0' }}>
 
         {/* Photo card */}
-        {p?.photoUrl && (
+        {heroSrc && (
           <div style={{
             width: '80px',
             height: '80px',
@@ -119,8 +121,8 @@ const ModernMinimalismAboutSkin: React.FC<AboutPageProps> = ({
             marginBottom: '24px',
           }}>
             <img
-              src={p.photoUrl}
-              alt={p.displayName}
+              src={heroSrc}
+              alt={p?.displayName ?? companyName}
               style={{ width: '100%', height: '100%', objectFit: 'cover' }}
             />
           </div>

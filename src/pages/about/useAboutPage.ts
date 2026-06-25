@@ -7,6 +7,7 @@ export type { CatalogProfile };
 
 export interface AboutPageProps {
   profile: CatalogProfile | null;
+  bannerUrl: string | null;
   isLoading: boolean;
   error: string | null;
   companyName: string;
@@ -46,6 +47,7 @@ export function useAboutPage(): AboutPageProps {
 
   return {
     profile,
+    bannerUrl: branding.bannerUrl,
     isLoading,
     error,
     companyName: branding.companyName,
