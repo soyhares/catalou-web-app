@@ -102,10 +102,20 @@ const NeoLuxuryAboutSkin: React.FC<AboutPageProps> = ({
   }
 
   const p: CatalogProfile | null = profile;
-  const heroSrc = bannerUrl ?? p?.photoUrl ?? null;
 
   return (
     <div style={{ minHeight: '100vh', backgroundColor: 'var(--pwa-bg)', paddingBottom: '88px' }}>
+
+      {/* Full-width banner hero */}
+      {bannerUrl && (
+        <div style={{ width: '100%', aspectRatio: '3/1', maxHeight: '300px', overflow: 'hidden' }}>
+          <img
+            src={bannerUrl}
+            alt={p?.displayName ?? companyName}
+            style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
+          />
+        </div>
+      )}
 
       {/* Dark card header with photo + glow */}
       <div style={{
@@ -114,7 +124,8 @@ const NeoLuxuryAboutSkin: React.FC<AboutPageProps> = ({
         padding: '48px 28px 36px',
       }}>
         <div style={{ maxWidth: '560px', margin: '0 auto' }}>
-          {heroSrc && (
+          {/* Avatar — only when no banner */}
+          {!bannerUrl && p?.photoUrl && (
             <div style={{
               width: '96px',
               height: '96px',
@@ -125,7 +136,7 @@ const NeoLuxuryAboutSkin: React.FC<AboutPageProps> = ({
               marginBottom: '24px',
             }}>
               <img
-                src={heroSrc}
+                src={p.photoUrl}
                 alt={p?.displayName ?? companyName}
                 style={{ width: '100%', height: '100%', objectFit: 'cover' }}
               />

@@ -103,15 +103,25 @@ const ModernMinimalismAboutSkin: React.FC<AboutPageProps> = ({
   }
 
   const p: CatalogProfile | null = profile;
-  const heroSrc = bannerUrl ?? p?.photoUrl ?? null;
 
   return (
     <div style={{ minHeight: '100vh', backgroundColor: 'var(--pwa-bg)', paddingBottom: '88px' }}>
 
+      {/* Full-width banner hero */}
+      {bannerUrl && (
+        <div style={{ width: '100%', aspectRatio: '3/1', maxHeight: '300px', overflow: 'hidden' }}>
+          <img
+            src={bannerUrl}
+            alt={p?.displayName ?? companyName}
+            style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
+          />
+        </div>
+      )}
+
       <div style={{ maxWidth: '560px', margin: '0 auto', padding: '32px 20px 0' }}>
 
-        {/* Photo card */}
-        {heroSrc && (
+        {/* Avatar — only when no banner */}
+        {!bannerUrl && p?.photoUrl && (
           <div style={{
             width: '80px',
             height: '80px',
@@ -121,7 +131,7 @@ const ModernMinimalismAboutSkin: React.FC<AboutPageProps> = ({
             marginBottom: '24px',
           }}>
             <img
-              src={heroSrc}
+              src={p.photoUrl}
               alt={p?.displayName ?? companyName}
               style={{ width: '100%', height: '100%', objectFit: 'cover' }}
             />

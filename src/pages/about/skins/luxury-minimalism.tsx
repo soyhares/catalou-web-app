@@ -45,7 +45,7 @@ const LuxuryMinimalismAboutSkin: React.FC<AboutPageProps> = ({
 
       {/* Large hero photo or blank accent bar */}
       {heroSrc ? (
-        <div style={{ width: '100%', height: '320px', overflow: 'hidden', position: 'relative' }}>
+        <div style={{ width: '100%', aspectRatio: '3/1', maxHeight: '300px', overflow: 'hidden', position: 'relative' }}>
           <img
             src={heroSrc}
             alt={p?.displayName ?? companyName}
