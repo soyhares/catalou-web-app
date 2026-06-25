@@ -42,9 +42,9 @@ const NeoLuxurySkin: React.FC<CatalogPageProps> = ({
   error,
   ordersEnabled,
   bookingsEnabled,
-  typeFilter,
-  hasServices,
-  hasProductItems,
+  typeFilter: _typeFilter,
+  hasServices: _hasServices,
+  hasProductItems: _hasProductItems,
   cartCount,
   companyName,
   logoUrl,
@@ -54,7 +54,7 @@ const NeoLuxurySkin: React.FC<CatalogPageProps> = ({
   onCartClick,
   onQuote,
   onRetry,
-  onTypeFilterChange,
+  onTypeFilterChange: _onTypeFilterChange,
 }) => {
   const navigate = useNavigate();
   const { isMobile } = useTheme();
@@ -256,48 +256,6 @@ const NeoLuxurySkin: React.FC<CatalogPageProps> = ({
 
       {/* ── Main Content ──────────────────────────────────────────────── */}
       <main style={{ padding: '24px 16px 0' }}>
-        {/* Type filter tabs */}
-        {hasServices && hasProductItems && (
-          <div style={{ display: 'flex', gap: '6px', marginBottom: '16px' }}>
-            {(['all', 'product', 'service'] as const).map((t) => (
-              <button
-                key={t}
-                type="button"
-                onClick={() => onTypeFilterChange(t)}
-                style={{
-                  fontFamily: 'var(--pwa-font-body)',
-                  fontSize: '11px',
-                  fontWeight: typeFilter === t ? 700 : 400,
-                  letterSpacing: '0.06em',
-                  padding: '5px 14px',
-                  borderRadius: 'var(--pwa-radius-sm)',
-                  border: `1px solid ${typeFilter === t ? 'var(--pwa-accent)' : 'var(--pwa-border)'}`,
-                  backgroundColor: typeFilter === t ? 'var(--pwa-accent)' : 'transparent',
-                  color: typeFilter === t ? 'var(--pwa-bg)' : 'var(--pwa-text-secondary)',
-                  cursor: 'pointer',
-                }}
-              >
-                {t === 'all' ? 'Todo' : t === 'product' ? 'Productos' : 'Servicios'}
-              </button>
-            ))}
-          </div>
-        )}
-
-        {/* Section title */}
-        {hasProducts && (
-          <h2 style={{
-            fontFamily: 'var(--pwa-font-heading)',
-            fontSize: '1.1rem',
-            fontWeight: 700,
-            color: 'var(--pwa-text)',
-            marginBottom: '16px',
-            letterSpacing: '0.02em',
-          }}>
-            <span style={{ color: 'var(--pwa-accent)' }} aria-hidden="true">✦</span>{' '}
-            {selectedCategory ? selectedCategory.name : 'Destacados'}
-          </h2>
-        )}
-
         {/* Subcategory row */}
         {visibleSubs.length > 0 && (
           <div style={{ position: 'relative', marginBottom: '16px' }}>
@@ -326,6 +284,21 @@ const NeoLuxurySkin: React.FC<CatalogPageProps> = ({
             </div>
             <div style={{ position: 'absolute', top: 0, right: 0, bottom: 0, width: '48px', background: 'linear-gradient(to right, transparent, var(--pwa-bg))', pointerEvents: 'none' }} />
           </div>
+        )}
+
+        {/* Section title */}
+        {hasProducts && (
+          <h2 style={{
+            fontFamily: 'var(--pwa-font-heading)',
+            fontSize: '1.1rem',
+            fontWeight: 700,
+            color: 'var(--pwa-text)',
+            marginBottom: '16px',
+            letterSpacing: '0.02em',
+          }}>
+            <span style={{ color: 'var(--pwa-accent)' }} aria-hidden="true">✦</span>{' '}
+            {selectedCategory ? selectedCategory.name : 'Destacados'}
+          </h2>
         )}
 
         {/* Loading skeleton — mirrors the 2-column card layout with shimmer */}

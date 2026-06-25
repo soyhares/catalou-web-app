@@ -48,9 +48,9 @@ const ModernMinimalismSkin: React.FC<CatalogPageProps> = ({
   error,
   ordersEnabled,
   bookingsEnabled,
-  typeFilter,
-  hasServices,
-  hasProductItems,
+  typeFilter: _typeFilter,
+  hasServices: _hasServices,
+  hasProductItems: _hasProductItems,
   cartCount: _cartCount,
   companyName: _companyName,
   logoUrl: _logoUrl,
@@ -60,7 +60,7 @@ const ModernMinimalismSkin: React.FC<CatalogPageProps> = ({
   onCartClick: _onCartClick,
   onQuote,
   onRetry,
-  onTypeFilterChange,
+  onTypeFilterChange: _onTypeFilterChange,
 }) => {
   const navigate = useNavigate();
   const { isMobile } = useTheme();
@@ -228,10 +228,14 @@ const ModernMinimalismSkin: React.FC<CatalogPageProps> = ({
           </div>
         )}
 
+      </header>}
+
+      {/* ── Main Content ──────────────────────────────────────────────── */}
+      <main style={{ padding: '16px' }}>
         {/* Subcategory row */}
         {visibleSubs.length > 0 && (
-          <div style={{ position: 'relative' }}>
-            <div style={{ display: 'flex', gap: '6px', overflowX: 'auto', scrollbarWidth: 'none' as const, padding: '0 16px 10px', flexWrap: 'nowrap' as const }}>
+          <div style={{ position: 'relative', marginBottom: '16px' }}>
+            <div style={{ display: 'flex', gap: '6px', overflowX: 'auto', scrollbarWidth: 'none' as const, flexWrap: 'nowrap' as const }}>
               {visibleSubs.map((sub) => (
                 <button
                   key={sub.id}
@@ -239,11 +243,12 @@ const ModernMinimalismSkin: React.FC<CatalogPageProps> = ({
                   onClick={() => onSubcategorySelect(selectedSubcategoryId === sub.id ? null : sub.id)}
                   style={{
                     fontFamily: 'var(--pwa-font-body)',
-                    fontSize: '11px',
-                    padding: '4px 10px',
+                    fontSize: '12px',
+                    fontWeight: selectedSubcategoryId === sub.id ? 600 : 400,
+                    padding: '5px 12px',
                     borderRadius: 'var(--pwa-radius-chip)',
-                    border: `1px solid ${selectedSubcategoryId === sub.id ? 'var(--pwa-text)' : 'var(--pwa-border)'}`,
-                    backgroundColor: selectedSubcategoryId === sub.id ? 'var(--pwa-text)' : 'transparent',
+                    border: `1.5px solid ${selectedSubcategoryId === sub.id ? 'var(--pwa-accent)' : 'var(--pwa-border)'}`,
+                    backgroundColor: selectedSubcategoryId === sub.id ? 'var(--pwa-accent)' : 'transparent',
                     color: selectedSubcategoryId === sub.id ? 'var(--pwa-bg)' : 'var(--pwa-text-secondary)',
                     cursor: 'pointer',
                     flexShrink: 0,
@@ -255,35 +260,6 @@ const ModernMinimalismSkin: React.FC<CatalogPageProps> = ({
               ))}
             </div>
             <div style={{ position: 'absolute', top: 0, right: 0, bottom: 0, width: '48px', background: 'linear-gradient(to right, transparent, var(--pwa-bg))', pointerEvents: 'none' }} />
-          </div>
-        )}
-      </header>}
-
-      {/* ── Main Content ──────────────────────────────────────────────── */}
-      <main style={{ padding: '16px' }}>
-        {/* Type filter tabs — only shown when catalog has both products and services */}
-        {hasServices && hasProductItems && (
-          <div style={{ display: 'flex', gap: '6px', marginBottom: '16px' }}>
-            {(['all', 'product', 'service'] as const).map((t) => (
-              <button
-                key={t}
-                type="button"
-                onClick={() => onTypeFilterChange(t)}
-                style={{
-                  fontFamily: 'var(--pwa-font-body)',
-                  fontSize: '12px',
-                  fontWeight: typeFilter === t ? 600 : 400,
-                  padding: '6px 14px',
-                  borderRadius: 'var(--pwa-radius-chip)',
-                  border: `1.5px solid ${typeFilter === t ? 'var(--pwa-accent)' : 'var(--pwa-border)'}`,
-                  backgroundColor: typeFilter === t ? 'var(--pwa-accent)' : 'transparent',
-                  color: typeFilter === t ? 'var(--pwa-bg)' : 'var(--pwa-text-secondary)',
-                  cursor: 'pointer',
-                }}
-              >
-                {t === 'all' ? 'Todo' : t === 'product' ? 'Productos' : 'Servicios'}
-              </button>
-            ))}
           </div>
         )}
 
