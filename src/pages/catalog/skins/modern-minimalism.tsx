@@ -108,6 +108,9 @@ const ModernMinimalismSkin: React.FC<CatalogPageProps> = ({
 
   const hasProducts = !isLoading && products.length > 0;
   const isEmpty = !isLoading && products.length === 0;
+  const visibleSubs = selectedCategory
+    ? selectedCategory.subcategories
+    : categories.flatMap((c) => c.subcategories);
   const resultCount = products.length;
 
   return (
@@ -226,9 +229,9 @@ const ModernMinimalismSkin: React.FC<CatalogPageProps> = ({
         )}
 
         {/* Subcategory row */}
-        {selectedCategory && selectedCategory.subcategories.length > 0 && (
+        {visibleSubs.length > 0 && (
           <div style={{ display: 'flex', gap: '6px', overflowX: 'auto', scrollbarWidth: 'none' as const, padding: '0 16px 10px' }}>
-            {selectedCategory.subcategories.map((sub) => (
+            {visibleSubs.map((sub) => (
               <button
                 key={sub.id}
                 type="button"

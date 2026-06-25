@@ -92,6 +92,9 @@ const NeoLuxurySkin: React.FC<CatalogPageProps> = ({
 
   const hasProducts = !isLoading && products.length > 0;
   const isEmpty = !isLoading && products.length === 0;
+  const visibleSubs = selectedCategory
+    ? selectedCategory.subcategories
+    : categories.flatMap((c) => c.subcategories);
 
   return (
     <div style={{ minHeight: '100vh', backgroundColor: 'var(--pwa-bg)', paddingBottom: '80px' }}>
@@ -296,9 +299,9 @@ const NeoLuxurySkin: React.FC<CatalogPageProps> = ({
         )}
 
         {/* Subcategory row */}
-        {selectedCategory && selectedCategory.subcategories.length > 0 && (
+        {visibleSubs.length > 0 && (
           <div style={{ display: 'flex', gap: '8px', overflowX: 'auto', scrollbarWidth: 'none' as const, marginBottom: '16px' }}>
-            {selectedCategory.subcategories.map((sub) => (
+            {visibleSubs.map((sub) => (
               <button
                 key={sub.id}
                 type="button"

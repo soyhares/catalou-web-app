@@ -71,6 +71,9 @@ const LuxuryMinimalismSkin: React.FC<CatalogPageProps> = ({
 
   const hasProducts = !isLoading && products.length > 0;
   const isEmpty = !isLoading && products.length === 0;
+  const visibleSubs = selectedCategory
+    ? selectedCategory.subcategories
+    : categories.flatMap((c) => c.subcategories);
 
   return (
     <div style={{ minHeight: '100vh', backgroundColor: 'var(--pwa-bg)', paddingBottom: '80px' }}>
@@ -192,9 +195,9 @@ const LuxuryMinimalismSkin: React.FC<CatalogPageProps> = ({
             </div>
 
             {/* Subcategory row */}
-            {selectedCategory && selectedCategory.subcategories.length > 0 && (
+            {visibleSubs.length > 0 && (
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '8px 20px 12px', overflowX: 'auto', scrollbarWidth: 'none' as const, borderTop: '1px solid var(--pwa-border)' }}>
-                {selectedCategory.subcategories.map((sub) => (
+                {visibleSubs.map((sub) => (
                   <button
                     key={sub.id}
                     type="button"
