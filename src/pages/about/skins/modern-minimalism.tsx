@@ -75,6 +75,7 @@ const PLATFORM_LABELS: Record<string, string> = {
 
 const ModernMinimalismAboutSkin: React.FC<AboutPageProps> = ({
   profile,
+  bannerUrl,
   isLoading,
   error,
   companyName,
@@ -106,10 +107,21 @@ const ModernMinimalismAboutSkin: React.FC<AboutPageProps> = ({
   return (
     <div style={{ minHeight: '100vh', backgroundColor: 'var(--pwa-bg)', paddingBottom: '88px' }}>
 
+      {/* Full-width banner hero */}
+      {bannerUrl && (
+        <div style={{ width: '100%', aspectRatio: '3/1', maxHeight: '300px', overflow: 'hidden' }}>
+          <img
+            src={bannerUrl}
+            alt={p?.displayName ?? companyName}
+            style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
+          />
+        </div>
+      )}
+
       <div style={{ maxWidth: '560px', margin: '0 auto', padding: '32px 20px 0' }}>
 
-        {/* Photo card */}
-        {p?.photoUrl && (
+        {/* Avatar — only when no banner */}
+        {!bannerUrl && p?.photoUrl && (
           <div style={{
             width: '80px',
             height: '80px',
@@ -120,7 +132,7 @@ const ModernMinimalismAboutSkin: React.FC<AboutPageProps> = ({
           }}>
             <img
               src={p.photoUrl}
-              alt={p.displayName}
+              alt={p?.displayName ?? companyName}
               style={{ width: '100%', height: '100%', objectFit: 'cover' }}
             />
           </div>

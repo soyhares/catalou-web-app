@@ -74,6 +74,7 @@ const PLATFORM_LABELS: Record<string, string> = {
 
 const NeoLuxuryAboutSkin: React.FC<AboutPageProps> = ({
   profile,
+  bannerUrl,
   isLoading,
   error,
   companyName,
@@ -105,6 +106,17 @@ const NeoLuxuryAboutSkin: React.FC<AboutPageProps> = ({
   return (
     <div style={{ minHeight: '100vh', backgroundColor: 'var(--pwa-bg)', paddingBottom: '88px' }}>
 
+      {/* Full-width banner hero */}
+      {bannerUrl && (
+        <div style={{ width: '100%', aspectRatio: '3/1', maxHeight: '300px', overflow: 'hidden' }}>
+          <img
+            src={bannerUrl}
+            alt={p?.displayName ?? companyName}
+            style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
+          />
+        </div>
+      )}
+
       {/* Dark card header with photo + glow */}
       <div style={{
         background: 'var(--pwa-card)',
@@ -112,7 +124,8 @@ const NeoLuxuryAboutSkin: React.FC<AboutPageProps> = ({
         padding: '48px 28px 36px',
       }}>
         <div style={{ maxWidth: '560px', margin: '0 auto' }}>
-          {p?.photoUrl && (
+          {/* Avatar — only when no banner */}
+          {!bannerUrl && p?.photoUrl && (
             <div style={{
               width: '96px',
               height: '96px',
@@ -124,7 +137,7 @@ const NeoLuxuryAboutSkin: React.FC<AboutPageProps> = ({
             }}>
               <img
                 src={p.photoUrl}
-                alt={p.displayName}
+                alt={p?.displayName ?? companyName}
                 style={{ width: '100%', height: '100%', objectFit: 'cover' }}
               />
             </div>
