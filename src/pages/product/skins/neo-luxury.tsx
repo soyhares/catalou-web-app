@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { CatalogFooter } from '@shared/ui/CatalogFooter';
 import { useTheme } from '@shared/ui/ThemeProvider';
 import { formatPrice } from '@shared/lib/formatPrice';
@@ -45,6 +45,7 @@ const NeoLuxuryProductSkin: React.FC<ProductPageProps> = (props) => {
 
   const { isMobile } = useTheme();
   const galleryImages = product ? [...product.images].sort((a, b) => a.sortOrder - b.sortOrder) : [];
+  const [expanded, setExpanded] = useState(false);
 
   /* ── Loading ──────────────────────────────────────────────────────────── */
   if (isLoading) {
@@ -77,6 +78,18 @@ const NeoLuxuryProductSkin: React.FC<ProductPageProps> = (props) => {
 
   return (
     <div style={{ minHeight: '100vh', backgroundColor: 'var(--pwa-bg)', paddingBottom: '80px' }}>
+
+      {/* Lightbox */}
+      {expanded && (
+        <div
+          role="dialog"
+          aria-modal="true"
+          style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', zIndex: 100, backgroundColor: 'rgba(0,0,0,0.95)', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'zoom-out' }}
+          onClick={() => setExpanded(false)}
+        >
+          <img src={activeImage!} alt={product.name} style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain', padding: '16px' }} />
+        </div>
+      )}
 
       {/* ── Header — mobile only; desktop nav handled by global TopBar ── */}
       {isMobile ? (
@@ -118,29 +131,36 @@ const NeoLuxuryProductSkin: React.FC<ProductPageProps> = (props) => {
 
           {/* ── Image Panel ─────────────────────────────────────────────── */}
           <div>
-            {/* Main image — dark card, neon border/glow */}
-            <div style={{
-              aspectRatio: '3/4',
-              backgroundColor: 'var(--pwa-card)',
-              borderRadius: 'var(--pwa-radius-md)',
-              overflow: 'hidden',
-              border: '1px solid var(--pwa-accent)',
-              boxShadow: '0 0 24px var(--pwa-accent), 0 0 2px var(--pwa-accent)',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-            }}>
+            {/* Main image — adaptive height, tap to expand */}
+            <div
+              onClick={() => activeImage && setExpanded(true)}
+              style={{
+                backgroundColor: 'var(--pwa-card)',
+                borderRadius: 'var(--pwa-radius-md)',
+                overflow: 'hidden',
+                border: '1px solid var(--pwa-accent)',
+                boxShadow: '0 0 24px var(--pwa-accent), 0 0 2px var(--pwa-accent)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                minHeight: '200px',
+                cursor: activeImage ? 'zoom-in' : 'default',
+              }}
+            >
               {activeImage ? (
                 <img
                   src={activeImage}
                   alt={product.name}
-                  style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                  style={{ width: '100%', height: 'auto', maxHeight: '70vh', objectFit: 'contain', display: 'block' }}
                   loading="lazy"
                 />
               ) : (
-                <IconPlaceholder />
+                <div style={{ padding: '48px' }}>
+                  <IconPlaceholder />
+                </div>
               )}
             </div>
+
 
             {/* Gallery thumbnails */}
             {(product.mainImageUrl || galleryImages.length > 0) && (

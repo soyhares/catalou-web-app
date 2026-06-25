@@ -48,9 +48,9 @@ const ModernMinimalismSkin: React.FC<CatalogPageProps> = ({
   error,
   ordersEnabled,
   bookingsEnabled,
-  typeFilter,
-  hasServices,
-  hasProductItems,
+  typeFilter: _typeFilter,
+  hasServices: _hasServices,
+  hasProductItems: _hasProductItems,
   cartCount: _cartCount,
   companyName: _companyName,
   logoUrl: _logoUrl,
@@ -60,7 +60,7 @@ const ModernMinimalismSkin: React.FC<CatalogPageProps> = ({
   onCartClick: _onCartClick,
   onQuote,
   onRetry,
-  onTypeFilterChange,
+  onTypeFilterChange: _onTypeFilterChange,
 }) => {
   const navigate = useNavigate();
   const { isMobile } = useTheme();
@@ -108,6 +108,9 @@ const ModernMinimalismSkin: React.FC<CatalogPageProps> = ({
 
   const hasProducts = !isLoading && products.length > 0;
   const isEmpty = !isLoading && products.length === 0;
+  const visibleSubs = selectedCategory
+    ? selectedCategory.subcategories
+    : categories.flatMap((c) => c.subcategories);
   const resultCount = products.length;
 
   return (
@@ -225,59 +228,38 @@ const ModernMinimalismSkin: React.FC<CatalogPageProps> = ({
           </div>
         )}
 
-        {/* Subcategory row */}
-        {selectedCategory && selectedCategory.subcategories.length > 0 && (
-          <div style={{ display: 'flex', gap: '6px', overflowX: 'auto', scrollbarWidth: 'none' as const, padding: '0 16px 10px' }}>
-            {selectedCategory.subcategories.map((sub) => (
-              <button
-                key={sub.id}
-                type="button"
-                onClick={() => onSubcategorySelect(selectedSubcategoryId === sub.id ? null : sub.id)}
-                style={{
-                  fontFamily: 'var(--pwa-font-body)',
-                  fontSize: '11px',
-                  padding: '4px 10px',
-                  borderRadius: 'var(--pwa-radius-chip)',
-                  border: `1px solid ${selectedSubcategoryId === sub.id ? 'var(--pwa-text)' : 'var(--pwa-border)'}`,
-                  backgroundColor: selectedSubcategoryId === sub.id ? 'var(--pwa-text)' : 'transparent',
-                  color: selectedSubcategoryId === sub.id ? 'var(--pwa-bg)' : 'var(--pwa-text-secondary)',
-                  cursor: 'pointer',
-                  flexShrink: 0,
-                  whiteSpace: 'nowrap' as const,
-                }}
-              >
-                {sub.name}
-              </button>
-            ))}
-          </div>
-        )}
       </header>}
 
       {/* ── Main Content ──────────────────────────────────────────────── */}
       <main style={{ padding: '16px' }}>
-        {/* Type filter tabs — only shown when catalog has both products and services */}
-        {hasServices && hasProductItems && (
-          <div style={{ display: 'flex', gap: '6px', marginBottom: '16px' }}>
-            {(['all', 'product', 'service'] as const).map((t) => (
-              <button
-                key={t}
-                type="button"
-                onClick={() => onTypeFilterChange(t)}
-                style={{
-                  fontFamily: 'var(--pwa-font-body)',
-                  fontSize: '12px',
-                  fontWeight: typeFilter === t ? 600 : 400,
-                  padding: '6px 14px',
-                  borderRadius: 'var(--pwa-radius-chip)',
-                  border: `1.5px solid ${typeFilter === t ? 'var(--pwa-accent)' : 'var(--pwa-border)'}`,
-                  backgroundColor: typeFilter === t ? 'var(--pwa-accent)' : 'transparent',
-                  color: typeFilter === t ? 'var(--pwa-bg)' : 'var(--pwa-text-secondary)',
-                  cursor: 'pointer',
-                }}
-              >
-                {t === 'all' ? 'Todo' : t === 'product' ? 'Productos' : 'Servicios'}
-              </button>
-            ))}
+        {/* Subcategory row */}
+        {visibleSubs.length > 0 && (
+          <div style={{ position: 'relative', marginBottom: '16px' }}>
+            <div style={{ display: 'flex', gap: '6px', overflowX: 'auto', scrollbarWidth: 'none' as const, flexWrap: 'nowrap' as const }}>
+              {visibleSubs.map((sub) => (
+                <button
+                  key={sub.id}
+                  type="button"
+                  onClick={() => onSubcategorySelect(selectedSubcategoryId === sub.id ? null : sub.id)}
+                  style={{
+                    fontFamily: 'var(--pwa-font-body)',
+                    fontSize: '12px',
+                    fontWeight: selectedSubcategoryId === sub.id ? 600 : 400,
+                    padding: '5px 12px',
+                    borderRadius: 'var(--pwa-radius-chip)',
+                    border: `1.5px solid ${selectedSubcategoryId === sub.id ? 'var(--pwa-accent)' : 'var(--pwa-border)'}`,
+                    backgroundColor: selectedSubcategoryId === sub.id ? 'var(--pwa-accent)' : 'transparent',
+                    color: selectedSubcategoryId === sub.id ? 'var(--pwa-bg)' : 'var(--pwa-text-secondary)',
+                    cursor: 'pointer',
+                    flexShrink: 0,
+                    whiteSpace: 'nowrap' as const,
+                  }}
+                >
+                  {sub.name}
+                </button>
+              ))}
+            </div>
+            <div style={{ position: 'absolute', top: 0, right: 0, bottom: 0, width: '48px', background: 'linear-gradient(to right, transparent, var(--pwa-bg))', pointerEvents: 'none' }} />
           </div>
         )}
 

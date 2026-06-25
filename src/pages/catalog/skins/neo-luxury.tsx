@@ -42,9 +42,9 @@ const NeoLuxurySkin: React.FC<CatalogPageProps> = ({
   error,
   ordersEnabled,
   bookingsEnabled,
-  typeFilter,
-  hasServices,
-  hasProductItems,
+  typeFilter: _typeFilter,
+  hasServices: _hasServices,
+  hasProductItems: _hasProductItems,
   cartCount,
   companyName,
   logoUrl,
@@ -54,7 +54,7 @@ const NeoLuxurySkin: React.FC<CatalogPageProps> = ({
   onCartClick,
   onQuote,
   onRetry,
-  onTypeFilterChange,
+  onTypeFilterChange: _onTypeFilterChange,
 }) => {
   const navigate = useNavigate();
   const { isMobile } = useTheme();
@@ -92,6 +92,9 @@ const NeoLuxurySkin: React.FC<CatalogPageProps> = ({
 
   const hasProducts = !isLoading && products.length > 0;
   const isEmpty = !isLoading && products.length === 0;
+  const visibleSubs = selectedCategory
+    ? selectedCategory.subcategories
+    : categories.flatMap((c) => c.subcategories);
 
   return (
     <div style={{ minHeight: '100vh', backgroundColor: 'var(--pwa-bg)', paddingBottom: '80px' }}>
@@ -253,30 +256,33 @@ const NeoLuxurySkin: React.FC<CatalogPageProps> = ({
 
       {/* ── Main Content ──────────────────────────────────────────────── */}
       <main style={{ padding: '24px 16px 0' }}>
-        {/* Type filter tabs */}
-        {hasServices && hasProductItems && (
-          <div style={{ display: 'flex', gap: '6px', marginBottom: '16px' }}>
-            {(['all', 'product', 'service'] as const).map((t) => (
-              <button
-                key={t}
-                type="button"
-                onClick={() => onTypeFilterChange(t)}
-                style={{
-                  fontFamily: 'var(--pwa-font-body)',
-                  fontSize: '11px',
-                  fontWeight: typeFilter === t ? 700 : 400,
-                  letterSpacing: '0.06em',
-                  padding: '5px 14px',
-                  borderRadius: 'var(--pwa-radius-sm)',
-                  border: `1px solid ${typeFilter === t ? 'var(--pwa-accent)' : 'var(--pwa-border)'}`,
-                  backgroundColor: typeFilter === t ? 'var(--pwa-accent)' : 'transparent',
-                  color: typeFilter === t ? 'var(--pwa-bg)' : 'var(--pwa-text-secondary)',
-                  cursor: 'pointer',
-                }}
-              >
-                {t === 'all' ? 'Todo' : t === 'product' ? 'Productos' : 'Servicios'}
-              </button>
-            ))}
+        {/* Subcategory row */}
+        {visibleSubs.length > 0 && (
+          <div style={{ position: 'relative', marginBottom: '16px' }}>
+            <div style={{ display: 'flex', gap: '8px', overflowX: 'auto', scrollbarWidth: 'none' as const, flexWrap: 'nowrap' as const }}>
+              {visibleSubs.map((sub) => (
+                <button
+                  key={sub.id}
+                  type="button"
+                  onClick={() => onSubcategorySelect(selectedSubcategoryId === sub.id ? null : sub.id)}
+                  style={{
+                    fontFamily: 'var(--pwa-font-body)',
+                    fontSize: '10px',
+                    padding: '5px 12px',
+                    borderRadius: 'var(--pwa-radius-chip)',
+                    border: selectedSubcategoryId === sub.id ? '1px solid var(--pwa-accent)' : '1px solid var(--pwa-border)',
+                    backgroundColor: selectedSubcategoryId === sub.id ? 'var(--pwa-accent-soft)' : 'transparent',
+                    color: selectedSubcategoryId === sub.id ? 'var(--pwa-accent)' : 'var(--pwa-text-secondary)',
+                    cursor: 'pointer',
+                    flexShrink: 0,
+                    whiteSpace: 'nowrap' as const,
+                  }}
+                >
+                  {sub.name}
+                </button>
+              ))}
+            </div>
+            <div style={{ position: 'absolute', top: 0, right: 0, bottom: 0, width: '48px', background: 'linear-gradient(to right, transparent, var(--pwa-bg))', pointerEvents: 'none' }} />
           </div>
         )}
 
@@ -293,33 +299,6 @@ const NeoLuxurySkin: React.FC<CatalogPageProps> = ({
             <span style={{ color: 'var(--pwa-accent)' }} aria-hidden="true">✦</span>{' '}
             {selectedCategory ? selectedCategory.name : 'Destacados'}
           </h2>
-        )}
-
-        {/* Subcategory row */}
-        {selectedCategory && selectedCategory.subcategories.length > 0 && (
-          <div style={{ display: 'flex', gap: '8px', overflowX: 'auto', scrollbarWidth: 'none' as const, marginBottom: '16px' }}>
-            {selectedCategory.subcategories.map((sub) => (
-              <button
-                key={sub.id}
-                type="button"
-                onClick={() => onSubcategorySelect(selectedSubcategoryId === sub.id ? null : sub.id)}
-                style={{
-                  fontFamily: 'var(--pwa-font-body)',
-                  fontSize: '10px',
-                  padding: '5px 12px',
-                  borderRadius: 'var(--pwa-radius-chip)',
-                  border: selectedSubcategoryId === sub.id ? '1px solid var(--pwa-accent)' : '1px solid var(--pwa-border)',
-                  backgroundColor: selectedSubcategoryId === sub.id ? 'var(--pwa-accent-soft)' : 'transparent',
-                  color: selectedSubcategoryId === sub.id ? 'var(--pwa-accent)' : 'var(--pwa-text-secondary)',
-                  cursor: 'pointer',
-                  flexShrink: 0,
-                  whiteSpace: 'nowrap' as const,
-                }}
-              >
-                {sub.name}
-              </button>
-            ))}
-          </div>
         )}
 
         {/* Loading skeleton — mirrors the 2-column card layout with shimmer */}
