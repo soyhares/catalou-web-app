@@ -230,28 +230,31 @@ const ModernMinimalismSkin: React.FC<CatalogPageProps> = ({
 
         {/* Subcategory row */}
         {visibleSubs.length > 0 && (
-          <div style={{ display: 'flex', gap: '6px', overflowX: 'auto', scrollbarWidth: 'none' as const, padding: '0 16px 10px' }}>
-            {visibleSubs.map((sub) => (
-              <button
-                key={sub.id}
-                type="button"
-                onClick={() => onSubcategorySelect(selectedSubcategoryId === sub.id ? null : sub.id)}
-                style={{
-                  fontFamily: 'var(--pwa-font-body)',
-                  fontSize: '11px',
-                  padding: '4px 10px',
-                  borderRadius: 'var(--pwa-radius-chip)',
-                  border: `1px solid ${selectedSubcategoryId === sub.id ? 'var(--pwa-text)' : 'var(--pwa-border)'}`,
-                  backgroundColor: selectedSubcategoryId === sub.id ? 'var(--pwa-text)' : 'transparent',
-                  color: selectedSubcategoryId === sub.id ? 'var(--pwa-bg)' : 'var(--pwa-text-secondary)',
-                  cursor: 'pointer',
-                  flexShrink: 0,
-                  whiteSpace: 'nowrap' as const,
-                }}
-              >
-                {sub.name}
-              </button>
-            ))}
+          <div style={{ position: 'relative' }}>
+            <div style={{ display: 'flex', gap: '6px', overflowX: 'auto', scrollbarWidth: 'none' as const, padding: '0 16px 10px', flexWrap: 'nowrap' as const }}>
+              {visibleSubs.map((sub) => (
+                <button
+                  key={sub.id}
+                  type="button"
+                  onClick={() => onSubcategorySelect(selectedSubcategoryId === sub.id ? null : sub.id)}
+                  style={{
+                    fontFamily: 'var(--pwa-font-body)',
+                    fontSize: '11px',
+                    padding: '4px 10px',
+                    borderRadius: 'var(--pwa-radius-chip)',
+                    border: `1px solid ${selectedSubcategoryId === sub.id ? 'var(--pwa-text)' : 'var(--pwa-border)'}`,
+                    backgroundColor: selectedSubcategoryId === sub.id ? 'var(--pwa-text)' : 'transparent',
+                    color: selectedSubcategoryId === sub.id ? 'var(--pwa-bg)' : 'var(--pwa-text-secondary)',
+                    cursor: 'pointer',
+                    flexShrink: 0,
+                    whiteSpace: 'nowrap' as const,
+                  }}
+                >
+                  {sub.name}
+                </button>
+              ))}
+            </div>
+            <div style={{ position: 'absolute', top: 0, right: 0, bottom: 0, width: '48px', background: 'linear-gradient(to right, transparent, var(--pwa-bg))', pointerEvents: 'none' }} />
           </div>
         )}
       </header>}

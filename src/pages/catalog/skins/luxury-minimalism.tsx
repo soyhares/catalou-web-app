@@ -196,29 +196,32 @@ const LuxuryMinimalismSkin: React.FC<CatalogPageProps> = ({
 
             {/* Subcategory row */}
             {visibleSubs.length > 0 && (
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '8px 20px 12px', overflowX: 'auto', scrollbarWidth: 'none' as const, borderTop: '1px solid var(--pwa-border)' }}>
-                {visibleSubs.map((sub) => (
-                  <button
-                    key={sub.id}
-                    type="button"
-                    onClick={() => onSubcategorySelect(selectedSubcategoryId === sub.id ? null : sub.id)}
-                    style={{
-                      fontFamily: 'var(--pwa-font-body)',
-                      fontSize: '9px',
-                      letterSpacing: '0.1em',
-                      textTransform: 'uppercase' as const,
-                      padding: '4px 12px',
-                      borderRadius: 'var(--pwa-radius-chip)',
-                      border: `1px solid ${selectedSubcategoryId === sub.id ? 'var(--pwa-accent)' : 'var(--pwa-border)'}`,
-                      backgroundColor: selectedSubcategoryId === sub.id ? 'var(--pwa-accent-soft)' : 'transparent',
-                      color: selectedSubcategoryId === sub.id ? 'var(--pwa-accent)' : 'var(--pwa-text-secondary)',
-                      cursor: 'pointer',
-                      flexShrink: 0,
-                    }}
-                  >
-                    {sub.name}
-                  </button>
-                ))}
+              <div style={{ position: 'relative', borderTop: '1px solid var(--pwa-border)' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '8px 20px 12px', overflowX: 'auto', scrollbarWidth: 'none' as const, flexWrap: 'nowrap' as const }}>
+                  {visibleSubs.map((sub) => (
+                    <button
+                      key={sub.id}
+                      type="button"
+                      onClick={() => onSubcategorySelect(selectedSubcategoryId === sub.id ? null : sub.id)}
+                      style={{
+                        fontFamily: 'var(--pwa-font-body)',
+                        fontSize: '9px',
+                        letterSpacing: '0.1em',
+                        textTransform: 'uppercase' as const,
+                        padding: '4px 12px',
+                        borderRadius: 'var(--pwa-radius-chip)',
+                        border: `1px solid ${selectedSubcategoryId === sub.id ? 'var(--pwa-accent)' : 'var(--pwa-border)'}`,
+                        backgroundColor: selectedSubcategoryId === sub.id ? 'var(--pwa-accent-soft)' : 'transparent',
+                        color: selectedSubcategoryId === sub.id ? 'var(--pwa-accent)' : 'var(--pwa-text-secondary)',
+                        cursor: 'pointer',
+                        flexShrink: 0,
+                      }}
+                    >
+                      {sub.name}
+                    </button>
+                  ))}
+                </div>
+                <div style={{ position: 'absolute', top: 0, right: 0, bottom: 0, width: '48px', background: 'linear-gradient(to right, transparent, var(--pwa-bg))', pointerEvents: 'none' }} />
               </div>
             )}
           </div>
