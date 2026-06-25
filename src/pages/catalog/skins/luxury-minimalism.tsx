@@ -32,7 +32,7 @@ const LuxuryMinimalismSkin: React.FC<CatalogPageProps> = ({
   isLoading,
   error,
   ordersEnabled,
-  bookingsEnabled,
+  bookingsEnabled: _bookingsEnabled,
   typeFilter: _typeFilter,
   hasServices: _hasServices,
   hasProductItems: _hasProductItems,
@@ -42,7 +42,7 @@ const LuxuryMinimalismSkin: React.FC<CatalogPageProps> = ({
   onCategorySelect,
   onSubcategorySelect,
   onCartClick,
-  onQuote,
+  onQuote: _onQuote,
   onRetry,
   onTypeFilterChange: _onTypeFilterChange,
 }) => {
@@ -442,7 +442,7 @@ const LuxuryMinimalismSkin: React.FC<CatalogPageProps> = ({
                         {formatPrice(product.basePrice, currency)}
                       </p>
                     )}
-                    {product.type === 'service' && product.durationMinutes && (
+                    {product.type === 'service' && product.durationMinutes && showPrices && (
                       <span style={{ fontFamily: 'var(--pwa-font-body)', fontSize: '10px', color: 'var(--pwa-text-secondary)', letterSpacing: '0.06em' }}>
                         {product.durationMinutes} min
                       </span>
@@ -451,34 +451,21 @@ const LuxuryMinimalismSkin: React.FC<CatalogPageProps> = ({
                   {showPrices && (businessModel === 'ASSOCIATED' || businessModel === 'BOTH') && product.basePrice && (
                     <PriceDisclaimer className="mt-1 mb-2" />
                   )}
-                  <button
-                    type="button"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      if (product.type === 'service' && bookingsEnabled) {
-                        void navigate('/book');
-                      } else if (product.type === 'product' && ordersEnabled) {
-                        onQuote(product.id);
-                      } else {
-                        void navigate(`/products/${product.id}`);
-                      }
-                    }}
-                    style={{
+                  {product.description ? (
+                    <p style={{
                       fontFamily: 'var(--pwa-font-body)',
-                      fontSize: '9px',
-                      letterSpacing: '0.16em',
-                      textTransform: 'uppercase' as const,
-                      fontWeight: 600,
-                      color: 'var(--pwa-text)',
-                      background: 'none',
-                      border: '1px solid var(--pwa-border)',
-                      borderRadius: 'var(--pwa-radius-button)',
-                      padding: '6px 16px',
-                      cursor: 'pointer',
-                    }}
-                  >
-                    {product.type === 'service' ? (bookingsEnabled ? 'Reservar' : 'Ver más') : (ordersEnabled ? 'Agregar' : 'Ver más')}
-                  </button>
+                      fontSize: '11px',
+                      lineHeight: 1.6,
+                      color: 'var(--pwa-text-secondary)',
+                      margin: 0,
+                      display: '-webkit-box',
+                      WebkitLineClamp: 2,
+                      WebkitBoxOrient: 'vertical' as const,
+                      overflow: 'hidden',
+                    }}>
+                      {product.description}
+                    </p>
+                  ) : null}
                 </div>
               </article>
             ))}
