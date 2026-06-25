@@ -91,7 +91,7 @@ function PoweredBy({ style }: { style?: React.CSSProperties }) {
 
 /* ── luxury-minimalism ───────────────────────────────────────────────────── */
 
-function LuxuryHero({ companyName, onEnter }: { companyName: string; onEnter: () => void }) {
+function LuxuryHero({ companyName, logoUrl, onEnter }: { companyName: string; logoUrl: string | null; onEnter: () => void }) {
   return (
     <div style={{ minHeight: '100vh', backgroundColor: 'var(--pwa-bg)', display: 'flex', flexDirection: 'column' }}>
       <div style={{
@@ -103,6 +103,14 @@ function LuxuryHero({ companyName, onEnter }: { companyName: string; onEnter: ()
         padding: '48px 32px',
         textAlign: 'center',
       }}>
+        {logoUrl && (
+          <motion.img
+            {...fis(0.0)}
+            src={logoUrl}
+            alt={companyName}
+            style={{ height: '80px', width: 'auto', objectFit: 'contain', marginBottom: '24px' }}
+          />
+        )}
         <motion.h1 {...fis(0.05)} style={{
           fontFamily: 'var(--pwa-font-heading)',
           fontStyle: 'italic',
@@ -325,9 +333,10 @@ export default function HeroPage() {
   }, [onEnter]);
 
   const companyName = branding.companyName;
+  const logoUrl = branding.logoUrl;
 
   if (theme === 'luxury-minimalism') {
-    return <LuxuryHero companyName={companyName} onEnter={onEnter} />;
+    return <LuxuryHero companyName={companyName} logoUrl={logoUrl} onEnter={onEnter} />;
   }
   if (theme === 'neo-luxury') {
     return <NeoHero companyName={companyName} onEnter={onEnter} />;

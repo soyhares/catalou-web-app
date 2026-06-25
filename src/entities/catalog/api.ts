@@ -20,6 +20,7 @@ export interface PublicProduct {
   categoryId: string;
   type: 'product' | 'service';
   durationMinutes: number | null;
+  description?: string | null;
 }
 
 export interface CatalogData {
