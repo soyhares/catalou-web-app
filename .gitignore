@@ -4,3 +4,7 @@ dist/
 .env.local
 .env.production
 .env.prod
+
+# macOS system files
+.DS_Store
+**/.DS_Store
