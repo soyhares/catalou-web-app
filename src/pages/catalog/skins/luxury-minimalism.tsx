@@ -308,17 +308,25 @@ const LuxuryMinimalismSkin: React.FC<CatalogPageProps> = ({
                 100% { background-position:  200% 0; }
               }
             `}</style>
-            {Array.from({ length: 5 }).map((_, i) => (
-              <div
-                key={i}
-                style={{
-                  display: 'flex',
-                  gap: '20px',
-                  padding: '20px 0',
-                  borderBottom: '1px solid var(--pwa-border)',
-                  alignItems: 'center',
-                }}
-              >
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr',
+              gap: isMobile ? '0' : '16px',
+            }}>
+              {Array.from({ length: 6 }).map((_, i) => (
+                <div
+                  key={i}
+                  style={{
+                    display: 'flex',
+                    gap: '20px',
+                    padding: '20px 0',
+                    borderBottom: isMobile ? '1px solid var(--pwa-border)' : 'none',
+                    alignItems: 'center',
+                    backgroundColor: isMobile ? 'transparent' : 'var(--pwa-surface-secondary)',
+                    borderRadius: isMobile ? '0' : 'var(--pwa-radius-lg)',
+                    overflow: 'hidden',
+                  }}
+                >
                 {/* Image placeholder */}
                 <div style={{
                   flexShrink: 0,
@@ -363,6 +371,7 @@ const LuxuryMinimalismSkin: React.FC<CatalogPageProps> = ({
                 </div>
               </div>
             ))}
+            </div>
           </div>
         )}
 
@@ -383,26 +392,35 @@ const LuxuryMinimalismSkin: React.FC<CatalogPageProps> = ({
 
         {/* Product list — vertical, horizontal card layout */}
         {hasProducts && (
-          <div style={{ display: 'flex', flexDirection: 'column' as const, gap: '0' }}>
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr',
+            gap: isMobile ? '0' : '16px',
+          }}>
             {products.map((product) => (
               <article
                 key={product.id}
                 onClick={() => navigate(`/products/${product.id}`)}
                 style={{
                   display: 'flex',
-                  alignItems: 'flex-start',
-                  gap: '20px',
-                  padding: '20px 0',
-                  borderBottom: '1px solid var(--pwa-border)',
+                  flexDirection: isMobile ? 'row' : 'column',
+                  alignItems: isMobile ? 'flex-start' : 'stretch',
+                  gap: isMobile ? '20px' : '0',
+                  padding: isMobile ? '20px 0' : '0',
+                  borderBottom: isMobile ? '1px solid var(--pwa-border)' : 'none',
+                  borderRadius: isMobile ? '0' : 'var(--pwa-radius-lg)',
+                  overflow: 'hidden',
+                  backgroundColor: isMobile ? 'transparent' : 'var(--pwa-surface-secondary)',
                   cursor: 'pointer',
                 }}
               >
                 {/* Image — square, rounded */}
                 <div style={{
-                  width: '100px',
-                  height: '100px',
+                  width: isMobile ? '100px' : '100%',
+                  height: isMobile ? '100px' : 'auto',
+                  aspectRatio: isMobile ? undefined : '4 / 3',
                   flexShrink: 0,
-                  borderRadius: 'var(--pwa-radius-md)',
+                  borderRadius: isMobile ? 'var(--pwa-radius-md)' : '0',
                   overflow: 'hidden',
                   backgroundColor: 'var(--pwa-surface-secondary)',
                 }}>
@@ -424,7 +442,10 @@ const LuxuryMinimalismSkin: React.FC<CatalogPageProps> = ({
                 </div>
 
                 {/* Text content */}
-                <div style={{ flex: 1, paddingTop: '4px' }}>
+                <div style={{
+                  flex: 1,
+                  padding: isMobile ? '4px 0 0' : '12px 14px',
+                }}>
                   <p style={{
                     fontFamily: 'var(--pwa-font-heading)',
                     fontStyle: 'italic',
