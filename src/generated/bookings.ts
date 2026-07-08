@@ -109,7 +109,7 @@ export interface paths {
         /** List manually blocked slots for a given date */
         get: operations["listBlockedSlots"];
         put?: never;
-        /** Manually block a time slot (CREADOR/ADMIN only) */
+        /** Manually block a time slot (ADMIN only) */
         post: operations["createBlockedSlot"];
         delete?: never;
         options?: never;
@@ -127,7 +127,7 @@ export interface paths {
         get?: never;
         put?: never;
         post?: never;
-        /** Unblock a previously blocked slot (CREADOR/ADMIN only) */
+        /** Unblock a previously blocked slot (ADMIN only) */
         delete: operations["deleteBlockedSlot"];
         options?: never;
         head?: never;
@@ -183,7 +183,7 @@ export interface paths {
         head?: never;
         /**
          * Mark a confirmed booking as completed (attended)
-         * @description Transitions booking from confirmed → completed. Requires CREADOR, ADMIN, or EDITOR role.
+         * @description Transitions booking from confirmed → completed. Requires ADMIN or EDITOR role.
          */
         patch: operations["completeBooking"];
         trace?: never;
