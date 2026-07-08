@@ -218,13 +218,13 @@ export interface components {
             /** @description Present only in register response */
             companyName?: string;
             /** @enum {string} */
-            role: "CREADOR" | "ADMIN" | "EDITOR" | "VIEWER";
+            role: "ADMIN" | "EDITOR";
         };
         MeResponse: {
             /** Format: uuid */
             companyId: string;
             /** @enum {string} */
-            role: "CREADOR" | "ADMIN" | "EDITOR" | "VIEWER";
+            role: "ADMIN" | "EDITOR";
             /** Format: uuid */
             supabaseUserId: string;
             /** @description Display name of the user (from shopper profile) */
@@ -234,12 +234,11 @@ export interface components {
             /** Format: email */
             email: string;
             /** @enum {string} */
-            role: "ADMIN" | "EDITOR" | "VIEWER";
+            role: "ADMIN" | "EDITOR";
             companyName: string;
         };
         AcceptInvitationRequest: {
-            /** @description Required for new accounts; omit if using Google OAuth */
-            password?: string;
+            password: string;
         };
         ErrorResponse: {
             message: string;
@@ -543,6 +542,15 @@ export interface operations {
             };
             /** @description Token expired */
             400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Invitation email is already registered as a Supabase Auth user */
+            409: {
                 headers: {
                     [name: string]: unknown;
                 };
