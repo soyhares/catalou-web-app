@@ -1,3 +1,10 @@
+/* ponytail: el viewport meta (user-scalable=no) ya no basta — Chrome/Safari
+   modernos lo ignoran por accesibilidad. touch-action bloquea el gesto de
+   pellizco directamente sin afectar el scroll vertical/horizontal normal. */
+html {
+  touch-action: pan-x pan-y;
+}
+
 /* Applied globally — ThemeProvider sets --pwa-* vars on :root */
 body {
   background-color: var(--pwa-bg);
