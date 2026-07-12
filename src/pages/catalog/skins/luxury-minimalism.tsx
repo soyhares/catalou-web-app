@@ -28,7 +28,7 @@ const LuxuryMinimalismSkin: React.FC<CatalogPageProps> = ({
   businessModel,
   selectedCategory,
   selectedSubcategoryId,
-  searchQuery,
+  // searchQuery,
   isLoading,
   error,
   ordersEnabled,
