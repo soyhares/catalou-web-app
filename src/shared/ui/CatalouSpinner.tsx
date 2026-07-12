@@ -9,10 +9,9 @@ export function CatalouSpinner({ size = 40, className }: Props) {
     <div role="status" aria-label="Cargando" className={className}>
       <img
         src="/brand/catalou-isotipo.png"
-        width={size}
-        height={size}
         alt=""
         aria-hidden="true"
+        style={{ width: size, height: size, maxWidth: 'none' }}
         className="catalou-spiral-orbit"
       />
     </div>
