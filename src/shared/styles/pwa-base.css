@@ -212,7 +212,7 @@ body {
   to   { transform: rotate(360deg); }
 }
 .catalou-spiral-orbit {
-  animation: catalou-spin 1.6s linear infinite;
+  animation: catalou-spin 0.6s linear infinite;
   transform-origin: 50% 50%;
 }
 @media (prefers-reduced-motion: reduce) {
