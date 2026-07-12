@@ -1,5 +1,6 @@
 import React from 'react';
 import type { AboutPageProps, CatalogProfile } from '../useAboutPage';
+import { CatalouSpinner } from '@shared/ui/CatalouSpinner';
 
 const PLATFORM_LABELS: Record<string, string> = {
   instagram: 'Instagram',
@@ -30,9 +31,7 @@ const LuxuryMinimalismAboutSkin: React.FC<AboutPageProps> = ({
   if (isLoading) {
     return (
       <div style={{ minHeight: '100vh', backgroundColor: 'var(--pwa-bg)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        <p style={{ fontFamily: 'var(--pwa-font-heading)', fontStyle: 'italic', color: 'var(--pwa-text)', opacity: 0.4, fontSize: '1rem' }}>
-          …
-        </p>
+        <CatalouSpinner size={40} />
       </div>
     );
   }

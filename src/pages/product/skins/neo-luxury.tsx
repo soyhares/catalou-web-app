@@ -4,6 +4,7 @@ import { useTheme } from '@shared/ui/ThemeProvider';
 import { formatPrice } from '@shared/lib/formatPrice';
 import { PriceDisclaimer } from '@shared/ui';
 import { WhatsAppProductConsultButton } from '@shared/ui/WhatsAppProductConsultButton';
+import { CatalouSpinner } from '@shared/ui/CatalouSpinner';
 import type { ProductPageProps } from '../useProductPage';
 
 /* ── Icons ───────────────────────────────────────────────────────────────── */
@@ -51,9 +52,7 @@ const NeoLuxuryProductSkin: React.FC<ProductPageProps> = (props) => {
   if (isLoading) {
     return (
       <div style={{ minHeight: '100vh', backgroundColor: 'var(--pwa-bg)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        <p style={{ fontFamily: 'var(--pwa-font-heading)', fontSize: '1.2rem', color: 'var(--pwa-accent)', opacity: 0.7 }}>
-          Cargando…
-        </p>
+        <CatalouSpinner size={40} />
       </div>
     );
   }

@@ -28,7 +28,7 @@ const LuxuryMinimalismSkin: React.FC<CatalogPageProps> = ({
   businessModel,
   selectedCategory,
   selectedSubcategoryId,
-  searchQuery,
+  // searchQuery,
   isLoading,
   error,
   ordersEnabled,
@@ -80,69 +80,70 @@ const LuxuryMinimalismSkin: React.FC<CatalogPageProps> = ({
       <OfflineBanner />
 
       {/* ── Top Bar — mobile only; desktop nav handled by global TopBar ─ */}
-      {isMobile && <header style={{
+      <header style={{
         position: 'sticky',
         top: 0,
         zIndex: 20,
         backgroundColor: 'var(--pwa-bg)',
         borderBottom: '1px solid var(--pwa-border)',
       }}>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '16px 20px' }}>
-          {/* Logo / Brand name — italic serif, centered */}
-          <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-            {logoUrl ? (
-              <img src={logoUrl} alt={companyName} style={{ height: '52px', width: 'auto', objectFit: 'contain' }} />
-            ) : (
-              <span style={{
-                fontFamily: 'var(--pwa-font-heading)',
-                fontStyle: 'italic',
-                fontSize: '1.35rem',
-                fontWeight: 400,
-                color: 'var(--pwa-text)',
-                letterSpacing: '0.02em',
-                lineHeight: 1,
-              }}>
-                {companyName}
-              </span>
-            )}
-            <span style={{ fontSize: '8px', letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--pwa-text-secondary)', opacity: 0.5, marginTop: '2px' }}>
-              Catálogo
-            </span>
-          </div>
-
-          {/* Cart icon — only when orders enabled */}
-          {ordersEnabled && (
-            <button
-              type="button"
-              onClick={onCartClick}
-              aria-label={`Carrito (${cartCount} artículos)`}
-              style={{ position: 'relative', color: 'var(--pwa-text)', background: 'none', border: 'none', cursor: 'pointer', padding: '4px' }}
-            >
-              <IconBag />
-              {cartCount > 0 && (
+        {isMobile && 
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '16px 20px' }}>
+            {/* Logo / Brand name — italic serif, centered */}
+            <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+              {logoUrl ? (
+                <img src={logoUrl} alt={companyName} style={{ height: '52px', width: 'auto', objectFit: 'contain' }} />
+              ) : (
                 <span style={{
-                  position: 'absolute',
-                  top: '-2px',
-                  right: '-2px',
-                  backgroundColor: 'var(--pwa-accent)',
-                  color: 'var(--pwa-bg)',
-                  fontSize: '9px',
-                  fontWeight: 600,
-                  minWidth: '14px',
-                  height: '14px',
-                  borderRadius: '7px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  padding: '0 2px',
+                  fontFamily: 'var(--pwa-font-heading)',
+                  fontStyle: 'italic',
+                  fontSize: '1.35rem',
+                  fontWeight: 400,
+                  color: 'var(--pwa-text)',
+                  letterSpacing: '0.02em',
+                  lineHeight: 1,
                 }}>
-                  {cartCount}
+                  {companyName}
                 </span>
               )}
-            </button>
-          )}
-        </div>
+              <span style={{ fontSize: '8px', letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--pwa-text-secondary)', opacity: 0.5, marginTop: '2px' }}>
+                Catálogo
+              </span>
+            </div>
 
+            {/* Cart icon — only when orders enabled */}
+            {ordersEnabled && (
+              <button
+                type="button"
+                onClick={onCartClick}
+                aria-label={`Carrito (${cartCount} artículos)`}
+                style={{ position: 'relative', color: 'var(--pwa-text)', background: 'none', border: 'none', cursor: 'pointer', padding: '4px' }}
+              >
+                <IconBag />
+                {cartCount > 0 && (
+                  <span style={{
+                    position: 'absolute',
+                    top: '-2px',
+                    right: '-2px',
+                    backgroundColor: 'var(--pwa-accent)',
+                    color: 'var(--pwa-bg)',
+                    fontSize: '9px',
+                    fontWeight: 600,
+                    minWidth: '14px',
+                    height: '14px',
+                    borderRadius: '7px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    padding: '0 2px',
+                  }}>
+                    {cartCount}
+                  </span>
+                )}
+              </button>
+            )}
+          </div>
+        }
         {/* Category chips */}
         {categories.length > 0 && (
           <div style={{ borderTop: '1px solid var(--pwa-border)', overflowX: 'auto', scrollbarWidth: 'none' as const }}>
@@ -196,10 +197,10 @@ const LuxuryMinimalismSkin: React.FC<CatalogPageProps> = ({
 
           </div>
         )}
-      </header>}
+      </header>
 
-      {/* ── Hero Section ──────────────────────────────────────────────── */}
-      {!searchQuery && !selectedCategory && !isLoading && hasProducts && (
+      {/**  ── Hero Section ──────────────────────────────────────────────── */}
+      {/*!searchQuery && !selectedCategory && !isLoading && hasProducts && (
         <section style={{
           background: 'linear-gradient(135deg, var(--pwa-surface-secondary) 0%, var(--pwa-bg) 60%)',
           padding: '48px 24px 40px',
@@ -227,7 +228,7 @@ const LuxuryMinimalismSkin: React.FC<CatalogPageProps> = ({
           }}>
             Piezas seleccionadas con cuidado
           </p>
-          <button
+         <button
             type="button"
             onClick={() => {
               const el = document.getElementById('lm-product-list');
@@ -248,9 +249,9 @@ const LuxuryMinimalismSkin: React.FC<CatalogPageProps> = ({
             }}
           >
             Ver catálogo
-          </button>
+          </button> 
         </section>
-      )}
+      )*/} 
 
       {/* ── Main Content ──────────────────────────────────────────────── */}
       <main style={{ padding: '32px 20px 0' }} id="lm-product-list">
@@ -310,7 +311,7 @@ const LuxuryMinimalismSkin: React.FC<CatalogPageProps> = ({
             `}</style>
             <div style={{
               display: 'grid',
-              gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr',
+              gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr 1fr',
               gap: isMobile ? '0' : '16px',
             }}>
               {Array.from({ length: 6 }).map((_, i) => (
@@ -394,7 +395,7 @@ const LuxuryMinimalismSkin: React.FC<CatalogPageProps> = ({
         {hasProducts && (
           <div style={{
             display: 'grid',
-            gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr',
+            gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr 1fr',
             gap: isMobile ? '0' : '16px',
           }}>
             {products.map((product) => (
@@ -403,10 +404,10 @@ const LuxuryMinimalismSkin: React.FC<CatalogPageProps> = ({
                 onClick={() => navigate(`/products/${product.id}`)}
                 style={{
                   display: 'flex',
-                  flexDirection: isMobile ? 'row' : 'column',
-                  alignItems: isMobile ? 'flex-start' : 'stretch',
-                  gap: isMobile ? '20px' : '0',
-                  padding: isMobile ? '20px 0' : '0',
+                  flexDirection: 'row',
+                  alignItems: 'flex-start' ,
+                  gap: '20px',
+                  padding: '20px',
                   borderBottom: isMobile ? '1px solid var(--pwa-border)' : 'none',
                   borderRadius: isMobile ? '0' : 'var(--pwa-radius-lg)',
                   overflow: 'hidden',
@@ -416,11 +417,11 @@ const LuxuryMinimalismSkin: React.FC<CatalogPageProps> = ({
               >
                 {/* Image — square, rounded */}
                 <div style={{
-                  width: isMobile ? '100px' : '100%',
-                  height: isMobile ? '100px' : 'auto',
+                  width: '100px',
+                  height: '100px',
                   aspectRatio: isMobile ? undefined : '4 / 3',
                   flexShrink: 0,
-                  borderRadius: isMobile ? 'var(--pwa-radius-md)' : '0',
+                  borderRadius: 'var(--pwa-radius-md)',
                   overflow: 'hidden',
                   backgroundColor: 'var(--pwa-surface-secondary)',
                 }}>
@@ -444,7 +445,7 @@ const LuxuryMinimalismSkin: React.FC<CatalogPageProps> = ({
                 {/* Text content */}
                 <div style={{
                   flex: 1,
-                  padding: isMobile ? '4px 0 0' : '12px 14px',
+                  padding: '4px 0 0',
                 }}>
                   <p style={{
                     fontFamily: 'var(--pwa-font-heading)',
