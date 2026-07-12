@@ -1,5 +1,6 @@
 import React from 'react';
 import type { AboutPageProps, CatalogProfile } from '../useAboutPage';
+import { CatalouSpinner } from '@shared/ui/CatalouSpinner';
 
 function IconInstagram() {
   return (
@@ -95,9 +96,7 @@ const ModernMinimalismAboutSkin: React.FC<AboutPageProps> = ({
   if (isLoading) {
     return (
       <div style={{ minHeight: '100vh', backgroundColor: 'var(--pwa-bg)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        <p style={{ fontFamily: 'var(--pwa-font-body)', color: 'var(--pwa-text-secondary)', fontSize: '0.875rem' }}>
-          Cargando…
-        </p>
+        <CatalouSpinner size={40} />
       </div>
     );
   }
