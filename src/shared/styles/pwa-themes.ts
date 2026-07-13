@@ -1,7 +1,11 @@
-export type CatalogTheme = 'luxury-minimalism' | 'neo-luxury' | 'modern-minimalism';
+// Single unified skin. The 3-skin architecture (modern-minimalism / neo-luxury)
+// was collapsed onto luxury-minimalism as the sole base. Per-tenant color overrides
+// still apply (see ThemeProvider.applyThemeTokens); the API's `catalogTheme` is ignored.
+export type CatalogTheme = 'luxury-minimalism';
 
+// appearance-public payload — only the per-tenant color overrides are consumed.
+// The raw API also sends `catalogTheme`, which we deliberately ignore.
 export interface AppearancePayload {
-  catalogTheme: CatalogTheme;
   catalogColorBg: string;
   catalogColorAccent: string;
   catalogColorText: string;
@@ -47,46 +51,6 @@ export const PWA_THEMES: Record<CatalogTheme, ThemeTokens> = {
     warningBg: 'rgba(201,169,110,0.12)',
     warningText: '#8B7355',
   },
-  'neo-luxury': {
-    bg: '#0D0718', surface: '#150B2A', surfaceSecondary: '#1E0A35',
-    accent: '#E879F9', accentSoft: 'rgba(232,121,249,0.15)', border: 'rgba(167,139,250,0.15)',
-    text: '#F8FAFC', textSecondary: 'rgba(167,139,250,0.7)', card: '#150B2A',
-    glassBg: 'rgba(21,11,42,0.85)', glassBorder: 'rgba(167,139,250,0.2)',
-    headingFont: "'Space Grotesk', system-ui, sans-serif", bodyFont: "'Space Grotesk', system-ui, sans-serif",
-    radiusSm: '8px', radiusMd: '12px', radiusLg: '16px',
-    radiusButton: '24px', radiusChip: '20px',
-    shadow: '0 4px 20px rgba(232,121,249,0.1)',
-    shadowSm: '0 2px 8px rgba(0,0,0,0.3)',
-    shadowMd: '0 8px 32px rgba(232,121,249,0.12)',
-    shadowLg: '0 16px 48px rgba(232,121,249,0.15)',
-    motionDuration: '200ms',
-    isMobileBreakpoint: 768,
-    onAccent: '#0D0718',
-    error: '#FF6B6B',
-    success: '#34D399',
-    warningBg: 'rgba(232,121,249,0.08)',
-    warningText: 'rgba(232,121,249,0.8)',
-  },
-  'modern-minimalism': {
-    bg: '#FFFFFF', surface: '#FFFFFF', surfaceSecondary: '#F9FAFB',
-    accent: '#111827', accentSoft: '#F3F4F6', border: '#E5E7EB',
-    text: '#111827', textSecondary: '#6B7280', card: '#FFFFFF',
-    glassBg: 'rgba(255,255,255,0.92)', glassBorder: 'rgba(229,231,235,0.8)',
-    headingFont: "'Inter', system-ui, sans-serif", bodyFont: "'Inter', system-ui, sans-serif",
-    radiusSm: '4px', radiusMd: '8px', radiusLg: '12px',
-    radiusButton: '8px', radiusChip: '6px',
-    shadow: '0 1px 3px rgba(0,0,0,0.08)',
-    shadowSm: '0 1px 2px rgba(0,0,0,0.05)',
-    shadowMd: '0 4px 12px rgba(0,0,0,0.08)',
-    shadowLg: '0 8px 24px rgba(0,0,0,0.10)',
-    motionDuration: '150ms',
-    isMobileBreakpoint: 768,
-    onAccent: '#FFFFFF',
-    error: '#EF4444',
-    success: '#22C55E',
-    warningBg: '#FEF3C7',
-    warningText: '#92400E',
-  },
 };
 
-export const defaultTheme: CatalogTheme = 'modern-minimalism';
+export const defaultTheme: CatalogTheme = 'luxury-minimalism';

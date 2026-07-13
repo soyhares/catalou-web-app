@@ -1,13 +1,11 @@
 import { lazy, Suspense, useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { useTheme } from '@shared/ui/ThemeProvider';
 import { useBranding } from '@app/BrandingContext';
 import { PushPermissionModal } from '@features/push-notifications/PushPermissionModal';
 import { saveBookingRef } from '@shared/lib/bookings-storage';
 import { fetchCatalog, type PublicCategory, type PublicProduct } from '@entities/catalog/api';
 import { getCompanyAvailability } from '@entities/booking/api';
 import type { BookingPublicResponse } from '@entities/booking/types';
-import type { CatalogTheme } from '@shared/styles/pwa-themes';
 
 export interface BookSkinProps {
   slug: string;
@@ -20,16 +18,11 @@ export interface BookSkinProps {
   onConfirmed: (booking: BookingPublicResponse) => void;
 }
 
-const SKINS: Record<CatalogTheme, React.LazyExoticComponent<React.FC<BookSkinProps>>> = {
-  'luxury-minimalism': lazy(() => import('./skins/luxury-minimalism')),
-  'neo-luxury':        lazy(() => import('./skins/neo-luxury')),
-  'modern-minimalism': lazy(() => import('./skins/modern-minimalism')),
-};
+const BookSkin = lazy(() => import('./skins/luxury-minimalism'));
 
 export default function BookPage() {
   const navigate        = useNavigate();
   const [searchParams]  = useSearchParams();
-  const { theme }       = useTheme();
   const { slug, branding } = useBranding();
   const [showPushPrompt, setShowPushPrompt] = useState(false);
   const [confirmedBookingId, setConfirmedBookingId] = useState<string | undefined>();
@@ -56,8 +49,6 @@ export default function BookPage() {
     });
   }, [slug]);
 
-  const Skin = SKINS[theme] ?? SKINS['modern-minimalism'];
-
   function handleConfirmed(booking: BookingPublicResponse) {
     saveBookingRef(slug, { id: booking.id, createdAt: new Date().toISOString() });
     setConfirmedBookingId(booking.id);
@@ -81,7 +72,7 @@ export default function BookPage() {
 
   return (
     <Suspense fallback={<div style={{ minHeight: '100vh', background: 'var(--pwa-bg)' }} />}>
-      <Skin
+      <BookSkin
         slug={slug}
         categories={categories}
         products={products}
