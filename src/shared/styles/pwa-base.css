@@ -12,28 +12,12 @@ body {
   font-family: var(--pwa-font-body);
 }
 
-/* Heading font per theme */
+/* Heading font */
 [data-pwa-theme="luxury-minimalism"] h1,
 [data-pwa-theme="luxury-minimalism"] h2,
 [data-pwa-theme="luxury-minimalism"] h3,
 [data-pwa-theme="luxury-minimalism"] .heading {
   font-family: var(--pwa-font-heading);
-}
-[data-pwa-theme="neo-luxury"] h1,
-[data-pwa-theme="neo-luxury"] h2,
-[data-pwa-theme="neo-luxury"] h3,
-[data-pwa-theme="neo-luxury"] .heading {
-  font-family: var(--pwa-font-heading);
-}
-
-/* modern-minimalism: sticky search inside header */
-[data-pwa-theme="modern-minimalism"] .catalog-search {
-  position: sticky;
-  top: 56px;
-  z-index: 10;
-}
-[data-pwa-theme="modern-minimalism"] .hero-section {
-  background-color: var(--pwa-surface-secondary);
 }
 
 /* ── Product card — editorial portrait ─────────────────────────────────── */
@@ -79,16 +63,8 @@ body {
   }
 }
 
-/* Per-theme card effects */
+/* Card hover — luxury: elevation only, no movement */
 [data-pwa-theme="luxury-minimalism"] .product-card:hover {
-  box-shadow: var(--pwa-shadow-lg);
-}
-[data-pwa-theme="modern-minimalism"] .product-card:hover {
-  box-shadow: var(--pwa-shadow-md);
-  transform: translateY(-2px);
-}
-[data-pwa-theme="neo-luxury"] .product-card:hover {
-  transform: scale(1.02);
   box-shadow: var(--pwa-shadow-lg);
 }
 
@@ -150,9 +126,7 @@ body {
   box-shadow: 0 0 0 3px rgba(239,68,68,0.15);
 }
 
-/* ── Per-skin booking form overrides ────────────────────────────────────── */
-
-/* luxury-minimalism: editorial underline-only inputs */
+/* ── Booking form — luxury editorial underline-only inputs ──────────────── */
 [data-pwa-theme="luxury-minimalism"] .pwa-book-form .pwa-input {
   background: transparent;
   border: none;
@@ -175,26 +149,6 @@ body {
   letter-spacing: 0.18em;
   font-weight: 600;
   color: var(--pwa-text-secondary) !important;
-}
-
-/* neo-luxury: dark glowing inputs */
-[data-pwa-theme="neo-luxury"] .pwa-book-form .pwa-input {
-  background: rgba(255, 255, 255, 0.04);
-  border-color: rgba(167, 139, 250, 0.22);
-}
-[data-pwa-theme="neo-luxury"] .pwa-book-form .pwa-input:focus {
-  border-color: #E879F9;
-  box-shadow: 0 0 0 3px rgba(232, 121, 249, 0.12), 0 0 20px rgba(232, 121, 249, 0.06);
-}
-[data-pwa-theme="neo-luxury"] .pwa-book-form .pwa-input::placeholder {
-  color: rgba(167, 139, 250, 0.35);
-  opacity: 1;
-}
-[data-pwa-theme="neo-luxury"] .pwa-book-form label {
-  font-size: 9px !important;
-  text-transform: uppercase;
-  letter-spacing: 0.14em;
-  font-weight: 600;
 }
 
 @keyframes pwa-slideUp {

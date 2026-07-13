@@ -7,7 +7,6 @@ import { InstallPromptSheet } from '@widgets/install-prompt/InstallPromptSheet';
 import Navigation from '@widgets/navigation';
 import { useBranding } from '@app/BrandingContext';
 
-const HeroPage = lazy(() => import('@pages/hero'));
 const CatalogPage = lazy(() => import('@pages/catalog'));
 const ProductDetailPage = lazy(() => import('@pages/product'));
 const CartPage = lazy(() => import('@pages/cart'));
@@ -42,7 +41,7 @@ function AnimatedRoutes() {
     <Suspense fallback={<div className="min-h-screen" style={{ backgroundColor: 'var(--pwa-bg)' }} />}>
       <AnimatePresence mode="wait">
         <Routes location={location} key={location.pathname}>
-          <Route path="/" element={<PageTransition><HeroPage /></PageTransition>} />
+          <Route path="/" element={<Navigate to="/catalog" replace />} />
           <Route path="/catalog" element={<PageTransition><CatalogPage /></PageTransition>} />
           <Route path="/products/:id" element={<PageTransition><ProductDetailPage /></PageTransition>} />
           <Route path="/cart" element={<OrdersGuard><PageTransition><CartPage /></PageTransition></OrdersGuard>} />

@@ -5,13 +5,17 @@ import { loadThemeFont } from '@shared/lib/font-loader';
 
 export type { CatalogTheme };
 
+// Sole skin. Kept as a constant so consumers of useTheme().theme keep working
+// after the 3-skin collapse without branching.
+const THEME: CatalogTheme = 'luxury-minimalism';
+
 interface ThemeContextValue {
   theme: CatalogTheme;
   isMobile: boolean;
 }
 
 const ThemeContext = createContext<ThemeContextValue>({
-  theme: 'modern-minimalism',
+  theme: THEME,
   isMobile: false,
 });
 
@@ -40,8 +44,10 @@ function isHex(v: string): boolean {
   return /^#[0-9A-Fa-f]{6}$/.test(v);
 }
 
+// Always applies the luxury base tokens. Only the per-tenant color overrides
+// (bg/accent/text/card) from the API are honored; the API's `catalogTheme` is ignored.
 function applyThemeTokens(payload: AppearancePayload): void {
-  const base = PWA_THEMES[payload.catalogTheme];
+  const base = PWA_THEMES[THEME];
   const root = document.documentElement;
 
   const finalText   = payload.catalogColorText   || base.text;
@@ -93,12 +99,15 @@ function applyThemeTokens(payload: AppearancePayload): void {
   root.style.setProperty('--pwa-warning-bg',    base.warningBg);
   root.style.setProperty('--pwa-warning-text',  base.warningText);
 
-  root.setAttribute('data-pwa-theme', payload.catalogTheme);
+  root.setAttribute('data-pwa-theme', THEME);
 }
+
+const EMPTY_OVERRIDES: AppearancePayload = {
+  catalogColorBg: '', catalogColorAccent: '', catalogColorText: '', catalogColorCard: '',
+};
 
 export function ThemeProvider({ children }: { children: ReactNode }) {
   const { slug } = useBranding();
-  const [theme, setTheme] = useState<CatalogTheme>(defaultTheme);
   const mobileBp = PWA_THEMES[defaultTheme].isMobileBreakpoint;
   const mobileQuery = `(max-width: ${mobileBp}px)`;
   const [isMobile, setIsMobile] = useState<boolean>(
@@ -113,21 +122,17 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
   }, [mobileQuery]);
 
   useEffect(() => {
-    if (!slug) return;
+    loadThemeFont(THEME);
+    if (!slug) {
+      applyThemeTokens(EMPTY_OVERRIDES);
+      return;
+    }
     const apiUrl = import.meta.env.VITE_API_URL as string;
     fetch(`${apiUrl}/companies/${slug}/appearance-public`)
       .then((r) => (r.ok ? (r.json() as Promise<AppearancePayload>) : Promise.reject()))
-      .then((data) => {
-        applyThemeTokens(data);
-        loadThemeFont(data.catalogTheme);
-        setTheme(data.catalogTheme);
-      })
-      .catch(() => {
-        // Fallback to modern-minimalism defaults
-        applyThemeTokens({ catalogTheme: defaultTheme, catalogColorBg: '', catalogColorAccent: '', catalogColorText: '', catalogColorCard: '' });
-        loadThemeFont(defaultTheme);
-      });
+      .then((data) => applyThemeTokens(data))
+      .catch(() => applyThemeTokens(EMPTY_OVERRIDES));
   }, [slug]);
 
-  return <ThemeContext.Provider value={{ theme, isMobile }}>{children}</ThemeContext.Provider>;
+  return <ThemeContext.Provider value={{ theme: THEME, isMobile }}>{children}</ThemeContext.Provider>;
 }
