@@ -99,6 +99,12 @@ body {
   box-shadow: 0 0 0 3px rgba(239,68,68,0.15);
 }
 
+/* ── Catalog search input ──────────────────────────────────────────────────── */
+.catalog-search-input:focus {
+  border-color: var(--pwa-accent);
+  box-shadow: 0 0 0 3px var(--pwa-accent-soft);
+}
+
 /* ── Booking form — luxury editorial underline-only inputs ──────────────── */
 [data-pwa-theme="luxury-minimalism"] .pwa-book-form .pwa-input {
   background: transparent;
