@@ -87,7 +87,7 @@ const LuxuryMinimalismSkin: React.FC<CatalogPageProps> = ({
         {isMobile && (
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '14px 18px 10px', gap: '10px' }}>
             {showBack && !isPicker ? (
-              <button type="button" onClick={onBackToPicker} aria-label="Volver a los catálogos" style={{ color: 'var(--pwa-text)', background: 'none', border: 'none', cursor: 'pointer', padding: '4px' }}>
+              <button type="button" onClick={onBackToPicker} aria-label="Volver a los catálogos" style={{ color: 'var(--pwa-text)', background: 'none', border: 'none', cursor: 'pointer', padding: '4px', display: 'flex', alignItems: 'center', justifyContent: 'center', minWidth: '44px', minHeight: '44px' }}>
                 <IconBack />
               </button>
             ) : (
@@ -112,7 +112,7 @@ const LuxuryMinimalismSkin: React.FC<CatalogPageProps> = ({
             </div>
 
             {ordersEnabled ? (
-              <button type="button" onClick={onCartClick} aria-label={`Carrito (${cartCount} artículos)`} style={{ position: 'relative', color: 'var(--pwa-text)', background: 'none', border: 'none', cursor: 'pointer', padding: '4px' }}>
+              <button type="button" onClick={onCartClick} aria-label={`Carrito (${cartCount} artículos)`} style={{ position: 'relative', color: 'var(--pwa-text)', background: 'none', border: 'none', cursor: 'pointer', padding: '4px', display: 'flex', alignItems: 'center', justifyContent: 'center', minWidth: '44px', minHeight: '44px' }}>
                 <IconBag />
                 {cartCount > 0 && (
                   <span style={{ position: 'absolute', top: '-2px', right: '-2px', backgroundColor: 'var(--pwa-accent)', color: 'var(--pwa-bg)', fontSize: '9px', fontWeight: 600, minWidth: '14px', height: '14px', borderRadius: '7px', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '0 2px' }}>
@@ -200,7 +200,7 @@ function chipStyle(active: boolean): React.CSSProperties {
     fontSize: '9px',
     letterSpacing: '0.1em',
     textTransform: 'uppercase',
-    padding: '6px 14px',
+    padding: '12px 14px',
     borderRadius: 'var(--pwa-radius-chip)',
     border: `1px solid ${active ? 'var(--pwa-text)' : 'var(--pwa-border)'}`,
     backgroundColor: active ? 'var(--pwa-text)' : 'transparent',
