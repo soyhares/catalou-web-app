@@ -8,6 +8,7 @@ export interface PublicSubcategory {
 export interface PublicCategory {
   id: string;
   name: string;
+  purpose: 'services' | 'menu' | 'informative' | null;
   subcategories: PublicSubcategory[];
 }
 

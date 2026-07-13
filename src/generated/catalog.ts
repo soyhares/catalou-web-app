@@ -130,6 +130,11 @@ export interface components {
             /** Format: uuid */
             id: string;
             name: string;
+            /**
+             * @description Catalog intent — services (booking), menu (ordering), informative (display only). Null for catalogs created before this field existed.
+             * @enum {string|null}
+             */
+            purpose?: "services" | "menu" | "informative" | null;
             subcategories: {
                 /** Format: uuid */
                 id: string;
