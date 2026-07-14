@@ -3,12 +3,21 @@ import { catalogSubtitle } from './purpose';
 
 interface CatalogPickerProps {
   catalogs: PublicCategory[];
+  bannerUrl: string | null;
   onSelect: (id: string) => void;
 }
 
-export function CatalogPicker({ catalogs, onSelect }: CatalogPickerProps) {
+export function CatalogPicker({ catalogs, bannerUrl, onSelect }: CatalogPickerProps) {
   return (
     <div style={{ padding: '8px 20px 24px' }}>
+      {bannerUrl && (
+        <img
+          src={bannerUrl}
+          alt=""
+          aria-hidden="true"
+          style={{ width: '100%', aspectRatio: '16/5', objectFit: 'cover', borderRadius: 'var(--pwa-radius-md)', marginBottom: '16px' }}
+        />
+      )}
       {catalogs.map((c, i) => (
         <button
           key={c.id}
