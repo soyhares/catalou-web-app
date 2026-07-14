@@ -26,10 +26,10 @@ function IconBack() {
   );
 }
 
-const gridStyle = (isMobile: boolean): React.CSSProperties => ({
+const listStyle = (isMobile: boolean): React.CSSProperties => ({
   display: 'grid',
-  gridTemplateColumns: isMobile ? '1fr 1fr' : 'repeat(4, 1fr)',
-  gap: isMobile ? '20px 12px' : '24px',
+  gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr',
+  gap: isMobile ? '18px' : '20px 32px',
 });
 
 const LuxuryMinimalismSkin: React.FC<CatalogPageProps> = ({
@@ -150,8 +150,8 @@ const LuxuryMinimalismSkin: React.FC<CatalogPageProps> = ({
       ) : (
         <main style={{ padding: '20px 20px 0' }}>
           {isLoading && (
-            <div style={gridStyle(isMobile)}>
-              {Array.from({ length: 8 }).map((_, i) => (
+            <div style={listStyle(isMobile)}>
+              {Array.from({ length: 6 }).map((_, i) => (
                 <ProductCardSkeleton key={i} />
               ))}
             </div>
@@ -166,7 +166,7 @@ const LuxuryMinimalismSkin: React.FC<CatalogPageProps> = ({
           )}
 
           {hasProducts && (
-            <div style={gridStyle(isMobile)}>
+            <div style={listStyle(isMobile)}>
               {products.map((product) => {
                 const action = getCardAction(product);
                 return (
@@ -174,8 +174,10 @@ const LuxuryMinimalismSkin: React.FC<CatalogPageProps> = ({
                     key={product.id}
                     id={product.id}
                     name={product.name}
+                    description={product.description}
                     imageUrl={product.mainImageUrl}
                     price={product.basePrice ? parseFloat(product.basePrice) : null}
+                    durationMinutes={product.durationMinutes}
                     showPrices={showPrices}
                     currency={currency}
                     businessModel={businessModel}

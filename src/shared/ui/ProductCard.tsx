@@ -5,8 +5,10 @@ import { PriceDisclaimer } from '@shared/ui/PriceDisclaimer';
 interface ProductCardProps {
   id: string;
   name: string;
+  description?: string | null;
   imageUrl: string | null;
   price: number | null;
+  durationMinutes?: number | null;
   showPrices: boolean;
   currency?: 'USD' | 'CRC';
   businessModel: 'DIRECT' | 'ASSOCIATED' | 'BOTH';
@@ -14,7 +16,7 @@ interface ProductCardProps {
   onAction: (id: string) => void;
 }
 
-export function ProductCard({ id, name, imageUrl, price, showPrices, currency = 'CRC', businessModel, actionLabel, onAction }: ProductCardProps) {
+export function ProductCard({ id, name, description, imageUrl, price, durationMinutes, showPrices, currency = 'CRC', businessModel, actionLabel, onAction }: ProductCardProps) {
   const navigate = useNavigate();
 
   function handleCardClick() {
@@ -27,59 +29,74 @@ export function ProductCard({ id, name, imageUrl, price, showPrices, currency = 
   }
 
   return (
-    <article className="product-card cursor-pointer" style={{ backgroundColor: 'transparent' }} onClick={handleCardClick}>
-      <div className="overflow-hidden w-full mb-2 relative" style={{ aspectRatio: '3/4', backgroundColor: 'var(--pwa-surface-secondary)', borderRadius: 'var(--pwa-radius-md)' }}>
+    <article className="product-card cursor-pointer flex items-center" style={{ backgroundColor: 'transparent', gap: '14px' }} onClick={handleCardClick}>
+      <div className="overflow-hidden flex-shrink-0 relative" style={{ width: '96px', height: '96px', backgroundColor: 'var(--pwa-surface-secondary)', borderRadius: 'var(--pwa-radius-md)' }}>
         {imageUrl ? (
           <img src={imageUrl} alt={name} loading="lazy" className="product-card__image w-full h-full object-cover" />
         ) : (
           <div className="product-card__image w-full h-full flex items-center justify-center" style={{ backgroundColor: 'var(--pwa-surface-secondary)' }}>
-            <svg width="28" height="28" viewBox="0 0 28 28" fill="none" style={{ color: 'var(--pwa-accent)', opacity: 0.25 }}>
-              <rect x="2" y="2" width="24" height="24" stroke="currentColor" strokeWidth="1" />
-              <path d="M2 20L9 13L13 17L18 11L26 20" stroke="currentColor" strokeWidth="1" strokeLinejoin="round" />
-              <circle cx="9" cy="9" r="2.5" stroke="currentColor" strokeWidth="1" />
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" style={{ color: 'var(--pwa-accent)', opacity: 0.25 }}>
+              <rect x="2" y="2" width="20" height="20" stroke="currentColor" strokeWidth="1" />
+              <path d="M2 17L7 12L11 15L15 10L22 17" stroke="currentColor" strokeWidth="1" strokeLinejoin="round" />
+              <circle cx="8" cy="8" r="2" stroke="currentColor" strokeWidth="1" />
             </svg>
           </div>
         )}
-        {showPrices && price !== null && (
-          <div className="absolute bottom-2 left-2 px-2 py-0.5 text-xs font-bold" style={{ backgroundColor: 'var(--pwa-accent)', color: 'var(--pwa-on-accent)', borderRadius: 'var(--pwa-radius-sm, 4px)', letterSpacing: '-0.01em' }}>
-            {formatPrice(price, currency)}
-          </div>
-        )}
       </div>
 
-      {showPrices && (businessModel === 'ASSOCIATED' || businessModel === 'BOTH') && price !== null && (
-        <PriceDisclaimer className="px-0.5 mt-0" />
-      )}
-
-      <div className="px-0.5">
-        <p className="line-clamp-2 leading-snug mb-1" style={{ fontFamily: 'var(--pwa-font-heading)', fontStyle: 'italic', fontSize: 'clamp(0.95rem, 2.5vw, 1.1rem)', fontWeight: 400, color: 'var(--pwa-text)', letterSpacing: '0.01em' }}>
+      <div className="flex-1 min-w-0 flex flex-col" style={{ alignSelf: 'stretch' }}>
+        <p className="line-clamp-1 leading-snug" style={{ fontFamily: 'var(--pwa-font-heading)', fontStyle: 'italic', fontSize: 'clamp(0.95rem, 2.5vw, 1.05rem)', fontWeight: 400, color: 'var(--pwa-text)', letterSpacing: '0.01em' }}>
           {name}
         </p>
-      </div>
+        {description && (
+          <p className="line-clamp-2 leading-snug" style={{ fontFamily: 'var(--pwa-font-body)', fontSize: '11px', color: 'var(--pwa-text-secondary)', marginTop: '3px' }}>
+            {description}
+          </p>
+        )}
+        {showPrices && (businessModel === 'ASSOCIATED' || businessModel === 'BOTH') && price !== null && (
+          <PriceDisclaimer className="mt-1" />
+        )}
 
-      {actionLabel && (
-        <button
-          type="button"
-          onClick={handleActionClick}
-          className="w-full text-center uppercase"
-          style={{
-            marginTop: '6px',
-            fontFamily: 'var(--pwa-font-body)',
-            fontSize: '10px',
-            letterSpacing: '0.14em',
-            fontWeight: 600,
-            color: 'var(--pwa-on-accent)',
-            backgroundColor: 'var(--pwa-accent)',
-            border: 'none',
-            borderRadius: 'var(--pwa-radius-button)',
-            padding: '8px 0',
-            cursor: 'pointer',
-            minHeight: '36px',
-          }}
-        >
-          {actionLabel}
-        </button>
-      )}
+        <div className="flex-1" style={{ minHeight: '4px' }} />
+
+        <div className="flex items-center justify-between" style={{ marginTop: '6px', gap: '8px' }}>
+          <div className="flex items-baseline min-w-0" style={{ gap: '6px' }}>
+            {showPrices && price !== null && (
+              <span style={{ fontFamily: 'var(--pwa-font-body)', fontSize: '13px', fontWeight: 600, color: 'var(--pwa-text)' }}>
+                {formatPrice(price, currency)}
+              </span>
+            )}
+            {durationMinutes && (
+              <span style={{ fontFamily: 'var(--pwa-font-body)', fontSize: '10px', color: 'var(--pwa-text-secondary)' }}>
+                · {durationMinutes} min
+              </span>
+            )}
+          </div>
+
+          {actionLabel && (
+            <button
+              type="button"
+              onClick={handleActionClick}
+              style={{
+                flexShrink: 0,
+                fontFamily: 'var(--pwa-font-body)',
+                fontSize: '10px',
+                letterSpacing: '0.08em',
+                fontWeight: 600,
+                color: 'var(--pwa-accent)',
+                backgroundColor: 'var(--pwa-accent-soft)',
+                border: 'none',
+                borderRadius: 'var(--pwa-radius-button)',
+                padding: '10px 16px',
+                cursor: 'pointer',
+                minHeight: '36px',
+              }}
+            >
+              {actionLabel}
+            </button>
+          )}
+        </div>
+      </div>
     </article>
   );
 }
