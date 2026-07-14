@@ -121,6 +121,11 @@ export interface components {
              * @enum {string}
              */
             businessModel?: "DIRECT" | "ASSOCIATED" | "BOTH";
+            /**
+             * @description Tenant's business vertical, tenant-selected from a fixed list. Null for tenants that haven't set one.
+             * @enum {string|null}
+             */
+            businessCategory?: "BARBERSHOP" | "BEAUTY_SALON" | "SPA" | "BOUTIQUE" | "JEWELRY" | "FLORIST" | "PERFUMERY" | "TATTOO_STUDIO" | "ART_GALLERY" | "RESTAURANT" | "PHARMACY" | "RETAIL" | "PERSONAL_SHOPPER" | "PROFESSIONAL_SERVICES" | "ASSOCIATION" | "OTHER" | null;
         };
         CatalogResponse: {
             categories: components["schemas"]["CategoryWithSubcategories"][];
