@@ -21,7 +21,7 @@ export function CatalogSearchBar({ value, onChange }: CatalogSearchBarProps) {
           fontFamily: 'var(--pwa-font-body)',
           fontSize: '14px',
           color: 'var(--pwa-text)',
-          backgroundColor: 'var(--pwa-surface)',
+          backgroundColor: 'var(--pwa-card)',
           border: '1.5px solid var(--pwa-border)',
           borderRadius: 'var(--pwa-radius-md)',
           outline: 'none',

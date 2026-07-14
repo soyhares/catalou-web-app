@@ -70,7 +70,7 @@ export function CatalogPicker({ catalogs, onSelect }: CatalogPickerProps) {
             textAlign: isMobile ? 'left' : 'center',
             gap: isMobile ? '14px' : undefined,
             padding: isMobile ? '16px 14px' : '28px 20px',
-            backgroundColor: 'var(--pwa-surface)',
+            backgroundColor: 'var(--pwa-card)',
             borderRadius: 'var(--pwa-radius-md)',
             border: 'none',
             cursor: 'pointer',
