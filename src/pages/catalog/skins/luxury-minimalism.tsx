@@ -11,6 +11,7 @@ import { useBranding } from '@app/BrandingContext';
 import { CatalogPicker } from '../CatalogPicker';
 import { CatalogSearchBar } from '../CatalogSearchBar';
 import { catalogSubtitle } from '../purpose';
+import { businessCategoryLabel } from '@entities/company/businessCategoryLabels';
 import type { CatalogPageProps } from '../useCatalogPage';
 
 function IconBag() {
@@ -76,6 +77,7 @@ const LuxuryMinimalismSkin: React.FC<CatalogPageProps> = ({
   cartCount,
   companyName,
   logoUrl,
+  businessCategory,
   onSearchChange,
   onCartClick,
   onBellClick,
@@ -119,9 +121,16 @@ const LuxuryMinimalismSkin: React.FC<CatalogPageProps> = ({
                 {logoUrl && (
                   <img src={logoUrl} alt="" aria-hidden="true" style={{ height: '56px', width: 'auto', objectFit: 'contain', flexShrink: 0 }} />
                 )}
-                <span style={{ fontFamily: 'var(--pwa-font-body)', fontWeight: 500, fontSize: '0.9rem', color: 'var(--pwa-text)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                  {companyName}
-                </span>
+                <div style={{ minWidth: 0 }}>
+                  <span style={{ display: 'block', fontFamily: 'var(--pwa-font-body)', fontWeight: 500, fontSize: '0.9rem', color: 'var(--pwa-text)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                    {companyName}
+                  </span>
+                  {businessCategoryLabel(businessCategory) && (
+                    <span style={{ display: 'block', fontFamily: 'var(--pwa-font-body)', fontSize: '9px', letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--pwa-text-secondary)', marginTop: '2px' }}>
+                      {businessCategoryLabel(businessCategory)}
+                    </span>
+                  )}
+                </div>
               </div>
             ) : showBack ? (
               <button type="button" onClick={onBackToPicker} aria-label="Volver a los catálogos" style={{ color: 'var(--pwa-text)', background: 'none', border: 'none', cursor: 'pointer', padding: '4px', display: 'flex', alignItems: 'center', justifyContent: 'center', minWidth: '44px', minHeight: '44px' }}>

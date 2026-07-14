@@ -17,6 +17,7 @@ export interface BrandingData {
   currency: 'USD' | 'CRC';
   vapidPublicKey: string | null;
   featuresEnabled: Record<string, boolean>;
+  businessCategory: string | null;
 }
 
 export async function getBranding(slug: string): Promise<BrandingData> {
