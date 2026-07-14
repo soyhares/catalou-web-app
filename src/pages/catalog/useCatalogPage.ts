@@ -9,6 +9,7 @@ import {
   type PublicSubcategory,
 } from '@entities/catalog/api';
 import { useCart } from '@shared/lib/use-cart';
+import { usePushSubscription } from '@features/push-notifications/usePushSubscription';
 import { resolveCardActionKind, CARD_ACTION_LABEL } from './purpose';
 
 export interface CardAction {
@@ -42,8 +43,13 @@ export interface CatalogPageProps {
   logoUrl: string | null;
   businessCategory: string | null;
   ordersEnabled: boolean;
+  bookingsEnabled: boolean;
+  isPushSubscribed: boolean;
+  showPushModal: boolean;
   onSearchChange: (q: string) => void;
   onCartClick: () => void;
+  onBellClick: () => void;
+  onClosePushModal: () => void;
   onRetry: () => void;
 }
 
@@ -52,6 +58,7 @@ export function useCatalogPage(): CatalogPageProps {
   const navigate = useNavigate();
   const { add, items: cartItems } = useCart(slug);
   const [searchParams, setSearchParams] = useSearchParams();
+  const { isSubscribed: isPushSubscribed } = usePushSubscription();
 
   const [catalog, setCatalog] = useState<CatalogData | null>(null);
   const [loading, setLoading] = useState(true);
@@ -59,11 +66,24 @@ export function useCatalogPage(): CatalogPageProps {
   const [searchQuery, setSearchQuery] = useState('');
   const [debouncedQuery, setDebouncedQuery] = useState('');
   const [selectedSubcategoryId, setSelectedSubcategoryId] = useState<string | null>(null);
+  const [showPushModal, setShowPushModal] = useState(false);
 
   const selectedCatalogId = searchParams.get('catalogo');
   const cartCount = cartItems.reduce((s, i) => s + i.quantity, 0);
   const ordersEnabled = branding.featuresEnabled?.orders === true;
   const bookingsEnabled = branding.featuresEnabled?.bookings === true;
+
+  function onBellClick() {
+    if (isPushSubscribed) {
+      void navigate('/appointments');
+    } else {
+      setShowPushModal(true);
+    }
+  }
+
+  function onClosePushModal() {
+    setShowPushModal(false);
+  }
 
   useEffect(() => {
     const id = setTimeout(() => setDebouncedQuery(searchQuery), 300);
@@ -190,8 +210,13 @@ export function useCatalogPage(): CatalogPageProps {
     logoUrl: branding.logoUrl,
     businessCategory: branding.businessCategory,
     ordersEnabled,
+    bookingsEnabled,
+    isPushSubscribed,
+    showPushModal,
     onSearchChange,
     onCartClick,
+    onBellClick,
+    onClosePushModal,
     onRetry: () => void load(),
   };
 }
