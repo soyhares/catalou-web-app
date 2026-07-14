@@ -1,9 +1,12 @@
 import React, { useState } from 'react';
 import { CatalogFooter } from '@shared/ui/CatalogFooter';
 import { useTheme } from '@shared/ui/ThemeProvider';
+import { useBranding } from '@app/BrandingContext';
 import { formatPrice } from '@shared/lib/formatPrice';
 import { PriceDisclaimer } from '@shared/ui';
 import { WhatsAppProductConsultButton } from '@shared/ui/WhatsAppProductConsultButton';
+import { PushPermissionModal } from '@features/push-notifications/PushPermissionModal';
+import { businessCategoryLabel } from '@entities/company/businessCategoryLabels';
 import type { ProductPageProps } from '../useProductPage';
 
 function ProductDetailSkeleton() {
@@ -32,6 +35,32 @@ function IconPlaceholder() {
   );
 }
 
+function IconBack() {
+  return (
+    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+      <path d="M12.5 4L6.5 10L12.5 16" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
+function IconBag() {
+  return (
+    <svg width="22" height="22" viewBox="0 0 22 22" fill="none" aria-hidden="true">
+      <rect x="3" y="7.5" width="16" height="13" rx="1.5" stroke="currentColor" strokeWidth="1.2" fill="none" />
+      <path d="M7.5 7.5V6C7.5 3.515 9.015 2 11 2C12.985 2 14.5 3.515 14.5 6V7.5" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" fill="none" />
+    </svg>
+  );
+}
+
+function IconBell() {
+  return (
+    <svg width="22" height="22" viewBox="0 0 22 22" fill="none" aria-hidden="true">
+      <path d="M6 8.5C6 5.462 8.239 3 11 3C13.761 3 16 5.462 16 8.5V12.5L17.5 15H4.5L6 12.5V8.5Z" stroke="currentColor" strokeWidth="1.2" strokeLinejoin="round" fill="none" />
+      <path d="M9 17.5C9 18.605 9.895 19.5 11 19.5C12.105 19.5 13 18.605 13 17.5" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" />
+    </svg>
+  );
+}
+
 /* ── Skin ─────────────────────────────────────────────────────────────────── */
 
 const LuxuryMinimalismProductSkin: React.FC<ProductPageProps> = (props) => {
@@ -55,10 +84,19 @@ const LuxuryMinimalismProductSkin: React.FC<ProductPageProps> = (props) => {
     currency,
     businessModel,
     companyName,
+    logoUrl,
+    businessCategory,
     ordersEnabled,
+    bookingsEnabled,
+    cartCount,
+    showPushModal,
+    onCartClick,
+    onBellClick,
+    onClosePushModal,
   } = props;
 
   const { isMobile } = useTheme();
+  const { slug } = useBranding();
   const galleryImages = product ? [...product.images].sort((a, b) => a.sortOrder - b.sortOrder) : [];
   const [expanded, setExpanded] = useState(false);
 
@@ -114,21 +152,57 @@ const LuxuryMinimalismProductSkin: React.FC<ProductPageProps> = (props) => {
           borderBottom: '1px solid var(--pwa-border)',
           display: 'flex',
           alignItems: 'center',
-          justifyContent: 'space-between',
-          padding: '0 20px',
-          height: '56px',
+          padding: '14px 18px 10px',
+          gap: '10px',
         }}>
           <button
             type="button"
             onClick={onBack}
-            style={{ fontFamily: 'var(--pwa-font-body)', fontSize: '11px', letterSpacing: '0.1em', color: 'var(--pwa-accent)', background: 'none', border: 'none', cursor: 'pointer', padding: '4px 0' }}
+            aria-label="Volver al catálogo"
+            style={{ color: 'var(--pwa-text)', background: 'none', border: 'none', cursor: 'pointer', padding: '4px', display: 'flex', alignItems: 'center', justifyContent: 'center', minWidth: '32px', minHeight: '32px', flexShrink: 0 }}
           >
-            ← Colección
+            <IconBack />
           </button>
-          <span style={{ fontFamily: 'var(--pwa-font-heading)', fontStyle: 'italic', fontSize: '1rem', color: 'var(--pwa-text)' }}>
-            {companyName}
-          </span>
-          <div style={{ width: '64px' }} />
+
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px', minWidth: 0, flexShrink: 1 }}>
+            {logoUrl && (
+              <img src={logoUrl} alt="" aria-hidden="true" style={{ height: '40px', width: 'auto', objectFit: 'contain', flexShrink: 0 }} />
+            )}
+            <div style={{ minWidth: 0 }}>
+              <span style={{ display: 'block', fontFamily: 'var(--pwa-font-body)', fontWeight: 500, fontSize: '0.9rem', color: 'var(--pwa-text)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                {companyName}
+              </span>
+              {businessCategoryLabel(businessCategory) && (
+                <span style={{ display: 'block', fontFamily: 'var(--pwa-font-body)', fontSize: '9px', letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--pwa-text-secondary)', marginTop: '2px' }}>
+                  {businessCategoryLabel(businessCategory)}
+                </span>
+              )}
+            </div>
+          </div>
+
+          <div style={{ flex: 1 }} />
+
+          {ordersEnabled || bookingsEnabled ? (
+            <div style={{ display: 'flex', alignItems: 'center' }}>
+              {ordersEnabled && (
+                <button type="button" onClick={onCartClick} aria-label={`Carrito (${cartCount} artículos)`} style={{ position: 'relative', color: 'var(--pwa-text)', background: 'none', border: 'none', cursor: 'pointer', padding: '4px', display: 'flex', alignItems: 'center', justifyContent: 'center', minWidth: '44px', minHeight: '44px' }}>
+                  <IconBag />
+                  {cartCount > 0 && (
+                    <span style={{ position: 'absolute', top: '-2px', right: '-2px', backgroundColor: 'var(--pwa-accent)', color: 'var(--pwa-bg)', fontSize: '9px', fontWeight: 600, minWidth: '14px', height: '14px', borderRadius: '7px', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '0 2px' }}>
+                      {cartCount}
+                    </span>
+                  )}
+                </button>
+              )}
+              {bookingsEnabled && (
+                <button type="button" onClick={onBellClick} aria-label="Notificaciones de citas" style={{ color: 'var(--pwa-text)', background: 'none', border: 'none', cursor: 'pointer', padding: '4px', display: 'flex', alignItems: 'center', justifyContent: 'center', minWidth: '44px', minHeight: '44px' }}>
+                  <IconBell />
+                </button>
+              )}
+            </div>
+          ) : (
+            <span style={{ width: '28px' }} />
+          )}
         </header>
       ) : (
         <div style={{ padding: '12px 24px' }}>
@@ -412,6 +486,10 @@ const LuxuryMinimalismProductSkin: React.FC<ProductPageProps> = (props) => {
 
         <CatalogFooter className="mt-4 px-4" />
       </div>
+
+      {bookingsEnabled && (
+        <PushPermissionModal isOpen={showPushModal} onClose={onClosePushModal} slug={slug} />
+      )}
     </div>
   );
 };

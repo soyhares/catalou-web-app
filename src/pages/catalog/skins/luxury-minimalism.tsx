@@ -115,43 +115,30 @@ const LuxuryMinimalismSkin: React.FC<CatalogPageProps> = ({
 
       <header style={{ position: 'sticky', top: 0, zIndex: 20, backgroundColor: 'var(--pwa-bg)', borderBottom: '1px solid var(--pwa-border)' }}>
         {isMobile && (
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: isPicker ? '28px 20px 20px' : '14px 18px 10px', gap: '10px' }}>
-            {isPicker ? (
-              <div style={{ display: 'flex', alignItems: 'center', gap: '12px', minWidth: 0, flexShrink: 1 }}>
-                {logoUrl && (
-                  <img src={logoUrl} alt="" aria-hidden="true" style={{ height: '56px', width: 'auto', objectFit: 'contain', flexShrink: 0 }} />
-                )}
-                <div style={{ minWidth: 0 }}>
-                  <span style={{ display: 'block', fontFamily: 'var(--pwa-font-body)', fontWeight: 500, fontSize: '0.9rem', color: 'var(--pwa-text)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                    {companyName}
-                  </span>
-                  {businessCategoryLabel(businessCategory) && (
-                    <span style={{ display: 'block', fontFamily: 'var(--pwa-font-body)', fontSize: '9px', letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--pwa-text-secondary)', marginTop: '2px' }}>
-                      {businessCategoryLabel(businessCategory)}
-                    </span>
-                  )}
-                </div>
-              </div>
-            ) : showBack ? (
-              <button type="button" onClick={onBackToPicker} aria-label="Volver a los catálogos" style={{ color: 'var(--pwa-text)', background: 'none', border: 'none', cursor: 'pointer', padding: '4px', display: 'flex', alignItems: 'center', justifyContent: 'center', minWidth: '44px', minHeight: '44px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', padding: isPicker ? '28px 20px 20px' : '14px 18px 10px', gap: '10px' }}>
+            {showBack && !isPicker && (
+              <button type="button" onClick={onBackToPicker} aria-label="Volver a los catálogos" style={{ color: 'var(--pwa-text)', background: 'none', border: 'none', cursor: 'pointer', padding: '4px', display: 'flex', alignItems: 'center', justifyContent: 'center', minWidth: '32px', minHeight: '32px', flexShrink: 0 }}>
                 <IconBack />
               </button>
-            ) : (
-              <span style={{ width: '28px' }} />
             )}
 
-            <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', minWidth: 0 }}>
-              {!isPicker && (
-                <>
-                  <span style={{ fontFamily: 'var(--pwa-font-heading)', fontStyle: 'italic', fontSize: '1.15rem', color: 'var(--pwa-text)', lineHeight: 1.05, textAlign: 'center' }}>
-                    {activeCatalog?.name ?? companyName}
-                  </span>
-                  <span style={{ fontSize: '8px', letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--pwa-accent)', fontWeight: 600, marginTop: '3px' }}>
-                    {catalogSubtitle(activeCatalog?.purpose ?? null)}
-                  </span>
-                </>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '12px', minWidth: 0, flexShrink: 1 }}>
+              {logoUrl && (
+                <img src={logoUrl} alt="" aria-hidden="true" style={{ height: isPicker ? '56px' : '40px', width: 'auto', objectFit: 'contain', flexShrink: 0 }} />
               )}
+              <div style={{ minWidth: 0 }}>
+                <span style={{ display: 'block', fontFamily: 'var(--pwa-font-body)', fontWeight: 500, fontSize: '0.9rem', color: 'var(--pwa-text)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                  {companyName}
+                </span>
+                {businessCategoryLabel(businessCategory) && (
+                  <span style={{ display: 'block', fontFamily: 'var(--pwa-font-body)', fontSize: '9px', letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--pwa-text-secondary)', marginTop: '2px' }}>
+                    {businessCategoryLabel(businessCategory)}
+                  </span>
+                )}
+              </div>
             </div>
+
+            <div style={{ flex: 1 }} />
 
             {ordersEnabled || bookingsEnabled ? (
               <div style={{ display: 'flex', alignItems: 'center' }}>
@@ -200,6 +187,15 @@ const LuxuryMinimalismSkin: React.FC<CatalogPageProps> = ({
         <CatalogPicker catalogs={catalogs} onSelect={onCatalogSelect} />
       ) : (
         <main style={{ padding: '20px 20px 0' }}>
+          <div style={{ marginBottom: '16px' }}>
+            <h1 style={{ fontFamily: 'var(--pwa-font-heading)', fontStyle: 'italic', fontSize: '1.3rem', color: 'var(--pwa-text)', lineHeight: 1.1, margin: 0 }}>
+              {activeCatalog?.name ?? companyName}
+            </h1>
+            <span style={{ display: 'block', fontSize: '8px', letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--pwa-accent)', fontWeight: 600, marginTop: '3px' }}>
+              {catalogSubtitle(activeCatalog?.purpose ?? null)}
+            </span>
+          </div>
+
           {isLoading && (
             <div style={layoutStyle}>
               {Array.from({ length: useGrid ? 8 : 6 }).map((_, i) => (
