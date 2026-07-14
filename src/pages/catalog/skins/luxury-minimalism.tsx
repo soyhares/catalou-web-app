@@ -9,6 +9,7 @@ import { ProductGridCardSkeleton } from '@shared/ui/ProductGridCardSkeleton';
 import { CatalogPicker } from '../CatalogPicker';
 import { CatalogSearchBar } from '../CatalogSearchBar';
 import { catalogSubtitle } from '../purpose';
+import { businessCategoryLabel } from '@entities/company/businessCategoryLabels';
 import type { CatalogPageProps } from '../useCatalogPage';
 
 function IconBag() {
@@ -62,6 +63,7 @@ const LuxuryMinimalismSkin: React.FC<CatalogPageProps> = ({
   cartCount,
   companyName,
   logoUrl,
+  businessCategory,
   onSearchChange,
   onCartClick,
   onRetry,
@@ -115,6 +117,11 @@ const LuxuryMinimalismSkin: React.FC<CatalogPageProps> = ({
               ) : (
                 <span style={{ fontFamily: 'var(--pwa-font-heading)', fontStyle: 'italic', fontSize: '1.15rem', color: 'var(--pwa-text)', lineHeight: 1.05, textAlign: 'center' }}>
                   {activeCatalog?.name ?? companyName}
+                </span>
+              )}
+              {isPicker && businessCategoryLabel(businessCategory) && (
+                <span style={{ fontFamily: 'var(--pwa-font-body)', fontSize: '9px', letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--pwa-text-secondary)', marginTop: '2px' }}>
+                  {businessCategoryLabel(businessCategory)}
                 </span>
               )}
               <span style={{ fontSize: '8px', letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--pwa-accent)', fontWeight: 600, marginTop: '3px' }}>
