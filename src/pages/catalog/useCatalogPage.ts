@@ -69,6 +69,12 @@ export function useCatalogPage(): CatalogPageProps {
     return () => clearTimeout(id);
   }, [searchQuery]);
 
+  useEffect(() => {
+    setSelectedSubcategoryId(null);
+    setSearchQuery('');
+    setDebouncedQuery('');
+  }, [selectedCatalogId]);
+
   const load = useCallback(async () => {
     setLoading(true);
     setError(false);
@@ -103,7 +109,6 @@ export function useCatalogPage(): CatalogPageProps {
   const showBack = allCatalogs.length >= 2 && Boolean(selectedCatalogId);
 
   function onCatalogSelect(id: string) {
-    setSelectedSubcategoryId(null);
     setSearchParams((prev) => {
       const next = new URLSearchParams(prev);
       next.set('catalogo', id);
@@ -112,7 +117,6 @@ export function useCatalogPage(): CatalogPageProps {
   }
 
   function onBackToPicker() {
-    setSelectedSubcategoryId(null);
     setSearchParams((prev) => {
       const next = new URLSearchParams(prev);
       next.delete('catalogo');
