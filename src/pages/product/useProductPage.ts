@@ -26,6 +26,7 @@ export interface ProductPageProps {
   currency: 'USD' | 'CRC';
   businessModel: 'DIRECT' | 'ASSOCIATED' | 'BOTH';
   companyName: string;
+  categoryName: string | null;
   logoUrl: string | null;
   businessCategory: string | null;
   ordersEnabled: boolean;
@@ -46,6 +47,7 @@ export function useProductPage(): ProductPageProps {
   const { isSubscribed: isPushSubscribed } = usePushSubscription();
 
   const [product, setProduct] = useState<ProductPublic | null>(null);
+  const [categoryName, setCategoryName] = useState<string | null>(null);
   const [showPrices, setShowPrices] = useState(true);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -65,6 +67,9 @@ export function useProductPage(): ProductPageProps {
         setProduct(p);
         setShowPrices(catalog.showPrices);
         setActiveImage(p.mainImageUrl);
+        const matchedProduct = catalog.products.find((cp) => cp.id === id);
+        const category = matchedProduct ? catalog.categories.find((c) => c.id === matchedProduct.categoryId) : undefined;
+        setCategoryName(category?.name ?? null);
       } catch {
         setError('Producto no encontrado');
       } finally {
@@ -165,6 +170,7 @@ export function useProductPage(): ProductPageProps {
     currency: branding.currency ?? 'CRC',
     businessModel: branding.businessModel,
     companyName: branding.companyName,
+    categoryName,
     logoUrl: branding.logoUrl,
     businessCategory: branding.businessCategory,
     ordersEnabled: branding.featuresEnabled?.orders === true,

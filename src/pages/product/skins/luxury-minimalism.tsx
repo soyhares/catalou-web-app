@@ -84,6 +84,7 @@ const LuxuryMinimalismProductSkin: React.FC<ProductPageProps> = (props) => {
     currency,
     businessModel,
     companyName,
+    categoryName,
     logoUrl,
     businessCategory,
     ordersEnabled,
@@ -222,7 +223,7 @@ const LuxuryMinimalismProductSkin: React.FC<ProductPageProps> = (props) => {
             onClick={onGoHome}
             style={{ fontFamily: 'var(--pwa-font-body)', fontSize: '9px', letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--pwa-accent)', fontWeight: 600, opacity: 0.7, background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}
           >
-            Catálogo
+            {categoryName ?? 'Catálogo'}
           </button>
           <span style={{ fontSize: '9px', color: 'var(--pwa-text-secondary)', opacity: 0.3 }}>›</span>
           <span style={{ fontFamily: 'var(--pwa-font-body)', fontSize: '9px', letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--pwa-text-secondary)', opacity: 0.5, fontWeight: 600 }}>

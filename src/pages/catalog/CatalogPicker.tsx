@@ -65,7 +65,7 @@ export function CatalogPicker({ catalogs, onSelect }: CatalogPickerProps) {
           style={{
             width: '100%',
             display: 'flex',
-            alignItems: isMobile ? 'center' : undefined,
+            alignItems: 'center',
             flexDirection: isMobile ? 'row' : 'column',
             textAlign: isMobile ? 'left' : 'center',
             gap: isMobile ? '14px' : undefined,

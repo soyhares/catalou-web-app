@@ -166,6 +166,14 @@ const LuxuryMinimalismSkin: React.FC<CatalogPageProps> = ({
 
         {!isPicker && (
           <>
+            <div style={{ padding: '4px 20px 14px' }}>
+              <h1 style={{ fontFamily: 'var(--pwa-font-heading)', fontStyle: 'italic', fontSize: '1.5rem', color: 'var(--pwa-text)', lineHeight: 1.1, margin: 0 }}>
+                {activeCatalog?.name ?? companyName}
+              </h1>
+              <span style={{ display: 'block', fontSize: '9px', letterSpacing: '0.18em', textTransform: 'uppercase', color: 'var(--pwa-accent)', fontWeight: 700, marginTop: '4px' }}>
+                {catalogSubtitle(activeCatalog?.purpose ?? null)}
+              </span>
+            </div>
             <CatalogSearchBar value={searchQuery} onChange={onSearchChange} />
             {subcategories.length > 0 && (
               <div style={{ position: 'relative' }}>
@@ -187,15 +195,6 @@ const LuxuryMinimalismSkin: React.FC<CatalogPageProps> = ({
         <CatalogPicker catalogs={catalogs} onSelect={onCatalogSelect} />
       ) : (
         <main style={{ padding: '20px 20px 0' }}>
-          <div style={{ marginBottom: '16px' }}>
-            <h1 style={{ fontFamily: 'var(--pwa-font-heading)', fontStyle: 'italic', fontSize: '1.3rem', color: 'var(--pwa-text)', lineHeight: 1.1, margin: 0 }}>
-              {activeCatalog?.name ?? companyName}
-            </h1>
-            <span style={{ display: 'block', fontSize: '8px', letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--pwa-accent)', fontWeight: 600, marginTop: '3px' }}>
-              {catalogSubtitle(activeCatalog?.purpose ?? null)}
-            </span>
-          </div>
-
           {isLoading && (
             <div style={layoutStyle}>
               {Array.from({ length: useGrid ? 8 : 6 }).map((_, i) => (
