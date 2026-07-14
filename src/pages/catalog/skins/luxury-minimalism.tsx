@@ -31,13 +31,13 @@ function IconBack() {
 const listStyle = (isMobile: boolean): React.CSSProperties => ({
   display: 'grid',
   gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr',
-  gap: isMobile ? '18px' : '20px 32px',
+  gap: isMobile ? '22px' : '20px 32px',
 });
 
 const gridStyle = (isMobile: boolean): React.CSSProperties => ({
   display: 'grid',
-  gridTemplateColumns: isMobile ? '1fr 1fr' : 'repeat(4, 1fr)',
-  gap: isMobile ? '20px 12px' : '24px',
+  gridTemplateColumns: isMobile ? '1fr' : 'repeat(auto-fit, minmax(200px, 1fr))',
+  gap: isMobile ? '22px' : '24px',
 });
 
 const LuxuryMinimalismSkin: React.FC<CatalogPageProps> = ({
@@ -62,6 +62,7 @@ const LuxuryMinimalismSkin: React.FC<CatalogPageProps> = ({
   cartCount,
   companyName,
   logoUrl,
+  bannerUrl,
   onSearchChange,
   onCartClick,
   onRetry,
@@ -96,7 +97,7 @@ const LuxuryMinimalismSkin: React.FC<CatalogPageProps> = ({
 
       <header style={{ position: 'sticky', top: 0, zIndex: 20, backgroundColor: 'var(--pwa-bg)', borderBottom: '1px solid var(--pwa-border)' }}>
         {isMobile && (
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '14px 18px 10px', gap: '10px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: isPicker ? '24px 20px 20px' : '14px 18px 10px', gap: '10px' }}>
             {showBack && !isPicker ? (
               <button type="button" onClick={onBackToPicker} aria-label="Volver a los catálogos" style={{ color: 'var(--pwa-text)', background: 'none', border: 'none', cursor: 'pointer', padding: '4px', display: 'flex', alignItems: 'center', justifyContent: 'center', minWidth: '44px', minHeight: '44px' }}>
                 <IconBack />
@@ -107,11 +108,12 @@ const LuxuryMinimalismSkin: React.FC<CatalogPageProps> = ({
 
             <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', minWidth: 0 }}>
               {isPicker ? (
-                logoUrl ? (
-                  <img src={logoUrl} alt={companyName} style={{ height: '48px', width: 'auto', objectFit: 'contain' }} />
-                ) : (
-                  <span style={{ fontFamily: 'var(--pwa-font-heading)', fontStyle: 'italic', fontSize: '1.3rem', color: 'var(--pwa-text)', lineHeight: 1 }}>{companyName}</span>
-                )
+                <>
+                  {logoUrl && (
+                    <img src={logoUrl} alt={companyName} style={{ height: '72px', width: 'auto', objectFit: 'contain', marginBottom: '6px' }} />
+                  )}
+                  <span style={{ fontFamily: 'var(--pwa-font-body)', fontWeight: 500, fontSize: '0.95rem', color: 'var(--pwa-text)', lineHeight: 1.2 }}>{companyName}</span>
+                </>
               ) : (
                 <span style={{ fontFamily: 'var(--pwa-font-heading)', fontStyle: 'italic', fontSize: '1.15rem', color: 'var(--pwa-text)', lineHeight: 1.05, textAlign: 'center' }}>
                   {activeCatalog?.name ?? companyName}
@@ -142,7 +144,7 @@ const LuxuryMinimalismSkin: React.FC<CatalogPageProps> = ({
             <CatalogSearchBar value={searchQuery} onChange={onSearchChange} />
             {subcategories.length > 0 && (
               <div style={{ position: 'relative' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '0 20px 12px', overflowX: 'auto', scrollbarWidth: 'none' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '0 20px 16px', overflowX: 'auto', scrollbarWidth: 'none' }}>
                   <button type="button" onClick={() => onSubcategorySelect(null)} style={chipStyle(!selectedSubcategoryId)}>Todo</button>
                   {subcategories.map((sub) => (
                     <button key={sub.id} type="button" onClick={() => onSubcategorySelect(selectedSubcategoryId === sub.id ? null : sub.id)} style={chipStyle(selectedSubcategoryId === sub.id)}>
@@ -157,7 +159,7 @@ const LuxuryMinimalismSkin: React.FC<CatalogPageProps> = ({
       </header>
 
       {isPicker ? (
-        <CatalogPicker catalogs={catalogs} onSelect={onCatalogSelect} />
+        <CatalogPicker catalogs={catalogs} bannerUrl={bannerUrl} onSelect={onCatalogSelect} />
       ) : (
         <main style={{ padding: '20px 20px 0' }}>
           {isLoading && (
