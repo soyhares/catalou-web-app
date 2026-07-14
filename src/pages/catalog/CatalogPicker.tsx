@@ -15,7 +15,7 @@ export function CatalogPicker({ catalogs, bannerUrl, onSelect }: CatalogPickerPr
           src={bannerUrl}
           alt=""
           aria-hidden="true"
-          style={{ width: '100%', aspectRatio: '16/5', objectFit: 'cover', borderRadius: 'var(--pwa-radius-md)', marginBottom: '16px' }}
+          style={{ width: '100%', maxWidth: '480px', aspectRatio: '16/5', objectFit: 'cover', borderRadius: 'var(--pwa-radius-md)', margin: '0 auto 16px', display: 'block' }}
         />
       )}
       {catalogs.map((c, i) => (

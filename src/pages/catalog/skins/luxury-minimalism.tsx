@@ -88,7 +88,7 @@ const LuxuryMinimalismSkin: React.FC<CatalogPageProps> = ({
   const hasProducts = !isLoading && products.length > 0;
   const isEmpty = !isLoading && products.length === 0;
   const purpose = activeCatalog?.purpose ?? null;
-  const useGrid = purpose === 'menu' || purpose === 'informative';
+  const useGrid = !isMobile && (purpose === 'menu' || purpose === 'informative');
   const layoutStyle = useGrid ? gridStyle(isMobile) : listStyle(isMobile);
 
   return (
@@ -97,8 +97,17 @@ const LuxuryMinimalismSkin: React.FC<CatalogPageProps> = ({
 
       <header style={{ position: 'sticky', top: 0, zIndex: 20, backgroundColor: 'var(--pwa-bg)', borderBottom: '1px solid var(--pwa-border)' }}>
         {isMobile && (
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: isPicker ? '24px 20px 20px' : '14px 18px 10px', gap: '10px' }}>
-            {showBack && !isPicker ? (
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '14px 18px 10px', gap: '10px' }}>
+            {isPicker ? (
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', minWidth: 0, flexShrink: 1 }}>
+                {logoUrl && (
+                  <img src={logoUrl} alt={companyName} style={{ height: '28px', width: 'auto', objectFit: 'contain', flexShrink: 0 }} />
+                )}
+                <span style={{ fontFamily: 'var(--pwa-font-body)', fontWeight: 500, fontSize: '0.9rem', color: 'var(--pwa-text)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                  {companyName}
+                </span>
+              </div>
+            ) : showBack ? (
               <button type="button" onClick={onBackToPicker} aria-label="Volver a los catálogos" style={{ color: 'var(--pwa-text)', background: 'none', border: 'none', cursor: 'pointer', padding: '4px', display: 'flex', alignItems: 'center', justifyContent: 'center', minWidth: '44px', minHeight: '44px' }}>
                 <IconBack />
               </button>
@@ -108,20 +117,19 @@ const LuxuryMinimalismSkin: React.FC<CatalogPageProps> = ({
 
             <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', minWidth: 0 }}>
               {isPicker ? (
-                <>
-                  {logoUrl && (
-                    <img src={logoUrl} alt={companyName} style={{ height: '72px', width: 'auto', objectFit: 'contain', marginBottom: '6px' }} />
-                  )}
-                  <span style={{ fontFamily: 'var(--pwa-font-body)', fontWeight: 500, fontSize: '0.95rem', color: 'var(--pwa-text)', lineHeight: 1.2 }}>{companyName}</span>
-                </>
-              ) : (
-                <span style={{ fontFamily: 'var(--pwa-font-heading)', fontStyle: 'italic', fontSize: '1.15rem', color: 'var(--pwa-text)', lineHeight: 1.05, textAlign: 'center' }}>
-                  {activeCatalog?.name ?? companyName}
+                <span style={{ fontSize: '8px', letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--pwa-accent)', fontWeight: 600 }}>
+                  Catálogo
                 </span>
+              ) : (
+                <>
+                  <span style={{ fontFamily: 'var(--pwa-font-heading)', fontStyle: 'italic', fontSize: '1.15rem', color: 'var(--pwa-text)', lineHeight: 1.05, textAlign: 'center' }}>
+                    {activeCatalog?.name ?? companyName}
+                  </span>
+                  <span style={{ fontSize: '8px', letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--pwa-accent)', fontWeight: 600, marginTop: '3px' }}>
+                    {catalogSubtitle(activeCatalog?.purpose ?? null)}
+                  </span>
+                </>
               )}
-              <span style={{ fontSize: '8px', letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--pwa-accent)', fontWeight: 600, marginTop: '3px' }}>
-                {isPicker ? 'Catálogo' : catalogSubtitle(activeCatalog?.purpose ?? null)}
-              </span>
             </div>
 
             {ordersEnabled ? (
