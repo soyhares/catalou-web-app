@@ -23,12 +23,7 @@ body {
 /* ── Product card — editorial portrait ─────────────────────────────────── */
 
 .product-card {
-  transition: box-shadow var(--pwa-motion, 200ms) ease;
-}
-
-/* Card hover — luxury: elevation only, no movement or image scale */
-[data-pwa-theme="luxury-minimalism"] .product-card:hover {
-  box-shadow: var(--pwa-shadow-lg);
+  cursor: pointer;
 }
 
 /* ── TopBar glassmorphism ───────────────────────────────────────────────── */
