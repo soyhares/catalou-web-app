@@ -2,8 +2,10 @@ import React from 'react';
 import { OfflineBanner } from '@shared/ui/OfflineBanner';
 import { CatalogFooter } from '@shared/ui/CatalogFooter';
 import { useTheme } from '@shared/ui/ThemeProvider';
-import { ProductCard } from '@shared/ui/ProductCard';
-import { ProductCardSkeleton } from '@shared/ui/ProductCardSkeleton';
+import { ProductListCard } from '@shared/ui/ProductListCard';
+import { ProductListCardSkeleton } from '@shared/ui/ProductListCardSkeleton';
+import { ProductGridCard } from '@shared/ui/ProductGridCard';
+import { ProductGridCardSkeleton } from '@shared/ui/ProductGridCardSkeleton';
 import { CatalogPicker } from '../CatalogPicker';
 import { CatalogSearchBar } from '../CatalogSearchBar';
 import { catalogSubtitle } from '../purpose';
@@ -30,6 +32,12 @@ const listStyle = (isMobile: boolean): React.CSSProperties => ({
   display: 'grid',
   gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr',
   gap: isMobile ? '18px' : '20px 32px',
+});
+
+const gridStyle = (isMobile: boolean): React.CSSProperties => ({
+  display: 'grid',
+  gridTemplateColumns: isMobile ? '1fr 1fr' : 'repeat(4, 1fr)',
+  gap: isMobile ? '20px 12px' : '24px',
 });
 
 const LuxuryMinimalismSkin: React.FC<CatalogPageProps> = ({
@@ -78,6 +86,9 @@ const LuxuryMinimalismSkin: React.FC<CatalogPageProps> = ({
   const isPicker = mode === 'picker';
   const hasProducts = !isLoading && products.length > 0;
   const isEmpty = !isLoading && products.length === 0;
+  const purpose = activeCatalog?.purpose ?? null;
+  const useGrid = purpose === 'menu' || purpose === 'informative';
+  const layoutStyle = useGrid ? gridStyle(isMobile) : listStyle(isMobile);
 
   return (
     <div style={{ minHeight: '100vh', backgroundColor: 'var(--pwa-bg)', paddingBottom: '80px' }}>
@@ -150,9 +161,9 @@ const LuxuryMinimalismSkin: React.FC<CatalogPageProps> = ({
       ) : (
         <main style={{ padding: '20px 20px 0' }}>
           {isLoading && (
-            <div style={listStyle(isMobile)}>
-              {Array.from({ length: 6 }).map((_, i) => (
-                <ProductCardSkeleton key={i} />
+            <div style={layoutStyle}>
+              {Array.from({ length: useGrid ? 8 : 6 }).map((_, i) => (
+                useGrid ? <ProductGridCardSkeleton key={i} /> : <ProductListCardSkeleton key={i} />
               ))}
             </div>
           )}
@@ -166,11 +177,28 @@ const LuxuryMinimalismSkin: React.FC<CatalogPageProps> = ({
           )}
 
           {hasProducts && (
-            <div style={listStyle(isMobile)}>
+            <div style={layoutStyle}>
               {products.map((product) => {
                 const action = getCardAction(product);
+                if (useGrid) {
+                  return (
+                    <ProductGridCard
+                      key={product.id}
+                      id={product.id}
+                      name={product.name}
+                      imageUrl={product.mainImageUrl}
+                      price={product.basePrice ? parseFloat(product.basePrice) : null}
+                      showPrices={showPrices}
+                      currency={currency}
+                      businessModel={businessModel}
+                      variant={purpose === 'menu' ? 'shop' : 'info'}
+                      actionLabel={action.label}
+                      onAction={() => action.run()}
+                    />
+                  );
+                }
                 return (
-                  <ProductCard
+                  <ProductListCard
                     key={product.id}
                     id={product.id}
                     name={product.name}

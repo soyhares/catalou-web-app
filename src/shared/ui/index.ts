@@ -1,4 +1,5 @@
 export { OfflineBanner } from './OfflineBanner';
 export { ThemeProvider, useTheme, type CatalogTheme } from './ThemeProvider';
-export { ProductCard } from './ProductCard';
+export { ProductListCard } from './ProductListCard';
+export { ProductGridCard } from './ProductGridCard';
 export { PriceDisclaimer } from './PriceDisclaimer';

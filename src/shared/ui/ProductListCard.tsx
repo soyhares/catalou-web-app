@@ -2,7 +2,7 @@ import { useNavigate } from 'react-router-dom';
 import { formatPrice } from '@shared/lib/formatPrice';
 import { PriceDisclaimer } from '@shared/ui/PriceDisclaimer';
 
-interface ProductCardProps {
+interface ProductListCardProps {
   id: string;
   name: string;
   description?: string | null;
@@ -16,7 +16,7 @@ interface ProductCardProps {
   onAction: (id: string) => void;
 }
 
-export function ProductCard({ id, name, description, imageUrl, price, durationMinutes, showPrices, currency = 'CRC', businessModel, actionLabel, onAction }: ProductCardProps) {
+export function ProductListCard({ id, name, description, imageUrl, price, durationMinutes, showPrices, currency = 'CRC', businessModel, actionLabel, onAction }: ProductListCardProps) {
   const navigate = useNavigate();
 
   function handleCardClick() {

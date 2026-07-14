@@ -1,4 +1,4 @@
-export function ProductCardSkeleton() {
+export function ProductListCardSkeleton() {
   return (
     <div className="animate-pulse flex items-center" style={{ gap: '14px' }}>
       <div
