@@ -34,11 +34,12 @@ const listStyle = (isMobile: boolean): React.CSSProperties => ({
   gap: isMobile ? '22px' : '20px 32px',
 });
 
-const gridStyle = (isMobile: boolean): React.CSSProperties => ({
+// Only ever used when !isMobile — see `useGrid` below — so there is no mobile branch to carry.
+const desktopGridStyle: React.CSSProperties = {
   display: 'grid',
-  gridTemplateColumns: isMobile ? '1fr' : 'repeat(auto-fit, minmax(200px, 1fr))',
-  gap: isMobile ? '22px' : '24px',
-});
+  gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+  gap: '24px',
+};
 
 const LuxuryMinimalismSkin: React.FC<CatalogPageProps> = ({
   mode,
@@ -89,7 +90,7 @@ const LuxuryMinimalismSkin: React.FC<CatalogPageProps> = ({
   const isEmpty = !isLoading && products.length === 0;
   const purpose = activeCatalog?.purpose ?? null;
   const useGrid = !isMobile && (purpose === 'menu' || purpose === 'informative');
-  const layoutStyle = useGrid ? gridStyle(isMobile) : listStyle(isMobile);
+  const layoutStyle = useGrid ? desktopGridStyle : listStyle(isMobile);
 
   return (
     <div style={{ minHeight: '100vh', backgroundColor: 'var(--pwa-bg)', paddingBottom: '80px' }}>
@@ -101,7 +102,7 @@ const LuxuryMinimalismSkin: React.FC<CatalogPageProps> = ({
             {isPicker ? (
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px', minWidth: 0, flexShrink: 1 }}>
                 {logoUrl && (
-                  <img src={logoUrl} alt={companyName} style={{ height: '28px', width: 'auto', objectFit: 'contain', flexShrink: 0 }} />
+                  <img src={logoUrl} alt="" aria-hidden="true" style={{ height: '28px', width: 'auto', objectFit: 'contain', flexShrink: 0 }} />
                 )}
                 <span style={{ fontFamily: 'var(--pwa-font-body)', fontWeight: 500, fontSize: '0.9rem', color: 'var(--pwa-text)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                   {companyName}
@@ -221,6 +222,7 @@ const LuxuryMinimalismSkin: React.FC<CatalogPageProps> = ({
                     businessModel={businessModel}
                     actionLabel={action.label}
                     onAction={() => action.run()}
+                    imageFit={purpose === 'informative' ? 'contain' : 'cover'}
                   />
                 );
               })}

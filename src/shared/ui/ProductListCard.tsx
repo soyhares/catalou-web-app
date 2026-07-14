@@ -14,9 +14,11 @@ interface ProductListCardProps {
   businessModel: 'DIRECT' | 'ASSOCIATED' | 'BOTH';
   actionLabel: string | null;
   onAction: (id: string) => void;
+  imageFit?: 'cover' | 'contain';
 }
 
-export function ProductListCard({ id, name, description, imageUrl, price, durationMinutes, showPrices, currency = 'CRC', businessModel, actionLabel, onAction }: ProductListCardProps) {
+export function ProductListCard({ id, name, description, imageUrl, price, durationMinutes, showPrices, currency = 'CRC', businessModel, actionLabel, onAction, imageFit = 'cover' }: ProductListCardProps) {
+  const isContain = imageFit === 'contain';
   const navigate = useNavigate();
 
   function handleCardClick() {
@@ -30,9 +32,9 @@ export function ProductListCard({ id, name, description, imageUrl, price, durati
 
   return (
     <article className="product-card cursor-pointer flex items-center" style={{ backgroundColor: 'transparent', gap: '14px' }} onClick={handleCardClick}>
-      <div className="overflow-hidden flex-shrink-0 relative" style={{ width: '96px', height: '96px', backgroundColor: 'var(--pwa-surface-secondary)', borderRadius: 'var(--pwa-radius-md)' }}>
+      <div className="overflow-hidden flex-shrink-0 relative" style={{ width: '96px', height: '96px', backgroundColor: 'var(--pwa-surface-secondary)', borderRadius: 'var(--pwa-radius-md)', padding: isContain ? '10px' : 0 }}>
         {imageUrl ? (
-          <img src={imageUrl} alt={name} loading="lazy" className="product-card__image w-full h-full object-cover" />
+          <img src={imageUrl} alt={name} loading="lazy" className={`product-card__image w-full h-full ${isContain ? 'object-contain' : 'object-cover'}`} />
         ) : (
           <div className="product-card__image w-full h-full flex items-center justify-center" style={{ backgroundColor: 'var(--pwa-surface-secondary)' }}>
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" style={{ color: 'var(--pwa-accent)', opacity: 0.25 }}>
