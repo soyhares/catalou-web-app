@@ -40,7 +40,6 @@ export interface CatalogPageProps {
   cartCount: number;
   companyName: string;
   logoUrl: string | null;
-  bannerUrl: string | null;
   ordersEnabled: boolean;
   onSearchChange: (q: string) => void;
   onCartClick: () => void;
@@ -188,7 +187,6 @@ export function useCatalogPage(): CatalogPageProps {
     cartCount,
     companyName: branding.companyName,
     logoUrl: branding.logoUrl,
-    bannerUrl: branding.bannerUrl,
     ordersEnabled,
     onSearchChange,
     onCartClick,

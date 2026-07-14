@@ -63,7 +63,6 @@ const LuxuryMinimalismSkin: React.FC<CatalogPageProps> = ({
   cartCount,
   companyName,
   logoUrl,
-  bannerUrl,
   onSearchChange,
   onCartClick,
   onRetry,
@@ -117,11 +116,7 @@ const LuxuryMinimalismSkin: React.FC<CatalogPageProps> = ({
             )}
 
             <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', minWidth: 0 }}>
-              {isPicker ? (
-                <span style={{ fontSize: '8px', letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--pwa-accent)', fontWeight: 600 }}>
-                  Catálogo
-                </span>
-              ) : (
+              {!isPicker && (
                 <>
                   <span style={{ fontFamily: 'var(--pwa-font-heading)', fontStyle: 'italic', fontSize: '1.15rem', color: 'var(--pwa-text)', lineHeight: 1.05, textAlign: 'center' }}>
                     {activeCatalog?.name ?? companyName}
@@ -168,7 +163,7 @@ const LuxuryMinimalismSkin: React.FC<CatalogPageProps> = ({
       </header>
 
       {isPicker ? (
-        <CatalogPicker catalogs={catalogs} bannerUrl={bannerUrl} onSelect={onCatalogSelect} />
+        <CatalogPicker catalogs={catalogs} onSelect={onCatalogSelect} />
       ) : (
         <main style={{ padding: '20px 20px 0' }}>
           {isLoading && (

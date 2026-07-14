@@ -3,21 +3,20 @@ import { catalogSubtitle } from './purpose';
 
 interface CatalogPickerProps {
   catalogs: PublicCategory[];
-  bannerUrl: string | null;
   onSelect: (id: string) => void;
 }
 
-export function CatalogPicker({ catalogs, bannerUrl, onSelect }: CatalogPickerProps) {
+export function CatalogPicker({ catalogs, onSelect }: CatalogPickerProps) {
   return (
     <div style={{ padding: '8px 20px 24px' }}>
-      {bannerUrl && (
-        <img
-          src={bannerUrl}
-          alt=""
-          aria-hidden="true"
-          style={{ width: '100%', maxWidth: '480px', aspectRatio: '16/5', objectFit: 'cover', borderRadius: 'var(--pwa-radius-md)', margin: '0 auto 16px', display: 'block' }}
-        />
-      )}
+      <div style={{ textAlign: 'center', padding: '16px 0 28px' }}>
+        <h1 style={{ fontFamily: 'var(--pwa-font-heading)', fontStyle: 'italic', fontSize: '1.6rem', fontWeight: 400, color: 'var(--pwa-text)', margin: 0 }}>
+          Catálogo
+        </h1>
+        <p style={{ fontFamily: 'var(--pwa-font-body)', fontSize: '13px', color: 'var(--pwa-text-secondary)', marginTop: '8px' }}>
+          Elegí uno de los catálogos para continuar
+        </p>
+      </div>
       {catalogs.map((c, i) => (
         <button
           key={c.id}
