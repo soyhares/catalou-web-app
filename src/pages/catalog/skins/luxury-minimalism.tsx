@@ -214,8 +214,8 @@ const LuxuryMinimalismSkin: React.FC<CatalogPageProps> = ({
                     name={product.name}
                     description={product.description}
                     imageUrl={product.mainImageUrl}
-                    price={product.basePrice ? parseFloat(product.basePrice) : null}
-                    durationMinutes={product.durationMinutes}
+                    price={purpose === 'informative' ? null : (product.basePrice ? parseFloat(product.basePrice) : null)}
+                    durationMinutes={purpose === 'informative' ? null : product.durationMinutes}
                     showPrices={showPrices}
                     currency={currency}
                     businessModel={businessModel}
