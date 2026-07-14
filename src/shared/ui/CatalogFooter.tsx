@@ -13,7 +13,7 @@ export function CatalogFooter({ className = '' }: CatalogFooterProps) {
       <p className="text-xs" style={{ color: 'var(--pwa-text)', opacity: 0.4 }}>
         <Link
           to="/privacy-policy"
-          className="text-[var(--pwa-text)] underline underline-offset-2 hover:opacity-80 transition-opacity"
+          className="text-[var(--pwa-text)] hover:opacity-80 transition-opacity"
         >
           {t('common.privacyPolicy')}
         </Link>
@@ -24,7 +24,7 @@ export function CatalogFooter({ className = '' }: CatalogFooterProps) {
           target="_blank"
           rel="noopener noreferrer"
           style={{ color: 'var(--pwa-text)' }}
-          className="underline underline-offset-2 hover:opacity-80 transition-opacity"
+          className="hover:opacity-80 transition-opacity"
         >
           Catalou
         </a>

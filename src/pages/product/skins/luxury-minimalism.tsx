@@ -4,8 +4,22 @@ import { useTheme } from '@shared/ui/ThemeProvider';
 import { formatPrice } from '@shared/lib/formatPrice';
 import { PriceDisclaimer } from '@shared/ui';
 import { WhatsAppProductConsultButton } from '@shared/ui/WhatsAppProductConsultButton';
-import { CatalouSpinner } from '@shared/ui/CatalouSpinner';
 import type { ProductPageProps } from '../useProductPage';
+
+function ProductDetailSkeleton() {
+  return (
+    <div className="animate-pulse" style={{ maxWidth: '900px', margin: '0 auto', padding: '20px' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '40px' }}>
+        <div style={{ aspectRatio: '1/1', borderRadius: 'var(--pwa-radius-lg)', backgroundColor: 'var(--pwa-surface-secondary)' }} />
+        <div style={{ paddingTop: '16px' }}>
+          <div style={{ height: '32px', width: '70%', borderRadius: 'var(--pwa-radius-sm)', backgroundColor: 'var(--pwa-surface-secondary)', marginBottom: '16px' }} />
+          <div style={{ height: '24px', width: '40%', borderRadius: 'var(--pwa-radius-sm)', backgroundColor: 'var(--pwa-surface-secondary)', marginBottom: '24px' }} />
+          <div style={{ height: '52px', width: '100%', borderRadius: 'var(--pwa-radius-button)', backgroundColor: 'var(--pwa-surface-secondary)' }} />
+        </div>
+      </div>
+    </div>
+  );
+}
 
 /* ── Icons ───────────────────────────────────────────────────────────────── */
 
@@ -51,8 +65,8 @@ const LuxuryMinimalismProductSkin: React.FC<ProductPageProps> = (props) => {
   /* ── Loading ──────────────────────────────────────────────────────────── */
   if (isLoading) {
     return (
-      <div style={{ minHeight: '100vh', backgroundColor: 'var(--pwa-bg)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        <CatalouSpinner size={40} />
+      <div style={{ minHeight: '100vh', backgroundColor: 'var(--pwa-bg)' }}>
+        <ProductDetailSkeleton />
       </div>
     );
   }

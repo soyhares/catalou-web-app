@@ -1,6 +1,18 @@
 import React from 'react';
 import type { AboutPageProps, CatalogProfile } from '../useAboutPage';
-import { CatalouSpinner } from '@shared/ui/CatalouSpinner';
+
+function AboutSkeleton() {
+  return (
+    <div className="animate-pulse" style={{ minHeight: '100vh', backgroundColor: 'var(--pwa-bg)' }}>
+      <div style={{ width: '100%', aspectRatio: '3/1', maxHeight: '300px', backgroundColor: 'var(--pwa-surface-secondary)' }} />
+      <div style={{ padding: '24px 20px' }}>
+        <div style={{ height: '28px', width: '60%', borderRadius: 'var(--pwa-radius-sm)', backgroundColor: 'var(--pwa-surface-secondary)', marginBottom: '16px' }} />
+        <div style={{ height: '14px', width: '90%', borderRadius: 'var(--pwa-radius-sm)', backgroundColor: 'var(--pwa-surface-secondary)', marginBottom: '8px' }} />
+        <div style={{ height: '14px', width: '80%', borderRadius: 'var(--pwa-radius-sm)', backgroundColor: 'var(--pwa-surface-secondary)' }} />
+      </div>
+    </div>
+  );
+}
 
 const PLATFORM_LABELS: Record<string, string> = {
   instagram: 'Instagram',
@@ -29,11 +41,7 @@ const LuxuryMinimalismAboutSkin: React.FC<AboutPageProps> = ({
   }
 
   if (isLoading) {
-    return (
-      <div style={{ minHeight: '100vh', backgroundColor: 'var(--pwa-bg)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        <CatalouSpinner size={40} />
-      </div>
-    );
+    return <AboutSkeleton />;
   }
 
   const p: CatalogProfile | null = profile;
