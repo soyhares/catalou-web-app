@@ -53,10 +53,9 @@ export function AddedToCartToast() {
             key={toast.id}
             className="pointer-events-auto flex items-center gap-3 px-4 py-2.5 rounded-full max-w-xs w-full"
             style={{
-              backgroundColor: 'var(--pwa-glass-bg)',
+              backgroundColor: 'color-mix(in srgb, var(--pwa-accent) 92%, transparent)',
               backdropFilter: 'blur(12px)',
               WebkitBackdropFilter: 'blur(12px)',
-              border: '1px solid var(--pwa-glass-border)',
               boxShadow: 'var(--pwa-shadow-md)',
             }}
             initial={{ opacity: 0, y: 14, scale: 0.96 }}
@@ -65,7 +64,7 @@ export function AddedToCartToast() {
             transition={{ duration: 0.22, ease: 'easeOut' as const }}
           >
             {/* Icon */}
-            <span style={{ color: 'var(--pwa-accent)', flexShrink: 0 }}>
+            <span style={{ color: 'var(--pwa-card)', flexShrink: 0 }}>
               <BagIcon />
             </span>
 
@@ -73,7 +72,7 @@ export function AddedToCartToast() {
             <div className="flex-1 min-w-0">
               <p
                 className="uppercase tracking-[0.1em] leading-none"
-                style={{ fontSize: '8px', fontWeight: 700, color: 'var(--pwa-text-secondary)', opacity: 0.6 }}
+                style={{ fontSize: '8px', fontWeight: 700, color: 'var(--pwa-card)', opacity: 0.75 }}
               >
                 Agregado
               </p>
@@ -83,7 +82,7 @@ export function AddedToCartToast() {
                   fontFamily: 'var(--pwa-font-heading)',
                   fontStyle: 'italic',
                   fontSize: '0.9rem',
-                  color: 'var(--pwa-text)',
+                  color: 'var(--pwa-card)',
                 }}
               >
                 {toast.name}
@@ -98,7 +97,7 @@ export function AddedToCartToast() {
                 void navigate('/cart');
               }}
               className="flex items-center gap-1 shrink-0 uppercase tracking-[0.1em] hover:opacity-80 transition-opacity"
-              style={{ fontSize: '8px', fontWeight: 700, color: 'var(--pwa-accent)' }}
+              style={{ fontSize: '8px', fontWeight: 700, color: 'var(--pwa-card)' }}
             >
               Ver
               <ChevronRight />
