@@ -4,6 +4,7 @@ import { useBranding } from '@app/BrandingContext';
 import { fetchProduct, type ProductPublic, type VariantValuePublic } from '@entities/product/api';
 import { fetchCatalog } from '@entities/catalog/api';
 import { useCart } from '@shared/lib/use-cart';
+import { usePushSubscription } from '@features/push-notifications/usePushSubscription';
 
 export interface ProductPageProps {
   product: ProductPublic | null;
@@ -25,16 +26,28 @@ export interface ProductPageProps {
   currency: 'USD' | 'CRC';
   businessModel: 'DIRECT' | 'ASSOCIATED' | 'BOTH';
   companyName: string;
+  categoryName: string | null;
+  logoUrl: string | null;
+  businessCategory: string | null;
   ordersEnabled: boolean;
+  bookingsEnabled: boolean;
+  cartCount: number;
+  isPushSubscribed: boolean;
+  showPushModal: boolean;
+  onCartClick: () => void;
+  onBellClick: () => void;
+  onClosePushModal: () => void;
 }
 
 export function useProductPage(): ProductPageProps {
   const { id } = useParams<{ id: string }>();
   const { slug, branding } = useBranding();
   const navigate = useNavigate();
-  const { add: addToCart } = useCart(slug);
+  const { add: addToCart, items: cartItems } = useCart(slug);
+  const { isSubscribed: isPushSubscribed } = usePushSubscription();
 
   const [product, setProduct] = useState<ProductPublic | null>(null);
+  const [categoryName, setCategoryName] = useState<string | null>(null);
   const [showPrices, setShowPrices] = useState(true);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -42,6 +55,7 @@ export function useProductPage(): ProductPageProps {
   const [activeImage, setActiveImage] = useState<string | null>(null);
   const [quantity, setQuantity] = useState(1);
   const [addedFeedback, setAddedFeedback] = useState(false);
+  const [showPushModal, setShowPushModal] = useState(false);
 
   useEffect(() => {
     if (!id || !slug) return;
@@ -53,6 +67,9 @@ export function useProductPage(): ProductPageProps {
         setProduct(p);
         setShowPrices(catalog.showPrices);
         setActiveImage(p.mainImageUrl);
+        const matchedProduct = catalog.products.find((cp) => cp.id === id);
+        const category = matchedProduct ? catalog.categories.find((c) => c.id === matchedProduct.categoryId) : undefined;
+        setCategoryName(category?.name ?? null);
       } catch {
         setError('Producto no encontrado');
       } finally {
@@ -88,6 +105,24 @@ export function useProductPage(): ProductPageProps {
 
   function onImageSelect(url: string) {
     setActiveImage(url);
+  }
+
+  function onCartClick() {
+    navigate('/cart');
+  }
+
+  const bookingsEnabled = branding.featuresEnabled?.bookings === true;
+
+  function onBellClick() {
+    if (isPushSubscribed) {
+      navigate('/appointments');
+    } else {
+      setShowPushModal(true);
+    }
+  }
+
+  function onClosePushModal() {
+    setShowPushModal(false);
   }
 
   const hasVariants = !!product?.variantType;
@@ -135,6 +170,16 @@ export function useProductPage(): ProductPageProps {
     currency: branding.currency ?? 'CRC',
     businessModel: branding.businessModel,
     companyName: branding.companyName,
+    categoryName,
+    logoUrl: branding.logoUrl,
+    businessCategory: branding.businessCategory,
     ordersEnabled: branding.featuresEnabled?.orders === true,
+    bookingsEnabled,
+    cartCount: cartItems.reduce((s, i) => s + i.quantity, 0),
+    isPushSubscribed,
+    showPushModal,
+    onCartClick,
+    onBellClick,
+    onClosePushModal,
   };
 }

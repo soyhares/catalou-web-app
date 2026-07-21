@@ -22,22 +22,21 @@ const LuxuryTopBar: React.FC<NavigationProps> = ({
       backgroundColor: 'var(--pwa-card)',
       borderBottom: '1px solid var(--pwa-border)',
     }}>
-      {/* Company name / logo — serif italic */}
-      <div style={{ flex: '0 0 auto', minWidth: '120px' }}>
-        {logoUrl ? (
-          <img src={logoUrl} alt={companyName} style={{ height: '44px', width: 'auto', objectFit: 'contain' }} />
-        ) : (
-          <span style={{
-            fontFamily: 'var(--pwa-font-heading)',
-            fontStyle: 'italic',
-            fontSize: '1.1rem',
-            color: 'var(--pwa-text)',
-            fontWeight: 400,
-            letterSpacing: '0.02em',
-          }}>
-            {companyName}
-          </span>
+      {/* Company logo + name — serif italic */}
+      <div style={{ flex: '0 0 auto', minWidth: '120px', display: 'flex', alignItems: 'center', gap: '10px' }}>
+        {logoUrl && (
+          <img src={logoUrl} alt="" aria-hidden="true" style={{ height: '36px', width: 'auto', objectFit: 'contain' }} />
         )}
+        <span style={{
+          fontFamily: 'var(--pwa-font-heading)',
+          fontStyle: 'italic',
+          fontSize: '1.1rem',
+          color: 'var(--pwa-text)',
+          fontWeight: 400,
+          letterSpacing: '0.02em',
+        }}>
+          {companyName}
+        </span>
       </div>
 
       {/* Nav links — small caps centered */}

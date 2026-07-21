@@ -29,7 +29,7 @@ export function ProductGridCard({ id, name, imageUrl, price, showPrices, currenc
   }
 
   return (
-    <article className="product-card cursor-pointer" style={{ backgroundColor: 'transparent' }} onClick={handleCardClick}>
+    <article className="product-card cursor-pointer" style={{ backgroundColor: 'transparent', maxWidth: '190px', margin: '0 auto', width: '100%' }} onClick={handleCardClick}>
       <div
         className="overflow-hidden w-full relative"
         style={{
@@ -96,8 +96,8 @@ export function ProductGridCard({ id, name, imageUrl, price, showPrices, currenc
             fontSize: '10px',
             letterSpacing: '0.08em',
             fontWeight: 600,
-            color: 'var(--pwa-accent)',
-            backgroundColor: 'var(--pwa-accent-soft)',
+            color: 'var(--pwa-on-accent)',
+            backgroundColor: 'var(--pwa-accent)',
             border: 'none',
             borderRadius: 'var(--pwa-radius-button)',
             padding: '9px 0',
