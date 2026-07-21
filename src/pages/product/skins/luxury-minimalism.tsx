@@ -72,11 +72,13 @@ const LuxuryMinimalismProductSkin: React.FC<ProductPageProps> = (props) => {
     activeImage,
     quantity,
     computedPrice,
-    canAddToCart,
+    canProceed,
     addedFeedback,
+    ctaKind,
     onVariantSelect,
     onQuantityChange,
     onAddToCart,
+    onBook,
     onBack,
     onGoHome,
     onImageSelect,
@@ -329,7 +331,7 @@ const LuxuryMinimalismProductSkin: React.FC<ProductPageProps> = (props) => {
               {product.name}
             </h1>
 
-            {/* Price — accent color, generous spacing */}
+            {/* Price — accent color, generous spacing; duration alongside when bookable */}
             {showPrices && computedPrice && (
               <p style={{
                 fontFamily: 'var(--pwa-font-heading)',
@@ -339,11 +341,20 @@ const LuxuryMinimalismProductSkin: React.FC<ProductPageProps> = (props) => {
                 color: 'var(--pwa-accent)',
                 letterSpacing: '0.03em',
                 marginBottom: '24px',
+                display: 'flex',
+                alignItems: 'baseline',
+                gap: '12px',
+                flexWrap: 'wrap',
               }}>
                 {formatPrice(Number(computedPrice), currency)}
                 {selectedVariant && parseFloat(selectedVariant.priceModifier) > 0 && (
-                  <span style={{ fontFamily: 'var(--pwa-font-body)', fontSize: '0.8rem', fontWeight: 400, fontStyle: 'normal', color: 'var(--pwa-text-secondary)', marginLeft: '10px' }}>
+                  <span style={{ fontFamily: 'var(--pwa-font-body)', fontSize: '0.8rem', fontWeight: 400, fontStyle: 'normal', color: 'var(--pwa-text-secondary)' }}>
                     base + variante
+                  </span>
+                )}
+                {ctaKind === 'book' && product.durationMinutes !== null && (
+                  <span style={{ fontFamily: 'var(--pwa-font-body)', fontSize: '9px', letterSpacing: '0.14em', textTransform: 'uppercase', fontWeight: 700, fontStyle: 'normal', color: 'var(--pwa-text-secondary)', opacity: 0.6 }}>
+                    · {product.durationMinutes} min
                   </span>
                 )}
               </p>
@@ -394,8 +405,8 @@ const LuxuryMinimalismProductSkin: React.FC<ProductPageProps> = (props) => {
               </div>
             )}
 
-            {/* Quantity + CTA — only for products (not services) when orders enabled */}
-            {ordersEnabled && product?.type !== 'service' && (
+            {/* Primary action — quantity+Agregar for menu, Reservar for services, nothing for informative */}
+            {ctaKind === 'add' && (
               <>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '24px', marginBottom: '24px' }}>
                   <span style={{ fontFamily: 'var(--pwa-font-body)', fontSize: '9px', letterSpacing: '0.14em', textTransform: 'uppercase', fontWeight: 700, color: 'var(--pwa-text-secondary)', opacity: 0.5 }}>
@@ -424,7 +435,7 @@ const LuxuryMinimalismProductSkin: React.FC<ProductPageProps> = (props) => {
 
                 <button
                   type="button"
-                  disabled={!canAddToCart}
+                  disabled={!canProceed}
                   onClick={onAddToCart}
                   style={{
                     fontFamily: 'var(--pwa-font-body)',
@@ -438,15 +449,42 @@ const LuxuryMinimalismProductSkin: React.FC<ProductPageProps> = (props) => {
                     borderRadius: 'var(--pwa-radius-button)',
                     padding: '16px 24px',
                     width: '100%',
-                    cursor: canAddToCart ? 'pointer' : 'not-allowed',
-                    opacity: canAddToCart ? 1 : 0.3,
+                    cursor: canProceed ? 'pointer' : 'not-allowed',
+                    opacity: canProceed ? 1 : 0.3,
                     transition: 'opacity 0.2s',
                     marginBottom: '32px',
                   }}
                 >
-                  {addedFeedback ? '¡Añadido!' : canAddToCart ? 'Agregar' : 'Selecciona una opción'}
+                  {addedFeedback ? '¡Añadido!' : canProceed ? 'Agregar' : 'Selecciona una opción'}
                 </button>
               </>
+            )}
+
+            {ctaKind === 'book' && (
+              <button
+                type="button"
+                disabled={!canProceed}
+                onClick={onBook}
+                style={{
+                  fontFamily: 'var(--pwa-font-body)',
+                  fontSize: '10px',
+                  letterSpacing: '0.2em',
+                  textTransform: 'uppercase',
+                  fontWeight: 700,
+                  color: 'var(--pwa-bg)',
+                  backgroundColor: 'var(--pwa-accent)',
+                  border: 'none',
+                  borderRadius: 'var(--pwa-radius-button)',
+                  padding: '16px 24px',
+                  width: '100%',
+                  cursor: canProceed ? 'pointer' : 'not-allowed',
+                  opacity: canProceed ? 1 : 0.3,
+                  transition: 'opacity 0.2s',
+                  marginBottom: '32px',
+                }}
+              >
+                {canProceed ? 'Reservar' : 'Selecciona una opción'}
+              </button>
             )}
 
             {/* Description — serif body, generous line height */}
@@ -481,7 +519,10 @@ const LuxuryMinimalismProductSkin: React.FC<ProductPageProps> = (props) => {
               </div>
             )}
 
-            <WhatsAppProductConsultButton productName={product.name} />
+            {ctaKind !== 'none' && <WhatsAppProductConsultButton productName={product.name} />}
+            {ctaKind === 'none' && (
+              <WhatsAppProductConsultButton productName={product.name} variant="primary" />
+            )}
           </div>
         </div>
 
