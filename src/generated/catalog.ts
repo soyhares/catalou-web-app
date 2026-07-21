@@ -172,6 +172,11 @@ export interface components {
         ProductDetail: components["schemas"]["ProductCard"] & {
             description?: string | null;
             technicalSpecs?: string | null;
+            /**
+             * @description Purpose of the catalog (top-level category) this product belongs to — denormalized so the detail endpoint doesn't require a second fetch. Null for legacy categories.
+             * @enum {string|null}
+             */
+            purpose?: "services" | "menu" | "informative" | null;
             galleryImages?: {
                 /** Format: uuid */
                 id: string;

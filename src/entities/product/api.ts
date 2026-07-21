@@ -27,6 +27,9 @@ export interface ProductPublic {
   technicalSpecs: string | null;
   basePrice: string;
   mainImageUrl: string | null;
+  categoryId: string;
+  purpose: 'services' | 'menu' | 'informative' | null;
+  durationMinutes: number | null;
   variantType: VariantTypePublic | null;
   images: ProductImagePublic[];
 }
