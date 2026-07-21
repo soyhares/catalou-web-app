@@ -487,6 +487,10 @@ const LuxuryMinimalismProductSkin: React.FC<ProductPageProps> = (props) => {
               </button>
             )}
 
+            {ctaKind === 'none' && (
+              <WhatsAppProductConsultButton productName={product.name} variant="primary" />
+            )}
+
             {/* Description — serif body, generous line height */}
             {product.description && (
               <div style={{ borderTop: '1px solid var(--pwa-border)', paddingTop: '24px', marginBottom: '24px' }}>
@@ -520,9 +524,6 @@ const LuxuryMinimalismProductSkin: React.FC<ProductPageProps> = (props) => {
             )}
 
             {ctaKind !== 'none' && <WhatsAppProductConsultButton productName={product.name} />}
-            {ctaKind === 'none' && (
-              <WhatsAppProductConsultButton productName={product.name} variant="primary" />
-            )}
           </div>
         </div>
 
