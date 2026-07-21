@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { useBranding } from '@app/BrandingContext';
 import { fetchProduct, type ProductPublic, type VariantValuePublic } from '@entities/product/api';
 import { fetchCatalog } from '@entities/catalog/api';
+import { resolveCardActionKind, type CardActionKind } from '../catalog/purpose';
 import { useCart } from '@shared/lib/use-cart';
 import { usePushSubscription } from '@features/push-notifications/usePushSubscription';
 
@@ -14,11 +15,13 @@ export interface ProductPageProps {
   activeImage: string | null;
   quantity: number;
   computedPrice: string | null;
-  canAddToCart: boolean;
+  canProceed: boolean;
   addedFeedback: boolean;
+  ctaKind: CardActionKind;
   onVariantSelect: (variant: VariantValuePublic) => void;
   onQuantityChange: (qty: number) => void;
   onAddToCart: () => void;
+  onBook: () => void;
   onBack: () => void;
   onGoHome: () => void;
   onImageSelect: (url: string) => void;
@@ -48,7 +51,6 @@ export function useProductPage(): ProductPageProps {
 
   const [product, setProduct] = useState<ProductPublic | null>(null);
   const [categoryName, setCategoryName] = useState<string | null>(null);
-  const [showPrices, setShowPrices] = useState(true);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [selectedVariant, setSelectedVariant] = useState<VariantValuePublic | null>(null);
@@ -65,7 +67,6 @@ export function useProductPage(): ProductPageProps {
       try {
         const [p, catalog] = await Promise.all([fetchProduct(slug, id), fetchCatalog(slug)]);
         setProduct(p);
-        setShowPrices(catalog.showPrices);
         setActiveImage(p.mainImageUrl);
         const matchedProduct = catalog.products.find((cp) => cp.id === id);
         const category = matchedProduct ? catalog.categories.find((c) => c.id === matchedProduct.categoryId) : undefined;
@@ -126,11 +127,22 @@ export function useProductPage(): ProductPageProps {
   }
 
   const hasVariants = !!product?.variantType;
-  const canAddToCart = !hasVariants || selectedVariant !== null;
+  const canProceed = !hasVariants || selectedVariant !== null;
+
+  const ordersEnabled = branding.featuresEnabled?.orders === true;
+
+  const ctaKind: CardActionKind = product
+    ? resolveCardActionKind({
+        purpose: product.purpose,
+        productType: product.type,
+        ordersEnabled,
+        bookingsEnabled,
+      })
+    : 'none';
 
   function onAddToCart() {
     const price = computePrice();
-    if (!canAddToCart || !product || !price) return;
+    if (!canProceed || !product || !price) return;
     void addToCart({
       companySlug: slug,
       productId: product.id,
@@ -150,6 +162,11 @@ export function useProductPage(): ProductPageProps {
     });
   }
 
+  function onBook() {
+    if (!canProceed || !product) return;
+    void navigate(`/book?itemId=${product.id}`);
+  }
+
   return {
     product,
     isLoading: loading,
@@ -158,22 +175,24 @@ export function useProductPage(): ProductPageProps {
     activeImage,
     quantity,
     computedPrice: computePrice(),
-    canAddToCart,
+    canProceed,
     addedFeedback,
+    ctaKind,
     onVariantSelect,
     onQuantityChange,
     onAddToCart,
+    onBook,
     onBack,
     onGoHome,
     onImageSelect,
-    showPrices,
+    showPrices: branding.showPrices,
     currency: branding.currency ?? 'CRC',
     businessModel: branding.businessModel,
     companyName: branding.companyName,
     categoryName,
     logoUrl: branding.logoUrl,
     businessCategory: branding.businessCategory,
-    ordersEnabled: branding.featuresEnabled?.orders === true,
+    ordersEnabled,
     bookingsEnabled,
     cartCount: cartItems.reduce((s, i) => s + i.quantity, 0),
     isPushSubscribed,
