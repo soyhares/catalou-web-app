@@ -491,6 +491,29 @@ const LuxuryMinimalismProductSkin: React.FC<ProductPageProps> = (props) => {
               <WhatsAppProductConsultButton productName={product.name} variant="primary" />
             )}
 
+            {product.type === 'informative' && product.moreInfoUrl && (
+              <a
+                href={product.moreInfoUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{
+                  display: 'inline-block',
+                  fontFamily: 'var(--pwa-font-body)',
+                  fontSize: '10px',
+                  letterSpacing: '0.14em',
+                  textTransform: 'uppercase',
+                  fontWeight: 700,
+                  color: 'var(--pwa-accent)',
+                  textDecoration: 'none',
+                  borderBottom: '1px solid var(--pwa-accent)',
+                  paddingBottom: '2px',
+                  marginBottom: '24px',
+                }}
+              >
+                Más información
+              </a>
+            )}
+
             {/* Description — serif body, generous line height */}
             {product.description && (
               <div style={{ borderTop: '1px solid var(--pwa-border)', paddingTop: '24px', marginBottom: '24px' }}>

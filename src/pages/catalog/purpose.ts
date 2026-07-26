@@ -18,7 +18,7 @@ export const CARD_ACTION_LABEL: Record<CardActionKind, string | null> = {
 
 export function resolveCardActionKind(args: {
   purpose: Purpose;
-  productType: 'product' | 'service';
+  productType: 'product' | 'service' | 'informative';
   ordersEnabled: boolean;
   bookingsEnabled: boolean;
 }): CardActionKind {

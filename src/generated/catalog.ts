@@ -165,13 +165,18 @@ export interface components {
              * @default product
              * @enum {string}
              */
-            type: "product" | "service";
+            type: "product" | "service" | "informative";
             /** @description Only relevant when type is service */
             durationMinutes?: number | null;
         };
         ProductDetail: components["schemas"]["ProductCard"] & {
             description?: string | null;
             technicalSpecs?: string | null;
+            /**
+             * Format: uri
+             * @description External link shown on informative items ("más información"). Only meaningful when type is informative; null otherwise.
+             */
+            moreInfoUrl?: string | null;
             /**
              * @description Purpose of the catalog (top-level category) this product belongs to — denormalized so the detail endpoint doesn't require a second fetch. Null for legacy categories.
              * @enum {string|null}
