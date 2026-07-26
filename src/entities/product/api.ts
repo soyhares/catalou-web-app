@@ -22,7 +22,7 @@ export interface ProductImagePublic {
 export interface ProductPublic {
   id: string;
   name: string;
-  type: 'product' | 'service';
+  type: 'product' | 'service' | 'informative';
   description: string | null;
   technicalSpecs: string | null;
   basePrice: string;
@@ -30,6 +30,7 @@ export interface ProductPublic {
   categoryId: string;
   purpose: 'services' | 'menu' | 'informative' | null;
   durationMinutes: number | null;
+  moreInfoUrl: string | null;
   variantType: VariantTypePublic | null;
   images: ProductImagePublic[];
 }
