@@ -36,6 +36,10 @@ describe('resolveCardActionKind', () => {
     expect(resolveCardActionKind({ ...base, purpose: 'menu', productType: 'service' })).toBe('none');
   });
 
+  it('returns "none" for an informative-type item inside a menu catalog (never add an informative item to cart)', () => {
+    expect(resolveCardActionKind({ ...base, purpose: 'menu', productType: 'informative' })).toBe('none');
+  });
+
   it('returns "none" for an informative catalog', () => {
     expect(resolveCardActionKind({ ...base, purpose: 'informative' })).toBe('none');
     expect(resolveCardActionKind({ ...base, purpose: null })).toBe('none');
