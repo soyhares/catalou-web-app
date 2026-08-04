@@ -2,14 +2,22 @@ import { describe, it, expect } from 'vitest';
 import { catalogSubtitle, resolveCardActionKind, CARD_ACTION_LABEL } from './purpose';
 
 describe('catalogSubtitle', () => {
-  it('maps each purpose to its voseo subtitle', () => {
-    expect(catalogSubtitle('services')).toBe('Reservá tu cita');
-    expect(catalogSubtitle('menu')).toBe('Hacé tu pedido');
-    expect(catalogSubtitle('informative')).toBe('Conocé más');
+  const enabled = { ordersEnabled: true, bookingsEnabled: true };
+  const disabled = { ordersEnabled: false, bookingsEnabled: false };
+
+  it('maps each purpose to its voseo subtitle when its module is enabled', () => {
+    expect(catalogSubtitle('services', enabled)).toBe('Reservá tu cita');
+    expect(catalogSubtitle('menu', enabled)).toBe('Hacé tu pedido');
+    expect(catalogSubtitle('informative', enabled)).toBe('Conocé más');
   });
 
   it('treats a null (legacy) purpose as informative', () => {
-    expect(catalogSubtitle(null)).toBe('Conocé más');
+    expect(catalogSubtitle(null, enabled)).toBe('Conocé más');
+  });
+
+  it('falls back to a neutral subtitle when the backing module is disabled', () => {
+    expect(catalogSubtitle('services', disabled)).toBe('Conocé más');
+    expect(catalogSubtitle('menu', disabled)).toBe('Conocé más');
   });
 });
 

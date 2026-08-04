@@ -5,6 +5,8 @@ import { catalogSubtitle } from './purpose';
 interface CatalogPickerProps {
   catalogs: PublicCategory[];
   onSelect: (id: string) => void;
+  ordersEnabled: boolean;
+  bookingsEnabled: boolean;
 }
 
 function IconBag() {
@@ -43,7 +45,7 @@ function purposeIcon(purpose: PublicCategory['purpose']) {
   return <IconInfo />;
 }
 
-export function CatalogPicker({ catalogs, onSelect }: CatalogPickerProps) {
+export function CatalogPicker({ catalogs, onSelect, ordersEnabled, bookingsEnabled }: CatalogPickerProps) {
   const { isMobile } = useTheme();
 
   return (
@@ -98,7 +100,7 @@ export function CatalogPicker({ catalogs, onSelect }: CatalogPickerProps) {
               {c.name}
             </span>
             <span style={{ display: 'block', fontFamily: 'var(--pwa-font-body)', fontSize: '9px', letterSpacing: '0.14em', textTransform: 'uppercase', color: 'var(--pwa-accent)', fontWeight: 700, marginTop: '4px' }}>
-              {catalogSubtitle(c.purpose)}
+              {catalogSubtitle(c.purpose, { ordersEnabled, bookingsEnabled })}
             </span>
           </div>
           {isMobile && (
