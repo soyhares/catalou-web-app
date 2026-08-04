@@ -171,7 +171,7 @@ const LuxuryMinimalismSkin: React.FC<CatalogPageProps> = ({
                 {activeCatalog?.name ?? companyName}
               </h1>
               <span style={{ display: 'block', fontSize: '9px', letterSpacing: '0.18em', textTransform: 'uppercase', color: 'var(--pwa-accent)', fontWeight: 700, marginTop: '4px' }}>
-                {catalogSubtitle(activeCatalog?.purpose ?? null)}
+                {catalogSubtitle(activeCatalog?.purpose ?? null, { ordersEnabled, bookingsEnabled })}
               </span>
             </div>
             <CatalogSearchBar value={searchQuery} onChange={onSearchChange} />
@@ -192,7 +192,7 @@ const LuxuryMinimalismSkin: React.FC<CatalogPageProps> = ({
       </header>
 
       {isPicker ? (
-        <CatalogPicker catalogs={catalogs} onSelect={onCatalogSelect} />
+        <CatalogPicker catalogs={catalogs} onSelect={onCatalogSelect} ordersEnabled={ordersEnabled} bookingsEnabled={bookingsEnabled} />
       ) : (
         <main style={{ padding: '20px 20px 0' }}>
           {isLoading && (

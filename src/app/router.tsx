@@ -1,8 +1,9 @@
 import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
-import { lazy, Suspense, type ReactNode } from 'react';
+import { lazy, Suspense, useEffect, type ReactNode } from 'react';
 import { AnimatePresence } from 'framer-motion';
 import { PageTransition } from '@shared/ui/PageTransition';
 import { AddedToCartToast } from '@shared/ui/AddedToCartToast';
+import { RouteNoticeToast, dispatchRouteUnavailable } from '@shared/ui/RouteNoticeToast';
 import { InstallPromptSheet } from '@widgets/install-prompt/InstallPromptSheet';
 import Navigation from '@widgets/navigation';
 import { useBranding } from '@app/BrandingContext';
@@ -25,13 +26,21 @@ const BookPage = lazy(() => import('@pages/book'));
 
 function BookingsGuard({ children }: { children: ReactNode }) {
   const { branding } = useBranding();
-  if (!branding.featuresEnabled?.bookings) return <Navigate to="/catalog" replace />;
+  const enabled = branding.featuresEnabled?.bookings;
+  useEffect(() => {
+    if (!enabled) dispatchRouteUnavailable('Las reservas no están disponibles por el momento.');
+  }, [enabled]);
+  if (!enabled) return <Navigate to="/catalog" replace />;
   return <>{children}</>;
 }
 
 function OrdersGuard({ children }: { children: ReactNode }) {
   const { branding } = useBranding();
-  if (!branding.featuresEnabled?.orders) return <Navigate to="/catalog" replace />;
+  const enabled = branding.featuresEnabled?.orders;
+  useEffect(() => {
+    if (!enabled) dispatchRouteUnavailable('Los pedidos no están disponibles por el momento.');
+  }, [enabled]);
+  if (!enabled) return <Navigate to="/catalog" replace />;
   return <>{children}</>;
 }
 
@@ -66,6 +75,7 @@ export function AppRouter() {
       <Navigation />
       <AnimatedRoutes />
       <AddedToCartToast />
+      <RouteNoticeToast />
       <InstallPromptSheet />
     </BrowserRouter>
   );

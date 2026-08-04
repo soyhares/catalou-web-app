@@ -2,9 +2,12 @@ import type { PublicCategory } from '@entities/catalog/api';
 
 type Purpose = PublicCategory['purpose'];
 
-export function catalogSubtitle(purpose: Purpose): string {
-  if (purpose === 'services') return 'Reservá tu cita';
-  if (purpose === 'menu') return 'Hacé tu pedido';
+export function catalogSubtitle(
+  purpose: Purpose,
+  flags: { ordersEnabled: boolean; bookingsEnabled: boolean },
+): string {
+  if (purpose === 'services') return flags.bookingsEnabled ? 'Reservá tu cita' : 'Conocé más';
+  if (purpose === 'menu') return flags.ordersEnabled ? 'Hacé tu pedido' : 'Conocé más';
   return 'Conocé más';
 }
 
