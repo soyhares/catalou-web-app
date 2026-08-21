@@ -4,10 +4,11 @@ import { getCatalogProfile } from '@entities/shopper-profile/api';
 
 interface Props {
   productName: string;
+  imageUrl?: string | null;
   variant?: 'primary' | 'secondary';
 }
 
-export function WhatsAppProductConsultButton({ productName, variant = 'secondary' }: Props) {
+export function WhatsAppProductConsultButton({ productName, imageUrl, variant = 'secondary' }: Props) {
   const { slug, branding } = useBranding();
   const [whatsappNumber, setWhatsappNumber] = useState<string | null>(null);
 
@@ -20,7 +21,10 @@ export function WhatsAppProductConsultButton({ productName, variant = 'secondary
 
   if (branding.businessModel !== 'DIRECT' || !whatsappNumber) return null;
 
-  const href = `https://wa.me/${whatsappNumber.replace(/\D/g, '')}?text=${encodeURIComponent(`Hola, me interesa conocer más sobre: ${productName}`)}`;
+  const message = imageUrl
+    ? `Hola, me interesa conocer más sobre: ${productName}\n${imageUrl}`
+    : `Hola, me interesa conocer más sobre: ${productName}`;
+  const href = `https://wa.me/${whatsappNumber.replace(/\D/g, '')}?text=${encodeURIComponent(message)}`;
   const isPrimary = variant === 'primary';
 
   const link = (

@@ -488,7 +488,7 @@ const LuxuryMinimalismProductSkin: React.FC<ProductPageProps> = (props) => {
             )}
 
             {ctaKind === 'none' && (
-              <WhatsAppProductConsultButton productName={product.name} variant="primary" />
+              <WhatsAppProductConsultButton productName={product.name} imageUrl={activeImage} variant="primary" />
             )}
 
             {product.type === 'informative' && product.moreInfoUrl && (
@@ -546,7 +546,7 @@ const LuxuryMinimalismProductSkin: React.FC<ProductPageProps> = (props) => {
               </div>
             )}
 
-            {ctaKind !== 'none' && <WhatsAppProductConsultButton productName={product.name} />}
+            {ctaKind !== 'none' && <WhatsAppProductConsultButton productName={product.name} imageUrl={activeImage} />}
           </div>
         </div>
 

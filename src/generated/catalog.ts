@@ -126,6 +126,20 @@ export interface components {
              * @enum {string|null}
              */
             businessCategory?: "BARBERSHOP" | "BEAUTY_SALON" | "SPA" | "BOUTIQUE" | "JEWELRY" | "FLORIST" | "PERFUMERY" | "TATTOO_STUDIO" | "ART_GALLERY" | "RESTAURANT" | "PHARMACY" | "RETAIL" | "PERSONAL_SHOPPER" | "PROFESSIONAL_SERVICES" | "ASSOCIATION" | "OTHER" | null;
+            featuresEnabled?: components["schemas"]["FeatureFlags"];
+        };
+        /** @description Module toggles for this tenant. Always returned fully merged with defaults — every key is present regardless of what's actually stored, so the PWA never needs to treat a missing key as "off". */
+        FeatureFlags: {
+            orders: boolean;
+            bookings: boolean;
+            broadcasts: boolean;
+            analytics: boolean;
+            loyalty: boolean;
+            ai: boolean;
+            quotes: boolean;
+            wallet: boolean;
+            broadcastsEmail: boolean;
+            accounting: boolean;
         };
         CatalogResponse: {
             categories: components["schemas"]["CategoryWithSubcategories"][];
@@ -244,6 +258,8 @@ export interface components {
             items: {
                 productNameSnapshot: string;
                 variantSnapshot?: string | null;
+                /** @description URL de la imagen del producto (o de la variante elegida, si tenía una propia) al momento del pedido. Null si el producto no tenía imagen o el pedido es anterior a esta funcionalidad. */
+                productImageSnapshot?: string | null;
                 quantity: number;
                 /** Format: decimal */
                 unitPriceSnapshot: number;
@@ -251,6 +267,13 @@ export interface components {
         };
         ErrorResponse: {
             message: string;
+        };
+        FeatureDisabledResponse: {
+            error: string;
+            /** @enum {string} */
+            code: "FEATURE_DISABLED";
+            /** @description The flag name that is disabled (e.g. "orders"). */
+            feature: string;
         };
         ValidationErrorResponse: {
             message: string;
@@ -400,6 +423,15 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["OrderConfirmation"];
+                };
+            };
+            /** @description The orders module is disabled for this tenant */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FeatureDisabledResponse"];
                 };
             };
             /** @description Validation error or financed orders not configured */
