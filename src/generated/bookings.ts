@@ -285,6 +285,13 @@ export interface components {
         ErrorResponse: {
             message: string;
         };
+        FeatureDisabledResponse: {
+            error: string;
+            /** @enum {string} */
+            code: "FEATURE_DISABLED";
+            /** @description The flag name that is disabled (e.g. "bookings"). */
+            feature: string;
+        };
         AvailabilityPublic: {
             /** @description Days of week enabled (0=Sun, 6=Sat) */
             enabledDays?: number[];
@@ -611,6 +618,15 @@ export interface operations {
                 };
             };
             400: components["responses"]["BadRequest"];
+            /** @description The bookings module is disabled for this tenant */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FeatureDisabledResponse"];
+                };
+            };
             404: components["responses"]["NotFound"];
             /** @description Date/time outside available slots */
             422: {
