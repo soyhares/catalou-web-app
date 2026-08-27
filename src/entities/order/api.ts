@@ -8,6 +8,8 @@ export interface SubmitOrderItem {
   // one value per variant type of the product; [] when it has none
   variantValueIds: string[];
   quantity: number;
+  // free-text note the shopper wrote for this product (SPEC-021); omit when none
+  customerNote?: string;
 }
 
 export interface SubmitOrderInput {
@@ -29,6 +31,7 @@ export interface OrderConfirmation {
 export interface OrderSummaryItem {
   productNameSnapshot: string;
   variantSnapshot: string | null;
+  customerNote: string | null;
   quantity: number;
   unitPriceSnapshot: number;
 }

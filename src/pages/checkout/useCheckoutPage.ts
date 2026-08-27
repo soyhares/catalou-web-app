@@ -15,7 +15,6 @@ export interface CheckoutForm {
   phone: string;
   email: string;
   deliveryAddress: string;
-  notes: string;
   affiliateNumber: string;
 }
 
@@ -53,7 +52,6 @@ export function useCheckoutPage(): CheckoutPageProps {
     phone: '',
     email: '',
     deliveryAddress: '',
-    notes: '',
     affiliateNumber: '',
   });
   const [errors, setErrors] = useState<Partial<Record<keyof CheckoutForm, string>>>({});
@@ -105,11 +103,22 @@ export function useCheckoutPage(): CheckoutPageProps {
         productId: item.productId,
         variantValueIds: item.variantValueIds,
         quantity: item.quantity,
+        customerNote: item.note,
       })),
     })
-      .then(() => clearCart(slug))
       .then(() => {
-        void navigate('/order-confirmed', { replace: true });
+        // SPEC-021: carry the noted lines to the confirmation screen before the cart is cleared
+        const notedItems = items
+          .filter((item) => item.note)
+          .map((item) => ({
+            productName: item.productName,
+            variantLabel: item.variantLabel,
+            note: item.note as string,
+          }));
+        return clearCart(slug).then(() => notedItems);
+      })
+      .then((notedItems) => {
+        void navigate('/order-confirmed', { replace: true, state: { notedItems } });
       })
       .catch(() => {
         setSubmitError('No se pudo enviar el pedido. Intenta nuevamente.');

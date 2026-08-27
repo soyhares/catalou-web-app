@@ -13,6 +13,9 @@ export interface CartItem {
   variantLabel: string | null;
   quantity: number;
   unitPrice: number;
+  // free-text note the shopper wrote for this line (SPEC-021); absent when none.
+  // IndexedDB is schemaless per record — older items simply lack the key.
+  note?: string;
 }
 
 function openDB(): Promise<IDBDatabase> {
@@ -69,6 +72,33 @@ export async function updateCartItemQuantity(id: string, quantity: number): Prom
         return;
       }
       const putReq = tx(db, 'readwrite').put({ ...item, quantity });
+      putReq.onsuccess = () => resolve();
+      putReq.onerror = () => reject(putReq.error);
+    };
+    getReq.onerror = () => reject(getReq.error);
+  });
+}
+
+// SPEC-021: set/clear the free-text note on a cart line. Whitespace-only clears it.
+export async function updateCartItemNote(id: string, note: string): Promise<void> {
+  const db = await openDB();
+  const store = tx(db, 'readwrite');
+  return new Promise((resolve, reject) => {
+    const getReq = store.get(id);
+    getReq.onsuccess = () => {
+      const item = getReq.result as CartItem;
+      if (!item) {
+        resolve();
+        return;
+      }
+      const trimmed = note.trim();
+      const next: CartItem = { ...item };
+      if (trimmed) {
+        next.note = trimmed;
+      } else {
+        delete next.note;
+      }
+      const putReq = tx(db, 'readwrite').put(next);
       putReq.onsuccess = () => resolve();
       putReq.onerror = () => reject(putReq.error);
     };

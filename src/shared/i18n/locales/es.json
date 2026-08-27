@@ -34,7 +34,11 @@
     "variants": "Opciones",
     "selectVariant": "Selecciona una opción",
     "noImage": "Sin imagen disponible",
-    "priceDisclaimer": "Precio de referencia. El costo final puede variar según las condiciones del convenio con tu organización."
+    "priceDisclaimer": "Precio de referencia. El costo final puede variar según las condiciones del convenio con tu organización.",
+    "noteAdd": "Agregar una nota",
+    "notePlaceholder": "Ej. sin cebolla, para regalo…",
+    "noteHint": "Visible para el negocio. No incluyas datos personales sensibles (salud, documentos, tarjetas).",
+    "noteRemove": "Quitar nota"
   },
   "cart": {
     "navLabel": "Cotizar",
@@ -53,7 +57,12 @@
     "continueShopping": "Continuar explorando",
     "added": "Agregado al carrito",
     "items_one": "{{count}} artículo",
-    "items_other": "{{count}} artículos"
+    "items_other": "{{count}} artículos",
+    "note": "Nota",
+    "noteAdd": "Agregar una nota",
+    "noteEdit": "Editar",
+    "noteSave": "Guardar",
+    "noteHint": "Visible para el negocio. No incluyas datos personales sensibles."
   },
   "checkout": {
     "title": "Finalizar pedido",
@@ -162,7 +171,8 @@
   "orderConfirmed": {
     "title": "¡Pedido recibido!",
     "message": "Tu pedido fue enviado exitosamente. Pronto nos pondremos en contacto.",
-    "backToCatalog": "Volver al catálogo"
+    "backToCatalog": "Volver al catálogo",
+    "noteLabel": "Nota"
   },
   "order": {
     "confirmed": "¡Pedido confirmado!",

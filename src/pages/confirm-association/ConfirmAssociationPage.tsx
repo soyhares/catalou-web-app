@@ -183,6 +183,11 @@ export default function ConfirmAssociationPage() {
                           {item.variantSnapshot}
                         </span>
                       )}
+                      {item.customerNote && (
+                        <span className="block text-xs not-italic" style={{ color: 'var(--pwa-text-secondary)', opacity: 0.6, fontFamily: 'var(--pwa-font-body)' }}>
+                          {t('orderConfirmed.noteLabel')}: {item.customerNote}
+                        </span>
+                      )}
                     </td>
                     <td className="py-3 text-center text-xs" style={{ color: 'var(--pwa-text)' }}>{item.quantity}</td>
                     <td className="py-3 text-right text-xs" style={{ color: 'var(--pwa-text)' }}>

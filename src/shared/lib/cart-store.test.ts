@@ -7,6 +7,7 @@ import {
   removeCartItem,
   clearCart,
   updateCartItemQuantity,
+  updateCartItemNote,
 } from './cart-store';
 
 // Reset IndexedDB between tests so state doesn't bleed across cases
@@ -70,5 +71,30 @@ describe('cart-store', () => {
     await clearCart('tenant-a');
     expect(await getCartItems('tenant-a')).toHaveLength(0);
     expect(await getCartItems('tenant-b')).toHaveLength(1);
+  });
+
+  // SPEC-021 — per-line customer note
+  it('addCartItem persists a note; an item without one has no note key', async () => {
+    await addCartItem({ ...BASE_ITEM, note: 'Sin cebolla' });
+    await addCartItem({ ...BASE_ITEM, productId: 'prod-2', productName: 'Pantalón' });
+    const items = await getCartItems('tenant-a');
+    const shirt = items.find((i) => i.productName === 'Camisa')!;
+    const pants = items.find((i) => i.productName === 'Pantalón')!;
+    expect(shirt.note).toBe('Sin cebolla');
+    expect('note' in pants).toBe(false);
+  });
+
+  it('updateCartItemNote sets a trimmed note and clears it on whitespace-only', async () => {
+    const a = await addCartItem(BASE_ITEM);
+    const b = await addCartItem({ ...BASE_ITEM, productId: 'prod-2', productName: 'Pantalón' });
+
+    await updateCartItemNote(a.id, '  para regalo  ');
+    let items = await getCartItems('tenant-a');
+    expect(items.find((i) => i.id === a.id)!.note).toBe('para regalo');
+    expect('note' in items.find((i) => i.id === b.id)!).toBe(false);
+
+    await updateCartItemNote(a.id, '   ');
+    items = await getCartItems('tenant-a');
+    expect('note' in items.find((i) => i.id === a.id)!).toBe(false);
   });
 });

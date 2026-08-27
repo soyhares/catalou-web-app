@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { AnimatePresence, motion } from 'framer-motion';
@@ -39,10 +40,78 @@ function IconPlus() {
   );
 }
 
+// SPEC-021: discreet per-line note, editable until the order is sent
+function CartLineNote({
+  note,
+  onSave,
+}: {
+  note: string | undefined;
+  onSave: (value: string) => void;
+}) {
+  const { t } = useTranslation();
+  const [editing, setEditing] = useState(false);
+  const [draft, setDraft] = useState(note ?? '');
+
+  if (!editing) {
+    return note ? (
+      <button
+        type="button"
+        onClick={() => { setDraft(note); setEditing(true); }}
+        className="mt-2 text-left opacity-70 hover:opacity-100 transition-opacity"
+        style={{ fontSize: '11px', color: 'var(--pwa-text)', fontFamily: 'var(--pwa-font-body)' }}
+      >
+        <span style={{ opacity: 0.55 }}>{t('cart.note')}: </span>{note}
+      </button>
+    ) : (
+      <button
+        type="button"
+        onClick={() => { setDraft(''); setEditing(true); }}
+        className="mt-2 opacity-45 hover:opacity-100 transition-opacity"
+        style={{ fontSize: '11px', color: 'var(--pwa-text)', fontFamily: 'var(--pwa-font-body)' }}
+      >
+        {t('cart.noteAdd')}
+      </button>
+    );
+  }
+
+  return (
+    <div className="mt-2">
+      <textarea
+        value={draft}
+        onChange={(e) => setDraft(e.target.value)}
+        maxLength={500}
+        rows={2}
+        autoFocus
+        className="w-full resize-none bg-transparent"
+        style={{
+          fontSize: '12px',
+          color: 'var(--pwa-text)',
+          fontFamily: 'var(--pwa-font-body)',
+          borderBottom: '1px solid var(--pwa-border)',
+          paddingBottom: '3px',
+        }}
+      />
+      <div className="flex items-center justify-between mt-1">
+        <span style={{ fontSize: '9px', color: 'var(--pwa-text-secondary)', opacity: 0.6 }}>
+          {t('cart.noteHint')}
+        </span>
+        <button
+          type="button"
+          onClick={() => { onSave(draft); setEditing(false); }}
+          className="opacity-60 hover:opacity-100 transition-opacity shrink-0 ml-3 uppercase tracking-[0.12em]"
+          style={{ fontSize: '9px', fontWeight: 700, color: 'var(--pwa-accent)' }}
+        >
+          {t('cart.noteSave')}
+        </button>
+      </div>
+    </div>
+  );
+}
+
 export default function CartPage() {
   const { t } = useTranslation();
   const { branding, slug } = useBranding();
-  const { items, updateQuantity, remove, refresh } = useCart(slug);
+  const { items, updateQuantity, updateNote, remove, refresh } = useCart(slug);
   const navigate = useNavigate();
 
   const subtotal = items.reduce((sum, item) => sum + item.unitPrice * item.quantity, 0);
@@ -199,6 +268,10 @@ export default function CartPage() {
                             {formatPrice(item.unitPrice * item.quantity, branding.currency ?? 'CRC')}
                           </p>
                         )}
+                        <CartLineNote
+                          note={item.note}
+                          onSave={(value) => { void updateNote(item.id, value); }}
+                        />
                       </div>
 
                       {/* Quantity + remove */}
