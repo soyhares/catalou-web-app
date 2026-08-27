@@ -17,6 +17,7 @@ export interface CartPageProps {
   currency: 'USD' | 'CRC';
   businessModel: 'DIRECT' | 'ASSOCIATED' | 'BOTH';
   onUpdateQuantity: (id: string, qty: number) => void;
+  onUpdateNote: (id: string, note: string) => void;
   onRemove: (id: string) => void;
   onClear: () => void;
   onCheckout: () => void;
@@ -27,7 +28,7 @@ export interface CartPageProps {
 export function useCartPage(): CartPageProps {
   const { slug, branding } = useBranding();
   const navigate = useNavigate();
-  const { items, updateQuantity, remove, refresh } = useCart(slug);
+  const { items, updateQuantity, updateNote, remove, refresh } = useCart(slug);
   const [isLoading, setIsLoading] = useState(false);
 
   // items loaded by useCart internally; no separate loading needed here
@@ -42,6 +43,10 @@ export function useCartPage(): CartPageProps {
 
   function onUpdateQuantity(id: string, qty: number) {
     void updateQuantity(id, qty);
+  }
+
+  function onUpdateNote(id: string, note: string) {
+    void updateNote(id, note);
   }
 
   function onRemove(id: string) {
@@ -76,6 +81,7 @@ export function useCartPage(): CartPageProps {
     currency,
     businessModel: branding.businessModel,
     onUpdateQuantity,
+    onUpdateNote,
     onRemove,
     onClear,
     onCheckout,

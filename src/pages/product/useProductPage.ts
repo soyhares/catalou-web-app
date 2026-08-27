@@ -22,6 +22,11 @@ export interface ProductPageProps {
   canProceed: boolean;
   addedFeedback: boolean;
   ctaKind: CardActionKind;
+  // SPEC-021: discreet, opt-in per-product note captured at add-to-cart
+  noteOpen: boolean;
+  note: string;
+  onNoteToggle: (open: boolean) => void;
+  onNoteChange: (value: string) => void;
   onVariantSelect: (typeId: string, value: VariantValuePublic) => void;
   onQuantityChange: (qty: number) => void;
   onAddToCart: () => void;
@@ -62,6 +67,8 @@ export function useProductPage(): ProductPageProps {
   const [quantity, setQuantity] = useState(1);
   const [addedFeedback, setAddedFeedback] = useState(false);
   const [showPushModal, setShowPushModal] = useState(false);
+  const [noteOpen, setNoteOpen] = useState(false);
+  const [note, setNote] = useState('');
 
   useEffect(() => {
     if (!id || !slug) return;
@@ -115,6 +122,15 @@ export function useProductPage(): ProductPageProps {
     setActiveImage(url);
   }
 
+  function onNoteToggle(open: boolean) {
+    setNoteOpen(open);
+    if (!open) setNote('');
+  }
+
+  function onNoteChange(value: string) {
+    setNote(value);
+  }
+
   function onCartClick() {
     navigate('/cart');
   }
@@ -165,8 +181,11 @@ export function useProductPage(): ProductPageProps {
       variantLabel,
       quantity,
       unitPrice: parseFloat(price),
+      note: note.trim() || undefined,
     }).then(() => {
       window.dispatchEvent(new CustomEvent('cart-item-added', { detail: { name: product.name } }));
+      setNote('');
+      setNoteOpen(false);
       setAddedFeedback(true);
       setTimeout(() => setAddedFeedback(false), 2000);
     }).catch((err: unknown) => {
@@ -192,6 +211,10 @@ export function useProductPage(): ProductPageProps {
     canProceed,
     addedFeedback,
     ctaKind,
+    noteOpen,
+    note,
+    onNoteToggle,
+    onNoteChange,
     onVariantSelect,
     onQuantityChange,
     onAddToCart,

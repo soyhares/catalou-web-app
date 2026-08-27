@@ -1,11 +1,14 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import type { OrderConfirmedPageProps } from '../useOrderConfirmedPage';
 
 /* ── Skin ───────────────────────────────────────────────────────────────── */
 
 const LuxuryMinimalismOrderConfirmedSkin: React.FC<OrderConfirmedPageProps> = ({
+  notedItems,
   onGoHome,
 }) => {
+  const { t } = useTranslation();
   return (
     <div style={{
       minHeight: '100vh',
@@ -50,6 +53,20 @@ const LuxuryMinimalismOrderConfirmedSkin: React.FC<OrderConfirmedPageProps> = ({
           Tu selección ha sido recibida.<br />
           Nos pondremos en contacto contigo pronto.
         </p>
+
+        {/* SPEC-021: discreet recap of the notes the customer left */}
+        {notedItems.length > 0 && (
+          <ul style={{ listStyle: 'none', padding: 0, margin: '0 0 40px', textAlign: 'left' }}>
+            {notedItems.map((item, i) => (
+              <li key={i} style={{ fontFamily: 'var(--pwa-font-body)', fontSize: '12px', color: 'var(--pwa-text)', opacity: 0.7, lineHeight: 1.5, marginBottom: '10px' }}>
+                <span style={{ fontFamily: 'var(--pwa-font-heading)', fontStyle: 'italic' }}>{item.productName}</span>
+                {item.variantLabel ? ` · ${item.variantLabel}` : ''}
+                <br />
+                <span style={{ opacity: 0.6 }}>{t('orderConfirmed.noteLabel')}: </span>{item.note}
+              </li>
+            ))}
+          </ul>
+        )}
 
         {/* Subtle accent line */}
         <div style={{

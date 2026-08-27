@@ -19,6 +19,7 @@ const baseProps: ProductPageProps = {
   isLoading: false, error: null, variantTypes: [], selectedValueByType: {}, missingVariantTypeName: null,
   activeImage: null, quantity: 1,
   computedPrice: null, canProceed: true, addedFeedback: false, ctaKind: 'none',
+  noteOpen: false, note: '', onNoteToggle: vi.fn(), onNoteChange: vi.fn(),
   onVariantSelect: vi.fn(), onQuantityChange: vi.fn(), onAddToCart: vi.fn(), onBook: vi.fn(),
   onBack: vi.fn(), onGoHome: vi.fn(), onImageSelect: vi.fn(),
   showPrices: true, currency: 'USD', businessModel: 'DIRECT', companyName: 'ASEALLERGAN',
