@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { CatalogFooter } from '@shared/ui/CatalogFooter';
 import { useTheme } from '@shared/ui/ThemeProvider';
 import { useBranding } from '@app/BrandingContext';
@@ -77,6 +78,10 @@ const LuxuryMinimalismProductSkin: React.FC<ProductPageProps> = (props) => {
     canProceed,
     addedFeedback,
     ctaKind,
+    noteOpen,
+    note,
+    onNoteToggle,
+    onNoteChange,
     onVariantSelect,
     onQuantityChange,
     onAddToCart,
@@ -102,6 +107,7 @@ const LuxuryMinimalismProductSkin: React.FC<ProductPageProps> = (props) => {
 
   const { isMobile } = useTheme();
   const { slug } = useBranding();
+  const { t } = useTranslation();
   const galleryImages = product ? [...product.images].sort((a, b) => a.sortOrder - b.sortOrder) : [];
   const [expanded, setExpanded] = useState(false);
 
@@ -440,6 +446,43 @@ const LuxuryMinimalismProductSkin: React.FC<ProductPageProps> = (props) => {
                       +
                     </button>
                   </div>
+                </div>
+
+                {/* SPEC-021: discreet opt-in per-product note */}
+                <div style={{ marginBottom: '24px' }}>
+                  {!noteOpen ? (
+                    <button
+                      type="button"
+                      onClick={() => onNoteToggle(true)}
+                      style={{ fontFamily: 'var(--pwa-font-body)', fontSize: '11px', color: 'var(--pwa-text)', background: 'none', border: 'none', cursor: 'pointer', opacity: 0.5, padding: 0, textDecoration: 'underline' }}
+                    >
+                      {t('product.noteAdd')}
+                    </button>
+                  ) : (
+                    <div>
+                      <textarea
+                        value={note}
+                        onChange={(e) => onNoteChange(e.target.value)}
+                        maxLength={500}
+                        rows={2}
+                        autoFocus
+                        placeholder={t('product.notePlaceholder')}
+                        style={{ width: '100%', resize: 'none', background: 'transparent', fontFamily: 'var(--pwa-font-body)', fontSize: '13px', color: 'var(--pwa-text)', border: 'none', borderBottom: '1px solid var(--pwa-border)', paddingBottom: '4px', outline: 'none' }}
+                      />
+                      <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginTop: '6px', gap: '12px' }}>
+                        <span style={{ fontFamily: 'var(--pwa-font-body)', fontSize: '10px', color: 'var(--pwa-text-secondary)', opacity: 0.6 }}>
+                          {t('product.noteHint')}
+                        </span>
+                        <button
+                          type="button"
+                          onClick={() => onNoteToggle(false)}
+                          style={{ flexShrink: 0, fontFamily: 'var(--pwa-font-body)', fontSize: '10px', color: 'var(--pwa-text)', background: 'none', border: 'none', cursor: 'pointer', opacity: 0.5, padding: 0 }}
+                        >
+                          {t('product.noteRemove')}
+                        </button>
+                      </div>
+                    </div>
+                  )}
                 </div>
 
                 <button

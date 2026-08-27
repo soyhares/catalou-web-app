@@ -1,8 +1,53 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useTheme } from '@shared/ui/ThemeProvider';
 import { formatPrice } from '@shared/lib/formatPrice';
 import { PriceDisclaimer } from '@shared/ui';
 import type { CartPageProps } from '../useCartPage';
+
+// SPEC-021: discreet per-line note, editable until the order is sent
+const CartLineNote: React.FC<{ note: string | undefined; onSave: (value: string) => void }> = ({ note, onSave }) => {
+  const { t } = useTranslation();
+  const [editing, setEditing] = useState(false);
+  const [draft, setDraft] = useState(note ?? '');
+
+  if (!editing) {
+    return (
+      <button
+        type="button"
+        onClick={() => { setDraft(note ?? ''); setEditing(true); }}
+        style={{ marginTop: '8px', textAlign: 'left', background: 'none', border: 'none', cursor: 'pointer', padding: 0, fontFamily: 'var(--pwa-font-body)', fontSize: '11px', color: 'var(--pwa-text)', opacity: note ? 0.7 : 0.45 }}
+      >
+        {note ? <><span style={{ opacity: 0.6 }}>{t('cart.note')}: </span>{note}</> : t('cart.noteAdd')}
+      </button>
+    );
+  }
+
+  return (
+    <div style={{ marginTop: '8px' }}>
+      <textarea
+        value={draft}
+        onChange={(e) => setDraft(e.target.value)}
+        maxLength={500}
+        rows={2}
+        autoFocus
+        style={{ width: '100%', resize: 'none', background: 'transparent', fontFamily: 'var(--pwa-font-body)', fontSize: '12px', color: 'var(--pwa-text)', border: 'none', borderBottom: '1px solid var(--pwa-border)', paddingBottom: '3px', outline: 'none' }}
+      />
+      <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginTop: '4px', gap: '12px' }}>
+        <span style={{ fontFamily: 'var(--pwa-font-body)', fontSize: '9px', color: 'var(--pwa-text-secondary)', opacity: 0.6 }}>
+          {t('cart.noteHint')}
+        </span>
+        <button
+          type="button"
+          onClick={() => { onSave(draft); setEditing(false); }}
+          style={{ flexShrink: 0, background: 'none', border: 'none', cursor: 'pointer', padding: 0, fontFamily: 'var(--pwa-font-body)', fontSize: '9px', fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase', color: 'var(--pwa-accent)' }}
+        >
+          {t('cart.noteSave')}
+        </button>
+      </div>
+    </div>
+  );
+};
 
 /* ── Icons ──────────────────────────────────────────────────────────────── */
 
@@ -39,6 +84,7 @@ const LuxuryMinimalismCartSkin: React.FC<CartPageProps> = ({
   currency,
   businessModel,
   onUpdateQuantity,
+  onUpdateNote,
   onRemove,
   onClear,
   onCheckout,
@@ -212,6 +258,7 @@ const LuxuryMinimalismCartSkin: React.FC<CartPageProps> = ({
                         {formatPrice(item.unitPrice * item.quantity, currency)}
                       </p>
                     )}
+                    <CartLineNote note={item.note} onSave={(value) => onUpdateNote(item.id, value)} />
                   </div>
 
                   <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '12px', flexShrink: 0 }}>
