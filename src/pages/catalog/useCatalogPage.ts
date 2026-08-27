@@ -162,10 +162,10 @@ export function useCatalogPage(): CatalogPageProps {
       companySlug: slug,
       productId: product.id,
       productName: product.name,
-      variantTypeId: null,
-      variantTypeName: null,
-      variantValueId: null,
-      variantValueName: null,
+      // quick-add from the grid is for variant-free items; products with variant
+      // types are configured on the detail page (backend rejects an empty combination)
+      variantValueIds: [],
+      variantLabel: null,
       quantity: 1,
       unitPrice: parseFloat(product.basePrice) || 0,
     }).then(() => {

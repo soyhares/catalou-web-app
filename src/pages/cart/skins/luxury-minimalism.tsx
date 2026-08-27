@@ -189,7 +189,7 @@ const LuxuryMinimalismCartSkin: React.FC<CartPageProps> = ({
                     }}>
                       {item.productName}
                     </p>
-                    {item.variantValueName && (
+                    {item.variantLabel && (
                       <p style={{
                         fontSize: '9px',
                         color: 'var(--pwa-text-secondary)',
@@ -198,7 +198,7 @@ const LuxuryMinimalismCartSkin: React.FC<CartPageProps> = ({
                         letterSpacing: '0.1em',
                         margin: '0 0 8px',
                       }}>
-                        {item.variantTypeName} — {item.variantValueName}
+                        {item.variantLabel}
                       </p>
                     )}
                     {showPrices && (

@@ -31,7 +31,7 @@ export interface ProductPublic {
   purpose: 'services' | 'menu' | 'informative' | null;
   durationMinutes: number | null;
   moreInfoUrl: string | null;
-  variantType: VariantTypePublic | null;
+  variantTypes: VariantTypePublic[];
   images: ProductImagePublic[];
 }
 

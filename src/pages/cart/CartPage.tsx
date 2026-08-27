@@ -183,12 +183,12 @@ export default function CartPage() {
                         >
                           {item.productName}
                         </p>
-                        {item.variantValueName && (
+                        {item.variantLabel && (
                           <p
                             className="uppercase tracking-[0.1em]"
                             style={{ fontSize: '9px', color: 'var(--pwa-text-secondary)', opacity: 0.55 }}
                           >
-                            {item.variantTypeName} — {item.variantValueName}
+                            {item.variantLabel}
                           </p>
                         )}
                         {branding.showPrices && (

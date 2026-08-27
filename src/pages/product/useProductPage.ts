@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useBranding } from '@app/BrandingContext';
-import { fetchProduct, type ProductPublic, type VariantValuePublic } from '@entities/product/api';
+import { fetchProduct, type ProductPublic, type VariantValuePublic, type VariantTypePublic } from '@entities/product/api';
 import { fetchCatalog } from '@entities/catalog/api';
 import { resolveCardActionKind, type CardActionKind } from '../catalog/purpose';
 import { useCart } from '@shared/lib/use-cart';
@@ -11,14 +11,18 @@ export interface ProductPageProps {
   product: ProductPublic | null;
   isLoading: boolean;
   error: string | null;
-  selectedVariant: VariantValuePublic | null; // the selected VariantValuePublic object
+  variantTypes: VariantTypePublic[];
+  // typeId -> chosen value, one entry per selected variant type
+  selectedValueByType: Record<string, VariantValuePublic>;
+  // name of the first variant type still missing a selection, for the CTA hint
+  missingVariantTypeName: string | null;
   activeImage: string | null;
   quantity: number;
   computedPrice: string | null;
   canProceed: boolean;
   addedFeedback: boolean;
   ctaKind: CardActionKind;
-  onVariantSelect: (variant: VariantValuePublic) => void;
+  onVariantSelect: (typeId: string, value: VariantValuePublic) => void;
   onQuantityChange: (qty: number) => void;
   onAddToCart: () => void;
   onBook: () => void;
@@ -53,7 +57,7 @@ export function useProductPage(): ProductPageProps {
   const [categoryName, setCategoryName] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [selectedVariant, setSelectedVariant] = useState<VariantValuePublic | null>(null);
+  const [selectedValueByType, setSelectedValueByType] = useState<Record<string, VariantValuePublic>>({});
   const [activeImage, setActiveImage] = useState<string | null>(null);
   const [quantity, setQuantity] = useState(1);
   const [addedFeedback, setAddedFeedback] = useState(false);
@@ -83,13 +87,16 @@ export function useProductPage(): ProductPageProps {
   const computePrice = useCallback((): string | null => {
     if (!product) return null;
     const base = parseFloat(product.basePrice);
-    const modifier = selectedVariant ? parseFloat(selectedVariant.priceModifier) : 0;
+    const modifier = Object.values(selectedValueByType).reduce(
+      (sum, v) => sum + parseFloat(v.priceModifier),
+      0,
+    );
     return (base + modifier).toFixed(2);
-  }, [product, selectedVariant]);
+  }, [product, selectedValueByType]);
 
-  function onVariantSelect(variant: VariantValuePublic) {
-    setSelectedVariant(variant);
-    setActiveImage(variant.imageUrl ?? product?.mainImageUrl ?? null);
+  function onVariantSelect(typeId: string, value: VariantValuePublic) {
+    setSelectedValueByType((prev) => ({ ...prev, [typeId]: value }));
+    if (value.imageUrl) setActiveImage(value.imageUrl);
   }
 
   function onQuantityChange(qty: number) {
@@ -126,8 +133,10 @@ export function useProductPage(): ProductPageProps {
     setShowPushModal(false);
   }
 
-  const hasVariants = !!product?.variantType;
-  const canProceed = !hasVariants || selectedVariant !== null;
+  const variantTypes = product?.variantTypes ?? [];
+  const firstMissingType = variantTypes.find((t) => !selectedValueByType[t.id]) ?? null;
+  const canProceed = firstMissingType === null;
+  const missingVariantTypeName = firstMissingType?.name ?? null;
 
   const ordersEnabled = branding.featuresEnabled?.orders === true;
 
@@ -143,14 +152,17 @@ export function useProductPage(): ProductPageProps {
   function onAddToCart() {
     const price = computePrice();
     if (!canProceed || !product || !price) return;
+    // one value per type, in the product's type order
+    const chosen = variantTypes.map((t) => selectedValueByType[t.id]);
+    const variantLabel = chosen.length
+      ? variantTypes.map((t) => `${t.name}: ${selectedValueByType[t.id].value}`).join(', ')
+      : null;
     void addToCart({
       companySlug: slug,
       productId: product.id,
       productName: product.name,
-      variantTypeId: product.variantType?.id ?? null,
-      variantTypeName: product.variantType?.name ?? null,
-      variantValueId: selectedVariant?.id ?? null,
-      variantValueName: selectedVariant?.value ?? null,
+      variantValueIds: chosen.map((v) => v.id),
+      variantLabel,
       quantity,
       unitPrice: parseFloat(price),
     }).then(() => {
@@ -171,7 +183,9 @@ export function useProductPage(): ProductPageProps {
     product,
     isLoading: loading,
     error,
-    selectedVariant,
+    variantTypes,
+    selectedValueByType,
+    missingVariantTypeName,
     activeImage,
     quantity,
     computedPrice: computePrice(),

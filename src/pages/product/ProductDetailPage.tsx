@@ -74,7 +74,10 @@ export default function ProductDetailPage() {
     return (base + modifier).toFixed(2);
   }
 
-  const hasVariants = !!product?.variantType;
+  // NOTE: this page is not routed (see pages/product/index.tsx). Kept compiling
+  // for the single-variant case only; the live UI is skins/luxury-minimalism.tsx.
+  const variantType = product?.variantTypes[0] ?? null;
+  const hasVariants = !!variantType;
   const canAddToCart = !hasVariants || selectedVariant !== null;
   const galleryImages = product ? [...product.images].sort((a, b) => a.sortOrder - b.sortOrder) : [];
 
@@ -306,16 +309,16 @@ export default function ProductDetailPage() {
               <div className="h-px mb-5" style={{ backgroundColor: 'var(--pwa-border)' }} />
 
               {/* Variant selector */}
-              {hasVariants && product.variantType && (
+              {hasVariants && variantType && (
                 <div className="mb-5">
                   <p
                     className="uppercase tracking-[0.14em] mb-3"
                     style={{ fontSize: '9px', fontWeight: 700, color: 'var(--pwa-text-secondary)', opacity: 0.5 }}
                   >
-                    {product.variantType.name}
+                    {variantType.name}
                   </p>
                   <div className="flex flex-wrap gap-2">
-                    {product.variantType.values.map((v) => (
+                    {variantType.values.map((v) => (
                       <button
                         key={v.id}
                         type="button"
@@ -391,10 +394,8 @@ export default function ProductDetailPage() {
                         companySlug: slug,
                         productId: product.id,
                         productName: product.name,
-                        variantTypeId: product.variantType?.id ?? null,
-                        variantTypeName: product.variantType?.name ?? null,
-                        variantValueId: selectedVariant?.id ?? null,
-                        variantValueName: selectedVariant?.value ?? null,
+                        variantValueIds: selectedVariant ? [selectedVariant.id] : [],
+                        variantLabel: selectedVariant && variantType ? `${variantType.name}: ${selectedVariant.value}` : null,
                         quantity,
                         unitPrice: parseFloat(computedPrice() ?? '0'),
                       }).then(() => {
