@@ -182,7 +182,7 @@ export default function CheckoutPage() {
         affiliateNumber: orderType === 'FINANCED' ? affiliateNumber.trim() : undefined,
         items: items.map((item) => ({
           productId: item.productId,
-          variantValueId: item.variantValueId,
+          variantValueIds: item.variantValueIds,
           quantity: item.quantity,
         })),
       });
@@ -345,7 +345,7 @@ export default function CheckoutPage() {
                 <div key={item.id} className="flex justify-between text-sm gap-4">
                   <span style={{ color: 'var(--pwa-text)' }} className="flex-1 min-w-0">
                     <span className="font-medium">{item.productName}</span>
-                    {item.variantValueName ? <span style={{ color: 'var(--pwa-text-secondary)' }}> ({item.variantValueName})</span> : ''}
+                    {item.variantLabel ? <span style={{ color: 'var(--pwa-text-secondary)' }}> ({item.variantLabel})</span> : ''}
                     <span style={{ color: 'var(--pwa-text-secondary)' }}> × {item.quantity}</span>
                   </span>
                   {branding.showPrices && (

@@ -202,7 +202,8 @@ export interface components {
                 /** Format: uri */
                 url: string;
             }[];
-            variantType?: components["schemas"]["VariantTypeDetail"] | null;
+            /** @description Tipos de variante disponibles para este producto (ej. Talla, Color). Array vacío = producto sin variantes, se agrega directo al carrito sin selección (FR-010). */
+            variantTypes?: components["schemas"]["VariantTypeDetail"][];
         };
         VariantTypeDetail: {
             /** Format: uuid */
@@ -230,8 +231,8 @@ export interface components {
             items: {
                 /** Format: uuid */
                 productId: string;
-                /** Format: uuid */
-                variantValueId?: string | null;
+                /** @description Un valor de variante por cada VariantType del producto — server-side se valida que la combinación esté completa (FR-003). Omitir o dejar vacío solo es válido si el producto no tiene VariantTypes. */
+                variantValueIds?: string[];
                 quantity: number;
             }[];
         };

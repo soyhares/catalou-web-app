@@ -103,7 +103,7 @@ export function useCheckoutPage(): CheckoutPageProps {
       affiliateNumber: orderType === 'FINANCED' ? form.affiliateNumber.trim() : undefined,
       items: items.map((item) => ({
         productId: item.productId,
-        variantValueId: item.variantValueId,
+        variantValueIds: item.variantValueIds,
         quantity: item.quantity,
       })),
     })

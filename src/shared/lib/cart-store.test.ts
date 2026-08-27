@@ -22,10 +22,8 @@ const BASE_ITEM = {
   companySlug: 'tenant-a',
   productId:   'prod-1',
   productName: 'Camisa',
-  variantTypeId:   null,
-  variantTypeName: null,
-  variantValueId:  null,
-  variantValueName: null,
+  variantValueIds: [] as string[],
+  variantLabel: null,
   quantity:  1,
   unitPrice: 25.00,
 } as const;

@@ -68,7 +68,9 @@ const LuxuryMinimalismProductSkin: React.FC<ProductPageProps> = (props) => {
     product,
     isLoading,
     error,
-    selectedVariant,
+    variantTypes,
+    selectedValueByType,
+    missingVariantTypeName,
     activeImage,
     quantity,
     computedPrice,
@@ -347,7 +349,7 @@ const LuxuryMinimalismProductSkin: React.FC<ProductPageProps> = (props) => {
                 flexWrap: 'wrap',
               }}>
                 {formatPrice(Number(computedPrice), currency)}
-                {selectedVariant && parseFloat(selectedVariant.priceModifier) > 0 && (
+                {Object.values(selectedValueByType).some((v) => parseFloat(v.priceModifier) > 0) && (
                   <span style={{ fontFamily: 'var(--pwa-font-body)', fontSize: '0.8rem', fontWeight: 400, fontStyle: 'normal', color: 'var(--pwa-text-secondary)' }}>
                     base + variante
                   </span>
@@ -366,40 +368,47 @@ const LuxuryMinimalismProductSkin: React.FC<ProductPageProps> = (props) => {
             {/* Divider */}
             <div style={{ height: '1px', backgroundColor: 'var(--pwa-border)', marginBottom: '24px' }} />
 
-            {/* Variant selector — elegant pill selectors */}
-            {product.variantType && (
-              <div style={{ marginBottom: '24px' }}>
-                <p style={{ fontFamily: 'var(--pwa-font-body)', fontSize: '9px', letterSpacing: '0.14em', textTransform: 'uppercase', fontWeight: 700, color: 'var(--pwa-text-secondary)', opacity: 0.5, marginBottom: '12px' }}>
-                  {product.variantType.name}
-                </p>
-                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
-                  {product.variantType.values.map((v) => (
-                    <button
-                      key={v.id}
-                      type="button"
-                      onClick={() => onVariantSelect(v)}
-                      style={{
-                        fontFamily: 'var(--pwa-font-body)',
-                        fontSize: '12px',
-                        padding: '8px 20px',
-                        borderRadius: '30px',
-                        border: `1px solid ${selectedVariant?.id === v.id ? 'var(--pwa-accent)' : 'var(--pwa-border)'}`,
-                        backgroundColor: selectedVariant?.id === v.id ? 'var(--pwa-accent)' : 'transparent',
-                        color: selectedVariant?.id === v.id ? 'var(--pwa-bg)' : 'var(--pwa-text)',
-                        cursor: 'pointer',
-                        transition: 'all 0.2s',
-                      }}
-                    >
-                      {v.value}
-                      {showPrices && parseFloat(v.priceModifier) > 0 && (
-                        <span style={{ fontSize: '10px', marginLeft: '6px', opacity: 0.7 }}>+{formatPrice(parseFloat(v.priceModifier), currency)}</span>
-                      )}
-                    </button>
-                  ))}
-                </div>
-                {!selectedVariant && (
-                  <p style={{ fontFamily: 'var(--pwa-font-body)', fontSize: '9px', letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--pwa-accent)', fontWeight: 600, marginTop: '8px' }}>
-                    Selecciona una opción para continuar
+            {/* Variant selectors — one pill group per variant type */}
+            {variantTypes.length > 0 && (
+              <div style={{ marginBottom: '24px', display: 'flex', flexDirection: 'column', gap: '20px' }}>
+                {variantTypes.map((vt) => {
+                  const selected = selectedValueByType[vt.id];
+                  return (
+                    <div key={vt.id}>
+                      <p style={{ fontFamily: 'var(--pwa-font-body)', fontSize: '9px', letterSpacing: '0.14em', textTransform: 'uppercase', fontWeight: 700, color: 'var(--pwa-text-secondary)', opacity: 0.5, marginBottom: '12px' }}>
+                        {vt.name}
+                      </p>
+                      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+                        {vt.values.map((v) => (
+                          <button
+                            key={v.id}
+                            type="button"
+                            onClick={() => onVariantSelect(vt.id, v)}
+                            style={{
+                              fontFamily: 'var(--pwa-font-body)',
+                              fontSize: '12px',
+                              padding: '8px 20px',
+                              borderRadius: '30px',
+                              border: `1px solid ${selected?.id === v.id ? 'var(--pwa-accent)' : 'var(--pwa-border)'}`,
+                              backgroundColor: selected?.id === v.id ? 'var(--pwa-accent)' : 'transparent',
+                              color: selected?.id === v.id ? 'var(--pwa-bg)' : 'var(--pwa-text)',
+                              cursor: 'pointer',
+                              transition: 'all 0.2s',
+                            }}
+                          >
+                            {v.value}
+                            {showPrices && parseFloat(v.priceModifier) > 0 && (
+                              <span style={{ fontSize: '10px', marginLeft: '6px', opacity: 0.7 }}>+{formatPrice(parseFloat(v.priceModifier), currency)}</span>
+                            )}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  );
+                })}
+                {missingVariantTypeName && (
+                  <p style={{ fontFamily: 'var(--pwa-font-body)', fontSize: '9px', letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--pwa-accent)', fontWeight: 600 }}>
+                    Selecciona {missingVariantTypeName} para continuar
                   </p>
                 )}
               </div>

@@ -5,7 +5,8 @@ export type OrderStatus = 'PENDING';
 
 export interface SubmitOrderItem {
   productId: string;
-  variantValueId: string | null;
+  // one value per variant type of the product; [] when it has none
+  variantValueIds: string[];
   quantity: number;
 }
 

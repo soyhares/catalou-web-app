@@ -13,7 +13,7 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        /** Register a new company and provision its tenant */
+        /** Operator-mediated: register a new company and provision its tenant on behalf of a client the Operator coordinated with off-platform (see ADR-021). The client is not present — no password is collected here; they receive an email to set their own. */
         post: operations["registerCompany"];
         delete?: never;
         options?: never;
@@ -161,11 +161,11 @@ export interface paths {
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
+        /** @description Filled by the Operator during/after a coordination call with the client — no password field, the client sets their own via email (see ADR-021). */
         RegisterRequest: {
             companyName: string;
             /** Format: email */
             email: string;
-            password: string;
             country: string;
             /** @enum {string} */
             language: "ES" | "EN";
@@ -174,7 +174,7 @@ export interface components {
              * @enum {string}
              */
             tier?: "starter" | "pro" | "business";
-            /** @description Optional feature flags to enable at registration. Omitted keys use backend defaults. */
+            /** @description Optional feature flags to enable at registration. Omitted keys use backend defaults; tier-disallowed combinations are rejected/recalculated server-side (see ADR-021). */
             featuresEnabled?: {
                 orders?: boolean;
                 bookings?: boolean;
@@ -189,13 +189,21 @@ export interface components {
             currency: "CRC" | "USD";
             contactPhone?: string;
             adminName?: string;
-            /** @description Name of the intermediary organization (required when businessModel is asociado) */
+            /**
+             * @description 'associated' is only accepted when tier is 'business' — rejected with 422 otherwise (see ADR-021).
+             * @enum {string}
+             */
+            businessModel?: "direct" | "associated";
+            /** @description Name of the intermediary organization (required when businessModel is associated) */
             associationName?: string;
             /**
              * Format: email
              * @description Email of the intermediary organization for approval notifications
              */
             associationEmail?: string;
+        };
+        RegisterResponse: {
+            user: components["schemas"]["AuthUser"];
         };
         LoginRequest: {
             /** Format: email */
@@ -272,13 +280,31 @@ export interface operations {
             };
         };
         responses: {
-            /** @description Company registered; admin authenticated */
+            /** @description Company registered; client will receive a "set your password" email */
             201: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["AuthResponse"];
+                    "application/json": components["schemas"]["RegisterResponse"];
+                };
+            };
+            /** @description Missing or invalid Operator token */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Authenticated but not an Operator */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
                 };
             };
             /** @description Email already registered */
@@ -290,7 +316,7 @@ export interface operations {
                     "application/json": components["schemas"]["ErrorResponse"];
                 };
             };
-            /** @description Validation error */
+            /** @description Validation error, or Associated business model requested on a non-Business plan */
             422: {
                 headers: {
                     [name: string]: unknown;

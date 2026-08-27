@@ -7,10 +7,10 @@ export interface CartItem {
   companySlug: string;
   productId: string;
   productName: string;
-  variantTypeId: string | null;
-  variantTypeName: string | null;
-  variantValueId: string | null;
-  variantValueName: string | null;
+  // one value id per variant type of the product (in type order); [] when it has none
+  variantValueIds: string[];
+  // joined label for display, e.g. "Talla: M, Color: Azul"; null when no variants
+  variantLabel: string | null;
   quantity: number;
   unitPrice: number;
 }
