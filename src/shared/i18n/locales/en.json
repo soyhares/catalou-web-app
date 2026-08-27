@@ -34,7 +34,11 @@
     "variants": "Options",
     "selectVariant": "Select an option",
     "noImage": "No image available",
-    "priceDisclaimer": "Reference price. The final cost may vary according to the terms of the agreement with your organization."
+    "priceDisclaimer": "Reference price. The final cost may vary according to the terms of the agreement with your organization.",
+    "noteAdd": "Add a note",
+    "notePlaceholder": "e.g. no onion, gift wrap…",
+    "noteHint": "Visible to the business. Do not include sensitive personal data (health, IDs, cards).",
+    "noteRemove": "Remove note"
   },
   "cart": {
     "navLabel": "Quote",
@@ -53,7 +57,12 @@
     "continueShopping": "Keep browsing",
     "added": "Added to cart",
     "items_one": "{{count}} item",
-    "items_other": "{{count}} items"
+    "items_other": "{{count}} items",
+    "note": "Note",
+    "noteAdd": "Add a note",
+    "noteEdit": "Edit",
+    "noteSave": "Save",
+    "noteHint": "Visible to the business. Do not include sensitive personal data."
   },
   "checkout": {
     "title": "Checkout",
@@ -162,7 +171,8 @@
   "orderConfirmed": {
     "title": "Order received!",
     "message": "Your order was placed successfully. We'll be in touch shortly.",
-    "backToCatalog": "Back to catalog"
+    "backToCatalog": "Back to catalog",
+    "noteLabel": "Note"
   },
   "order": {
     "confirmed": "Order confirmed!",

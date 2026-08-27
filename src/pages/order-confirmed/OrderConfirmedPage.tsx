@@ -1,6 +1,12 @@
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { motion } from 'framer-motion';
+
+interface NotedItem {
+  productName: string;
+  variantLabel: string | null;
+  note: string;
+}
 
 function IconCheck() {
   return (
@@ -14,6 +20,8 @@ function IconCheck() {
 export default function OrderConfirmedPage() {
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const location = useLocation();
+  const notedItems = (location.state as { notedItems?: NotedItem[] } | null)?.notedItems ?? [];
 
   return (
     <div
@@ -55,6 +63,31 @@ export default function OrderConfirmedPage() {
         >
           {t('orderConfirmed.message')}
         </motion.p>
+
+        {notedItems.length > 0 && (
+          <motion.ul
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.4, duration: 0.4 }}
+            className="mb-8 text-left space-y-2"
+          >
+            {notedItems.map((item, i) => (
+              <li
+                key={i}
+                className="text-xs"
+                style={{ color: 'var(--pwa-text)', opacity: 0.7, lineHeight: 1.5 }}
+              >
+                <span style={{ fontStyle: 'italic', fontFamily: 'var(--pwa-font-heading)' }}>
+                  {item.productName}
+                </span>
+                {item.variantLabel ? ` · ${item.variantLabel}` : ''}
+                <br />
+                <span style={{ opacity: 0.6 }}>{t('orderConfirmed.noteLabel')}: </span>
+                {item.note}
+              </li>
+            ))}
+          </motion.ul>
+        )}
 
         <motion.button
           type="button"

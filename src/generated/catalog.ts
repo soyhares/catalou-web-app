@@ -226,6 +226,8 @@ export interface components {
             visitorPhone: string;
             /** Format: email */
             visitorEmail: string;
+            /** @description Dirección de entrega del pedido. */
+            deliveryAddress: string;
             /** @description Required when orderType is FINANCED. Identifies the member within the association for the tripartite approval flow. */
             affiliateNumber?: string;
             items: {
@@ -234,6 +236,8 @@ export interface components {
                 /** @description Un valor de variante por cada VariantType del producto — server-side se valida que la combinación esté completa (FR-003). Omitir o dejar vacío solo es válido si el producto no tiene VariantTypes. */
                 variantValueIds?: string[];
                 quantity: number;
+                /** @description Nota de texto libre opcional que el cliente escribió para este producto al agregarlo al carrito. Se muestra al negocio y en las comunicaciones de la orden. Omitir cuando no hay nota. */
+                customerNote?: string;
             }[];
         };
         OrderConfirmation: {
@@ -261,6 +265,8 @@ export interface components {
                 variantSnapshot?: string | null;
                 /** @description URL de la imagen del producto (o de la variante elegida, si tenía una propia) al momento del pedido. Null si el producto no tenía imagen o el pedido es anterior a esta funcionalidad. */
                 productImageSnapshot?: string | null;
+                /** @description Nota que el cliente dejó para este producto al momento del pedido. Null si no dejó nota o el pedido es anterior a esta funcionalidad. */
+                customerNote?: string | null;
                 quantity: number;
                 /** Format: decimal */
                 unitPriceSnapshot: number;

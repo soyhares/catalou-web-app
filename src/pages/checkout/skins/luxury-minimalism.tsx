@@ -212,17 +212,7 @@ const LuxuryMinimalismCheckoutSkin: React.FC<CheckoutPageProps> = ({
             {errors.deliveryAddress && <p style={{ fontSize: '11px', color: 'var(--pwa-error)', marginTop: '4px' }}>{errors.deliveryAddress}</p>}
           </div>
 
-          {/* Notes */}
-          <div>
-            <label style={labelStyle}>Notas adicionales</label>
-            <textarea
-              value={form.notes}
-              onChange={(e) => onFieldChange('notes', e.target.value)}
-              rows={2}
-              placeholder="Instrucciones especiales (opcional)"
-              style={{ ...inputStyle, resize: 'none' }}
-            />
-          </div>
+          {/* Per-product notes (SPEC-021) are captured at add-to-cart, not here. */}
 
           {/* Affiliate number — only for FINANCED orders */}
           {orderType === 'FINANCED' && (

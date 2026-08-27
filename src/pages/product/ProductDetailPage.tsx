@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { motion } from 'framer-motion';
 import { useBranding } from '@app/BrandingContext';
 import { fetchProduct } from '@entities/product/api';
@@ -28,10 +29,21 @@ function IconBag() {
   );
 }
 
+function IconNote() {
+  return (
+    <svg width="13" height="13" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+      <path d="M3 3h10v7l-3 3H3V3z" stroke="currentColor" strokeWidth="1.2" strokeLinejoin="round" fill="none"/>
+      <path d="M13 10l-3 3v-3h3z" stroke="currentColor" strokeWidth="1.2" strokeLinejoin="round" fill="none"/>
+      <path d="M5.5 6.5h5M5.5 8.5h3" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round"/>
+    </svg>
+  );
+}
+
 export default function ProductDetailPage() {
   const { id } = useParams<{ id: string }>();
   const { slug, branding } = useBranding();
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const { add: addToCart } = useCart(slug);
 
   const ordersEnabled = branding.featuresEnabled?.orders === true;
@@ -45,6 +57,9 @@ export default function ProductDetailPage() {
   const [activeImage, setActiveImage] = useState<string | null>(null);
   const [quantity, setQuantity] = useState(1);
   const [addedFeedback, setAddedFeedback] = useState(false);
+  // SPEC-021: discreet, opt-in per-product note captured at add-to-cart
+  const [noteOpen, setNoteOpen] = useState(false);
+  const [note, setNote] = useState('');
 
   useEffect(() => {
     if (!id || !slug) return;
@@ -385,6 +400,53 @@ export default function ProductDetailPage() {
                     </div>
                   </div>
 
+                  {/* SPEC-021: discreet opt-in per-product note */}
+                  <div className="mb-5">
+                    {!noteOpen ? (
+                      <button
+                        type="button"
+                        onClick={() => setNoteOpen(true)}
+                        className="inline-flex items-center gap-1.5 opacity-50 hover:opacity-100 transition-opacity"
+                        style={{ fontSize: '11px', color: 'var(--pwa-text)', fontFamily: 'var(--pwa-font-body)' }}
+                      >
+                        <IconNote />
+                        {t('product.noteAdd')}
+                      </button>
+                    ) : (
+                      <div>
+                        <textarea
+                          value={note}
+                          onChange={(e) => setNote(e.target.value)}
+                          maxLength={500}
+                          rows={2}
+                          autoFocus
+                          placeholder={t('product.notePlaceholder')}
+                          className="w-full resize-none bg-transparent"
+                          style={{
+                            fontSize: '13px',
+                            color: 'var(--pwa-text)',
+                            fontFamily: 'var(--pwa-font-body)',
+                            borderBottom: '1px solid var(--pwa-border)',
+                            paddingBottom: '4px',
+                          }}
+                        />
+                        <div className="flex items-center justify-between mt-1.5">
+                          <span style={{ fontSize: '10px', color: 'var(--pwa-text-secondary)', opacity: 0.6 }}>
+                            {t('product.noteHint')}
+                          </span>
+                          <button
+                            type="button"
+                            onClick={() => { setNote(''); setNoteOpen(false); }}
+                            className="opacity-50 hover:opacity-100 transition-opacity shrink-0 ml-3"
+                            style={{ fontSize: '10px', color: 'var(--pwa-text)' }}
+                          >
+                            {t('product.noteRemove')}
+                          </button>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+
                   <motion.button
                     type="button"
                     disabled={!canAddToCart}
@@ -398,8 +460,11 @@ export default function ProductDetailPage() {
                         variantLabel: selectedVariant && variantType ? `${variantType.name}: ${selectedVariant.value}` : null,
                         quantity,
                         unitPrice: parseFloat(computedPrice() ?? '0'),
+                        note: note.trim() || undefined,
                       }).then(() => {
                         window.dispatchEvent(new CustomEvent('cart-item-added', { detail: { name: product.name } }));
+                        setNote('');
+                        setNoteOpen(false);
                         setAddedFeedback(true);
                         setTimeout(() => setAddedFeedback(false), 2000);
                       });

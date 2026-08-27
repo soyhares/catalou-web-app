@@ -3,6 +3,7 @@ import {
   getCartItems,
   addCartItem,
   updateCartItemQuantity,
+  updateCartItemNote,
   removeCartItem,
   cartItemCount,
   type CartItem,
@@ -55,5 +56,11 @@ export function useCart(slug: string) {
     window.dispatchEvent(new Event('cart-updated'));
   }
 
-  return { items, count, add, updateQuantity, remove, refresh };
+  async function updateNote(id: string, note: string) {
+    await updateCartItemNote(id, note);
+    await refresh();
+    window.dispatchEvent(new Event('cart-updated'));
+  }
+
+  return { items, count, add, updateQuantity, updateNote, remove, refresh };
 }
