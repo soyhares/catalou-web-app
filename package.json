@@ -12,7 +12,8 @@
     "generate:auth": "openapi-typescript ${CONTRACTS_PATH:-../catalou-platform-core/contracts/openapi}/auth.yaml -o src/generated/auth.ts",
     "generate:catalog": "openapi-typescript ${CONTRACTS_PATH:-../catalou-platform-core/contracts/openapi}/catalog.yaml -o src/generated/catalog.ts",
     "generate:bookings": "openapi-typescript ${CONTRACTS_PATH:-../catalou-platform-core/contracts/openapi}/bookings.yaml -o src/generated/bookings.ts",
-    "generate": "pnpm generate:auth && pnpm generate:catalog && pnpm generate:bookings",
+    "generate:customers": "openapi-typescript ${CONTRACTS_PATH:-../catalou-platform-core/contracts/openapi}/customers.yaml -o src/generated/customers.ts",
+    "generate": "pnpm generate:auth && pnpm generate:catalog && pnpm generate:bookings && pnpm generate:customers",
     "test": "vitest run",
     "test:watch": "vitest",
     "test:e2e": "playwright test"

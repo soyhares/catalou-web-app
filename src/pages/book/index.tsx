@@ -3,6 +3,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useBranding } from '@app/BrandingContext';
 import { PushPermissionModal } from '@features/push-notifications/PushPermissionModal';
 import { saveBookingRef } from '@shared/lib/bookings-storage';
+import { usePostConversionPrompt } from '@shared/lib/usePostConversionPrompt';
 import { fetchCatalog, type PublicCategory, type PublicProduct } from '@entities/catalog/api';
 import { getCompanyAvailability } from '@entities/booking/api';
 import type { BookingPublicResponse } from '@entities/booking/types';
@@ -32,6 +33,11 @@ export default function BookPage() {
   const [ready, setReady]                   = useState(false);
 
   const preselectedItemId = searchParams.get('itemId') ?? undefined;
+
+  // SPEC-022 (T036): this modal blocks the whole screen after a booking, so it claims the
+  // top-priority surface and the install sheet steps aside. The claim never gates the modal
+  // itself: hiding it would leave the shopper with an empty screen.
+  usePostConversionPrompt(slug, 'notifications', showPushPrompt);
 
   useEffect(() => {
     Promise.all([

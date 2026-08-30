@@ -247,6 +247,11 @@ export interface components {
             orderType: "DIRECT" | "FINANCED";
             /** @enum {string} */
             status: "PENDING" | "ASSOCIATION_CONFIRMED";
+            /**
+             * Format: uuid
+             * @description Cliente registrado al que pertenece el pedido, si lo hay. Null en pedidos de invitado, que siguen siendo un estado válido y permanente, no un error (FR-012). Opcional y nullable a propósito: requerirlo rompería todos los clientes generados ya desplegados.
+             */
+            customerId?: string | null;
         };
         OrderAssociationReview: {
             /** Format: uuid */

@@ -1,4 +1,5 @@
 import { publicFetch } from '@shared/lib/api';
+import { getAccessToken } from '@shared/lib/customer-session';
 
 export type OrderType = 'DIRECT' | 'FINANCED';
 export type OrderStatus = 'PENDING';
@@ -85,8 +86,14 @@ export async function submitOrder(
   slug: string,
   input: SubmitOrderInput,
 ): Promise<OrderConfirmation> {
+  // SPEC-022: si hay sesión de cliente en este negocio, el pedido va firmado y nace asociado
+  // a su cuenta. Sin sesión sale igual: pedir como invitado es un camino de primera clase.
+  // El correo del formulario nunca alcanza para asociar, justamente porque no está verificado.
+  const token = await getAccessToken(slug).catch(() => null);
+
   return publicFetch<OrderConfirmation>(`/catalog/${slug}/orders`, {
     method: 'POST',
     body: JSON.stringify(input),
+    ...(token ? { headers: { Authorization: `Bearer ${token}` } } : {}),
   });
 }
