@@ -35,8 +35,12 @@ export default function BookPage() {
   const preselectedItemId = searchParams.get('itemId') ?? undefined;
 
   // SPEC-022 (T036): this modal blocks the whole screen after a booking, so it claims the
-  // top-priority surface and the install sheet steps aside. The claim never gates the modal
-  // itself: hiding it would leave the shopper with an empty screen.
+  // top-priority surface and the install sheet steps aside.
+  //
+  // The claim does NOT gate the modal: hiding it would leave the shopper on an empty screen
+  // with the booking already made. It is top priority, so it only ever loses to its own
+  // shared waiting period, and skipping that is the intended trade — the alternative is a
+  // dead end. Every other surface does consume this return value.
   usePostConversionPrompt(slug, 'notifications', showPushPrompt);
 
   useEffect(() => {
