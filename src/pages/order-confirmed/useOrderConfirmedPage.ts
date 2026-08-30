@@ -9,6 +9,8 @@ export interface NotedItem {
 
 export interface OrderConfirmedPageProps {
   orderId: string | null;
+  /** Email typed at checkout, used to anchor the account offer (SPEC-022). */
+  email: string | null;
   companyName: string;
   // SPEC-021: lines that carried a customer note, passed via navigate state from checkout
   notedItems: NotedItem[];
@@ -19,14 +21,18 @@ export function useOrderConfirmedPage(): OrderConfirmedPageProps {
   const { branding } = useBranding();
   const navigate = useNavigate();
   const location = useLocation();
-  const notedItems = (location.state as { notedItems?: NotedItem[] } | null)?.notedItems ?? [];
+  const state = location.state as
+    | { notedItems?: NotedItem[]; orderId?: string; email?: string }
+    | null;
+  const notedItems = state?.notedItems ?? [];
 
   function onGoHome() {
     void navigate('/', { replace: true });
   }
 
   return {
-    orderId: null,
+    orderId: state?.orderId ?? null,
+    email: state?.email ?? null,
     companyName: branding.companyName,
     notedItems,
     onGoHome,

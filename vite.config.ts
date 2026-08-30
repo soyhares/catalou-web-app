@@ -21,6 +21,14 @@ export default defineConfig(({ mode }) => {
           navigateFallbackDenylist: [/^\/api\//],
           runtimeCaching: [
             {
+              // SPEC-022 (T057) 🔒: el historial y el perfil del cliente NUNCA se cachean.
+              // Un dispositivo compartido serviría los datos de una persona a otra. Va
+              // primero a propósito: workbox resuelve en orden de registro, así que ninguna
+              // regla más amplia que se agregue después puede reclamar estas rutas.
+              urlPattern: /\/customers\//,
+              handler: 'NetworkOnly' as const,
+            },
+            {
               urlPattern: /\/companies\/[^/]+\/branding$/,
               handler: 'StaleWhileRevalidate' as const,
               options: {

@@ -7,6 +7,7 @@ import { RouteNoticeToast, dispatchRouteUnavailable } from '@shared/ui/RouteNoti
 import { InstallPromptSheet } from '@widgets/install-prompt/InstallPromptSheet';
 import Navigation from '@widgets/navigation';
 import { useBranding } from '@app/BrandingContext';
+import { CustomerGuard } from '@app/CustomerGuard';
 
 const CatalogPage = lazy(() => import('@pages/catalog'));
 const ProductDetailPage = lazy(() => import('@pages/product'));
@@ -21,6 +22,8 @@ const ConfirmBookingPage = lazy(
 );
 const AboutPage = lazy(() => import('@pages/about'));
 const PrivacyPolicyPage = lazy(() => import('@pages/privacy-policy/PrivacyPolicyPage'));
+const ActivateAccountPage = lazy(() => import('@pages/activate-account'));
+const AccountPage = lazy(() => import('@pages/account'));
 const AppointmentsPage = lazy(() => import('@pages/appointments'));
 const BookPage = lazy(() => import('@pages/book'));
 
@@ -62,6 +65,10 @@ function AnimatedRoutes() {
           <Route path="/appointments" element={<BookingsGuard><PageTransition><AppointmentsPage /></PageTransition></BookingsGuard>} />
           <Route path="/book" element={<BookingsGuard><BookPage /></BookingsGuard>} />
           <Route path="/privacy-policy" element={<PageTransition><PrivacyPolicyPage /></PageTransition>} />
+          {/* SPEC-022: account activation. Not guarded by OrdersGuard — the email link may
+              land here after the business turned orders off, and the code still works. */}
+          <Route path="/activate-account" element={<PageTransition><ActivateAccountPage /></PageTransition>} />
+          <Route path="/account" element={<CustomerGuard><PageTransition><AccountPage /></PageTransition></CustomerGuard>} />
           <Route path="*" element={<Navigate to="/catalog" replace />} />
         </Routes>
       </AnimatePresence>

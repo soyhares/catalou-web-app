@@ -2,6 +2,7 @@ import { useState, useCallback } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useBranding } from '@app/BrandingContext';
 import { useCart } from '@shared/lib/use-cart';
+import { readSession } from '@shared/lib/customer-session';
 
 export interface NavLink {
   label: string;
@@ -60,9 +61,15 @@ export function useNavigation(): NavigationProps {
 
   const bookingsEnabled = branding.featuresEnabled?.bookings === true;
   const ordersEnabled = branding.featuresEnabled?.orders === true;
-  const links = bookingsEnabled
+  const visibleLinks = bookingsEnabled
     ? BASE_LINKS
     : BASE_LINKS.filter((l) => l.path !== '/appointments');
+
+  // SPEC-022 (T058): el acceso a la cuenta aparece solo con sesión en ESTE negocio. Sin
+  // sesión no se ofrece nada: la cuenta se activa desde un pedido, no desde un login.
+  const links = readSession(slug)
+    ? [...visibleLinks, { label: 'Mi cuenta', path: '/account' }]
+    : visibleLinks;
 
   return {
     activeRoute: resolveActiveRoute(location.pathname),
