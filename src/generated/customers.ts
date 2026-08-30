@@ -102,9 +102,10 @@ export interface components {
             email: string;
             /**
              * Format: uuid
-             * @description Pedido que originó el ofrecimiento. Ancla la activación al negocio.
+             * @description Pedido que originó el ofrecimiento. Ancla la activación al negocio y prueba una interacción real: es **obligatorio para el alta**, la primera vez que alguien se vuelve cliente de este negocio.
+             *     Se **omite en el reingreso**: quien ya es cliente de este negocio y perdió su sesión pide el código solo con su correo. La respuesta no distingue los dos casos (FR-031), así que omitirlo nunca revela si la persona es cliente o no.
              */
-            orderId: string;
+            orderId?: string;
         };
         RequestActivationResponse: {
             /**

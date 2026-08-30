@@ -6,8 +6,6 @@ import { ProductListCard } from '@shared/ui/ProductListCard';
 import { ProductListCardSkeleton } from '@shared/ui/ProductListCardSkeleton';
 import { ProductGridCard } from '@shared/ui/ProductGridCard';
 import { ProductGridCardSkeleton } from '@shared/ui/ProductGridCardSkeleton';
-import { PushPermissionModal } from '@features/push-notifications/PushPermissionModal';
-import { useBranding } from '@app/BrandingContext';
 import { CatalogPicker } from '../CatalogPicker';
 import { CatalogSearchBar } from '../CatalogSearchBar';
 import { catalogSubtitle } from '../purpose';
@@ -23,11 +21,13 @@ function IconBag() {
   );
 }
 
-function IconBell() {
+function IconCalendar() {
   return (
     <svg width="22" height="22" viewBox="0 0 22 22" fill="none" aria-hidden="true">
-      <path d="M6 8.5C6 5.462 8.239 3 11 3C13.761 3 16 5.462 16 8.5V12.5L17.5 15H4.5L6 12.5V8.5Z" stroke="currentColor" strokeWidth="1.2" strokeLinejoin="round" fill="none" />
-      <path d="M9 17.5C9 18.605 9.895 19.5 11 19.5C12.105 19.5 13 18.605 13 17.5" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" />
+      <rect x="3" y="5" width="16" height="14" rx="1.6" stroke="currentColor" strokeWidth="1.2" fill="none" />
+      <path d="M7 2.8V5.6M15 2.8V5.6" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" />
+      <path d="M3 9H19" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" />
+      <path d="M6.5 12.5H11M6.5 15.5H9" stroke="currentColor" strokeWidth="1" strokeLinecap="round" opacity="0.7" />
     </svg>
   );
 }
@@ -73,19 +73,17 @@ const LuxuryMinimalismSkin: React.FC<CatalogPageProps> = ({
   error,
   ordersEnabled,
   bookingsEnabled,
-  showPushModal,
   cartCount,
   companyName,
   logoUrl,
   businessCategory,
   onSearchChange,
   onCartClick,
-  onBellClick,
-  onClosePushModal,
+  onAppointmentsClick,
+  onLogoClick,
   onRetry,
 }) => {
   const { isMobile } = useTheme();
-  const { slug } = useBranding();
 
   if (error) {
     return (
@@ -123,8 +121,17 @@ const LuxuryMinimalismSkin: React.FC<CatalogPageProps> = ({
             )}
 
             <div style={{ display: 'flex', alignItems: 'center', gap: '12px', minWidth: 0, flexShrink: 1 }}>
+              {/* El logo es la entrada a "Nosotros": esa pantalla dejó de ser un tab. Antes era
+                  un <img> decorativo sin destino. */}
               {logoUrl && (
-                <img src={logoUrl} alt="" aria-hidden="true" style={{ height: isPicker ? '56px' : '40px', width: 'auto', objectFit: 'contain', flexShrink: 0 }} />
+                <button
+                  type="button"
+                  onClick={onLogoClick}
+                  aria-label={`Sobre ${companyName}`}
+                  style={{ background: 'none', border: 'none', padding: 0, cursor: 'pointer', display: 'flex', alignItems: 'center', flexShrink: 0, minHeight: '44px' }}
+                >
+                  <img src={logoUrl} alt="" aria-hidden="true" style={{ height: isPicker ? '56px' : '40px', width: 'auto', objectFit: 'contain' }} />
+                </button>
               )}
               <div style={{ minWidth: 0 }}>
                 <span style={{ display: 'block', fontFamily: 'var(--pwa-font-body)', fontWeight: 500, fontSize: '0.9rem', color: 'var(--pwa-text)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
@@ -153,8 +160,8 @@ const LuxuryMinimalismSkin: React.FC<CatalogPageProps> = ({
                   </button>
                 )}
                 {bookingsEnabled && (
-                  <button type="button" onClick={onBellClick} aria-label="Notificaciones de citas" style={{ color: 'var(--pwa-text)', background: 'none', border: 'none', cursor: 'pointer', padding: '4px', display: 'flex', alignItems: 'center', justifyContent: 'center', minWidth: '44px', minHeight: '44px' }}>
-                    <IconBell />
+                  <button type="button" onClick={onAppointmentsClick} aria-label="Citas" style={{ color: 'var(--pwa-text)', background: 'none', border: 'none', cursor: 'pointer', padding: '4px', display: 'flex', alignItems: 'center', justifyContent: 'center', minWidth: '44px', minHeight: '44px' }}>
+                    <IconCalendar />
                   </button>
                 )}
               </div>
@@ -256,10 +263,6 @@ const LuxuryMinimalismSkin: React.FC<CatalogPageProps> = ({
       )}
 
       <CatalogFooter />
-
-      {bookingsEnabled && (
-        <PushPermissionModal isOpen={showPushModal} onClose={onClosePushModal} slug={slug} />
-      )}
     </div>
   );
 };

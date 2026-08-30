@@ -24,8 +24,8 @@ const baseProps: ProductPageProps = {
   onBack: vi.fn(), onGoHome: vi.fn(), onImageSelect: vi.fn(),
   showPrices: true, currency: 'USD', businessModel: 'DIRECT', companyName: 'ASEALLERGAN',
   categoryName: 'Convenios', logoUrl: null, businessCategory: null,
-  ordersEnabled: false, bookingsEnabled: false, cartCount: 0, isPushSubscribed: false, showPushModal: false,
-  onCartClick: vi.fn(), onBellClick: vi.fn(), onClosePushModal: vi.fn(),
+  ordersEnabled: false, bookingsEnabled: false, cartCount: 0, isPushSubscribed: false,
+  onCartClick: vi.fn(), onAppointmentsClick: vi.fn(),
 };
 
 describe('LuxuryMinimalismProductSkin — más información', () => {

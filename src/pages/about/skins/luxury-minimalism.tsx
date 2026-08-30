@@ -27,7 +27,9 @@ const LuxuryMinimalismAboutSkin: React.FC<AboutPageProps> = ({
   isLoading,
   error,
   companyName,
+  showSignIn,
   onGoHome,
+  onSignIn,
 }) => {
   if (error) {
     return (
@@ -174,7 +176,34 @@ const LuxuryMinimalismAboutSkin: React.FC<AboutPageProps> = ({
           </div>
         )}
 
-
+        {/* Reingreso. Esta pantalla es el segundo tab cuando no hay sesión, así que es el
+            único lugar de la PWA desde donde se puede volver a entrar a una cuenta. */}
+        {showSignIn && (
+          <div style={{ marginTop: '40px', paddingTop: '28px', borderTop: '1px solid var(--pwa-border)', textAlign: 'center' }}>
+            <p style={{ fontFamily: 'var(--pwa-font-body)', fontSize: '13px', color: 'var(--pwa-text-secondary)', lineHeight: 1.6, margin: '0 0 14px' }}>
+              ¿Ya tenés cuenta con nosotros?
+            </p>
+            <button
+              type="button"
+              onClick={onSignIn}
+              style={{
+                padding: '12px 28px',
+                fontFamily: 'var(--pwa-font-body)',
+                fontSize: '11px',
+                fontWeight: 600,
+                letterSpacing: '0.16em',
+                textTransform: 'uppercase',
+                color: 'var(--pwa-text)',
+                background: 'none',
+                border: '1px solid var(--pwa-border)',
+                borderRadius: 'var(--pwa-radius-button)',
+                cursor: 'pointer',
+              }}
+            >
+              Entrar a mi cuenta
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );

@@ -45,10 +45,8 @@ export interface ProductPageProps {
   bookingsEnabled: boolean;
   cartCount: number;
   isPushSubscribed: boolean;
-  showPushModal: boolean;
   onCartClick: () => void;
-  onBellClick: () => void;
-  onClosePushModal: () => void;
+  onAppointmentsClick: () => void;
 }
 
 export function useProductPage(): ProductPageProps {
@@ -66,7 +64,6 @@ export function useProductPage(): ProductPageProps {
   const [activeImage, setActiveImage] = useState<string | null>(null);
   const [quantity, setQuantity] = useState(1);
   const [addedFeedback, setAddedFeedback] = useState(false);
-  const [showPushModal, setShowPushModal] = useState(false);
   const [noteOpen, setNoteOpen] = useState(false);
   const [note, setNote] = useState('');
 
@@ -137,16 +134,11 @@ export function useProductPage(): ProductPageProps {
 
   const bookingsEnabled = branding.featuresEnabled?.bookings === true;
 
-  function onBellClick() {
-    if (isPushSubscribed) {
-      navigate('/appointments');
-    } else {
-      setShowPushModal(true);
-    }
-  }
-
-  function onClosePushModal() {
-    setShowPushModal(false);
+  // Va derecho a citas. Antes este botón era una campana que, sin suscripción push, abría un
+  // modal en vez de llevar a ningún lado: el acceso a reservas quedaba detrás de un permiso
+  // que la persona no había pedido. El ofrecimiento de push tiene su lugar tras reservar.
+  function onAppointmentsClick() {
+    void navigate('/appointments');
   }
 
   const variantTypes = product?.variantTypes ?? [];
@@ -233,9 +225,7 @@ export function useProductPage(): ProductPageProps {
     bookingsEnabled,
     cartCount: cartItems.reduce((s, i) => s + i.quantity, 0),
     isPushSubscribed,
-    showPushModal,
     onCartClick,
-    onBellClick,
-    onClosePushModal,
+    onAppointmentsClick,
   };
 }

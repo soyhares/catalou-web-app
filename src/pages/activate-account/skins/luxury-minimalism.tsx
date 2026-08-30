@@ -29,17 +29,106 @@ const primaryButton: React.CSSProperties = {
   cursor: 'pointer',
 };
 
+const textInput: React.CSSProperties = {
+  width: '100%',
+  padding: '14px',
+  fontSize: '15px',
+  fontFamily: 'var(--pwa-font-body)',
+  color: 'var(--pwa-text)',
+  backgroundColor: 'var(--pwa-surface)',
+  border: '1px solid var(--pwa-border)',
+  borderRadius: 'var(--pwa-radius-button)',
+};
+
+const quietButton: React.CSSProperties = {
+  marginTop: '16px',
+  fontSize: '11px',
+  color: 'var(--pwa-text)',
+  opacity: 0.6,
+  textTransform: 'uppercase',
+  letterSpacing: '0.2em',
+  background: 'none',
+  border: 'none',
+  cursor: 'pointer',
+  fontFamily: 'var(--pwa-font-body)',
+};
+
 const LuxuryMinimalismActivateAccountSkin: React.FC<ActivateAccountPageProps> = ({
+  step,
   email,
   code,
+  maskedEmail,
+  isRequesting,
   isVerifying,
   error,
   linkedOrderCount,
+  onEmailChange,
+  onRequestCode,
   onCodeChange,
   onSubmit,
   onCancel,
   onDone,
-}) => linkedOrderCount !== null ? (
+}) => linkedOrderCount === null && step === 'email' ? (
+  /* Paso 1 — reingreso: solo el correo. Quien viene de un pedido o del enlace del correo
+     nunca ve esta pantalla, porque ya trae el email. */
+  <div style={shell}>
+    <form
+      onSubmit={(e) => {
+        e.preventDefault();
+        onRequestCode();
+      }}
+      style={{ width: '100%', maxWidth: '340px', textAlign: 'center' }}
+    >
+      <div style={accentRule} />
+
+      <h1 style={{ fontFamily: 'var(--pwa-font-heading)', fontSize: '1.6rem', fontWeight: 400, color: 'var(--pwa-text)', margin: '0 0 12px' }}>
+        Entrá a tu cuenta
+      </h1>
+
+      <p style={{ fontFamily: 'var(--pwa-font-body)', fontSize: '13px', color: 'var(--pwa-text-secondary)', lineHeight: 1.6, margin: '0 0 28px' }}>
+        Te enviamos un código de 6 dígitos al correo con el que hiciste tus pedidos
+      </p>
+
+      <label htmlFor="activation-email" className="sr-only">
+        Tu correo
+      </label>
+      <input
+        id="activation-email"
+        type="email"
+        value={email}
+        onChange={(e) => onEmailChange(e.target.value)}
+        inputMode="email"
+        autoComplete="email"
+        placeholder="tu@correo.com"
+        aria-invalid={Boolean(error)}
+        aria-describedby={error ? 'activation-error' : undefined}
+        style={textInput}
+      />
+
+      {error && (
+        <p id="activation-error" role="alert" style={{ fontSize: '12px', color: '#b42318', margin: '10px 0 0' }}>
+          {error}
+        </p>
+      )}
+
+      <button
+        type="submit"
+        disabled={isRequesting || !email.trim()}
+        style={{
+          ...primaryButton,
+          marginTop: '20px',
+          opacity: isRequesting || !email.trim() ? 0.6 : 1,
+        }}
+      >
+        {isRequesting ? 'Enviando...' : 'Enviarme un código'}
+      </button>
+
+      <button type="button" onClick={onCancel} style={quietButton}>
+        Ahora no
+      </button>
+    </form>
+  </div>
+) : linkedOrderCount !== null ? (
   <div style={shell}>
     <div style={{ width: '100%', maxWidth: '340px', textAlign: 'center' }}>
       <div style={accentRule} />
@@ -107,7 +196,7 @@ const LuxuryMinimalismActivateAccountSkin: React.FC<ActivateAccountPageProps> = 
           margin: '0 0 28px',
         }}
       >
-        Te enviamos un código de 6 dígitos {email ? `a ${email}` : 'a tu correo'}
+        Te enviamos un código de 6 dígitos {(maskedEmail ?? email) ? `a ${maskedEmail ?? email}` : 'a tu correo'}
       </p>
 
       <label htmlFor="activation-code" className="sr-only">

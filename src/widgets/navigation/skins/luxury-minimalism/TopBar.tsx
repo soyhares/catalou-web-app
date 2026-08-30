@@ -7,6 +7,7 @@ const LuxuryTopBar: React.FC<NavigationProps> = ({
   activeRoute,
   cartCount,
   ordersEnabled,
+  bookingsEnabled,
   links,
   onNavigate,
 }) => {
@@ -24,8 +25,16 @@ const LuxuryTopBar: React.FC<NavigationProps> = ({
     }}>
       {/* Company logo + name — serif italic */}
       <div style={{ flex: '0 0 auto', minWidth: '120px', display: 'flex', alignItems: 'center', gap: '10px' }}>
+        {/* El logo abre "Nosotros", igual que en mobile: dejó de ser un tab. */}
         {logoUrl && (
-          <img src={logoUrl} alt="" aria-hidden="true" style={{ height: '36px', width: 'auto', objectFit: 'contain' }} />
+          <button
+            type="button"
+            onClick={() => onNavigate('/about')}
+            aria-label={`Sobre ${companyName}`}
+            style={{ background: 'none', border: 'none', padding: 0, cursor: 'pointer', display: 'flex', alignItems: 'center' }}
+          >
+            <img src={logoUrl} alt="" aria-hidden="true" style={{ height: '36px', width: 'auto', objectFit: 'contain' }} />
+          </button>
         )}
         <span style={{
           fontFamily: 'var(--pwa-font-heading)',
@@ -82,6 +91,27 @@ const LuxuryTopBar: React.FC<NavigationProps> = ({
 
       {/* Right: Cart (only when orders enabled) */}
       <div style={{ flex: '0 0 auto', minWidth: '120px', display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: '20px' }}>
+        {bookingsEnabled && (
+          <button
+            type="button"
+            onClick={() => onNavigate('/appointments')}
+            style={{
+              background: 'none',
+              border: 'none',
+              cursor: 'pointer',
+              fontFamily: 'var(--pwa-font-body)',
+              fontSize: '9px',
+              textTransform: 'uppercase',
+              letterSpacing: '0.16em',
+              color: activeRoute === '/appointments' ? 'var(--pwa-accent)' : 'var(--pwa-text)',
+              opacity: activeRoute === '/appointments' ? 1 : 0.55,
+              fontWeight: 600,
+              padding: 0,
+            }}
+          >
+            Citas
+          </button>
+        )}
         {ordersEnabled && (
           <button
             type="button"

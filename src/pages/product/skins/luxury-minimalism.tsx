@@ -2,11 +2,9 @@ import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CatalogFooter } from '@shared/ui/CatalogFooter';
 import { useTheme } from '@shared/ui/ThemeProvider';
-import { useBranding } from '@app/BrandingContext';
 import { formatPrice } from '@shared/lib/formatPrice';
 import { PriceDisclaimer } from '@shared/ui';
 import { WhatsAppProductConsultButton } from '@shared/ui/WhatsAppProductConsultButton';
-import { PushPermissionModal } from '@features/push-notifications/PushPermissionModal';
 import { businessCategoryLabel } from '@entities/company/businessCategoryLabels';
 import type { ProductPageProps } from '../useProductPage';
 
@@ -53,11 +51,13 @@ function IconBag() {
   );
 }
 
-function IconBell() {
+function IconCalendar() {
   return (
     <svg width="22" height="22" viewBox="0 0 22 22" fill="none" aria-hidden="true">
-      <path d="M6 8.5C6 5.462 8.239 3 11 3C13.761 3 16 5.462 16 8.5V12.5L17.5 15H4.5L6 12.5V8.5Z" stroke="currentColor" strokeWidth="1.2" strokeLinejoin="round" fill="none" />
-      <path d="M9 17.5C9 18.605 9.895 19.5 11 19.5C12.105 19.5 13 18.605 13 17.5" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" />
+      <rect x="3" y="5" width="16" height="14" rx="1.6" stroke="currentColor" strokeWidth="1.2" fill="none" />
+      <path d="M7 2.8V5.6M15 2.8V5.6" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" />
+      <path d="M3 9H19" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" />
+      <path d="M6.5 12.5H11M6.5 15.5H9" stroke="currentColor" strokeWidth="1" strokeLinecap="round" opacity="0.7" />
     </svg>
   );
 }
@@ -99,14 +99,11 @@ const LuxuryMinimalismProductSkin: React.FC<ProductPageProps> = (props) => {
     ordersEnabled,
     bookingsEnabled,
     cartCount,
-    showPushModal,
     onCartClick,
-    onBellClick,
-    onClosePushModal,
+    onAppointmentsClick,
   } = props;
 
   const { isMobile } = useTheme();
-  const { slug } = useBranding();
   const { t } = useTranslation();
   const galleryImages = product ? [...product.images].sort((a, b) => a.sortOrder - b.sortOrder) : [];
   const [expanded, setExpanded] = useState(false);
@@ -206,8 +203,8 @@ const LuxuryMinimalismProductSkin: React.FC<ProductPageProps> = (props) => {
                 </button>
               )}
               {bookingsEnabled && (
-                <button type="button" onClick={onBellClick} aria-label="Notificaciones de citas" style={{ color: 'var(--pwa-text)', background: 'none', border: 'none', cursor: 'pointer', padding: '4px', display: 'flex', alignItems: 'center', justifyContent: 'center', minWidth: '44px', minHeight: '44px' }}>
-                  <IconBell />
+                <button type="button" onClick={onAppointmentsClick} aria-label="Citas" style={{ color: 'var(--pwa-text)', background: 'none', border: 'none', cursor: 'pointer', padding: '4px', display: 'flex', alignItems: 'center', justifyContent: 'center', minWidth: '44px', minHeight: '44px' }}>
+                  <IconCalendar />
                 </button>
               )}
             </div>
@@ -604,10 +601,6 @@ const LuxuryMinimalismProductSkin: React.FC<ProductPageProps> = (props) => {
 
         <CatalogFooter className="mt-4 px-4" />
       </div>
-
-      {bookingsEnabled && (
-        <PushPermissionModal isOpen={showPushModal} onClose={onClosePushModal} slug={slug} />
-      )}
     </div>
   );
 };

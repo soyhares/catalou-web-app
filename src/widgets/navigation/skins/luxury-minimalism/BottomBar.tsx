@@ -42,17 +42,31 @@ function IconAbout({ active }: { active: boolean }) {
   );
 }
 
+function IconStorefront({ active }: { active: boolean }) {
+  /* Awning over a doorway — the business itself, not a person */
+  const op = active ? 1 : 0.42;
+  return (
+    <svg width="15" height="15" viewBox="0 0 15 15" fill="none" aria-hidden="true" style={{ opacity: op }}>
+      <path d="M2 5.5H13V12.5C13 12.7761 12.7761 13 12.5 13H2.5C2.22386 13 2 12.7761 2 12.5V5.5Z" stroke="currentColor" strokeWidth="1.05" fill="none" />
+      <path d="M1.5 5.5L2.8 2.3C2.88 2.12 3.05 2 3.25 2H11.75C11.95 2 12.12 2.12 12.2 2.3L13.5 5.5" stroke="currentColor" strokeWidth="1.05" strokeLinejoin="round" fill="none" />
+      <path d="M6 13V9.2C6 9.09 6.09 9 6.2 9H8.8C8.91 9 9 9.09 9 9.2V13" stroke="currentColor" strokeWidth="0.95" strokeLinejoin="round" fill="none" opacity="0.8" />
+    </svg>
+  );
+}
+
 const ICONS: Record<string, (active: boolean) => React.ReactNode> = {
   '/catalog':      (a) => <IconCatalog active={a} />,
   '/appointments': (a) => <IconAppointments active={a} />,
-  '/about':        (a) => <IconAbout active={a} />,
+  // El cameo de persona es el icono de la cuenta, no el de Nosotros: la pantalla de cuenta
+  // no tenía entrada acá y se dibujaba sin icono, con el hueco a la vista.
+  '/account':      (a) => <IconAbout active={a} />,
+  '/about':        (a) => <IconStorefront active={a} />,
 };
 
 /* ── Component ──────────────────────────────────────────────────────────── */
 
 const LuxuryBottomBar: React.FC<NavigationProps> = ({
   activeRoute,
-  cartCount,
   links,
   onNavigate,
 }) => {
@@ -74,7 +88,6 @@ const LuxuryBottomBar: React.FC<NavigationProps> = ({
     >
       {links.map((link) => {
         const isActive = activeRoute === link.path;
-        const showBadge = link.path === '/cart' && cartCount > 0;
         return (
           <button
             key={link.path}
@@ -107,28 +120,6 @@ const LuxuryBottomBar: React.FC<NavigationProps> = ({
               opacity: isActive ? 1 : 0,
               transition: 'opacity 200ms ease',
             }} />
-
-            {/* Cart badge */}
-            {showBadge && (
-              <span style={{
-                position: 'absolute',
-                top: '14px',
-                right: 'calc(50% - 14px)',
-                minWidth: '14px',
-                height: '14px',
-                borderRadius: '50%',
-                backgroundColor: 'var(--pwa-accent)',
-                color: 'var(--pwa-on-accent)',
-                fontSize: '8px',
-                fontWeight: 700,
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                padding: '0 3px',
-              }}>
-                {cartCount > 9 ? '9+' : cartCount}
-              </span>
-            )}
 
             {/* Icon */}
             {ICONS[link.path]?.(isActive)}
