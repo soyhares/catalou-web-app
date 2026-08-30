@@ -17,9 +17,13 @@ export type RequestActivationResponse = components['schemas']['RequestActivation
 /** Wire shape of `POST /customers/{slug}/activation/verify` (snake-free, camelCase). */
 type VerifyActivationResponse = components['schemas']['CustomerSession'];
 
+/**
+ * `orderId` va en el ALTA (lo aporta el pedido recién hecho) y se omite en el REINGRESO de
+ * quien ya es cliente. La respuesta es la misma en ambos casos: nunca revela cuál fue.
+ */
 export async function requestActivation(
   slug: string,
-  input: { email: string; orderId: string },
+  input: { email: string; orderId?: string },
 ): Promise<RequestActivationResponse> {
   return publicFetch<RequestActivationResponse>(
     `/customers/${encodeURIComponent(slug)}/activation/request`,

@@ -26,6 +26,25 @@ const label: React.CSSProperties = {
   margin: '0 0 8px',
 };
 
+const fieldLabel: React.CSSProperties = {
+  display: 'block',
+  fontFamily: 'var(--pwa-font-body)',
+  fontSize: '11px',
+  color: 'var(--pwa-text-secondary)',
+  margin: '0 0 6px',
+};
+
+const fieldInput: React.CSSProperties = {
+  width: '100%',
+  padding: '12px',
+  fontSize: '14px',
+  fontFamily: 'var(--pwa-font-body)',
+  color: 'var(--pwa-text)',
+  backgroundColor: 'var(--pwa-surface)',
+  border: '1px solid var(--pwa-border)',
+  borderRadius: 'var(--pwa-radius-button)',
+};
+
 function formatDate(iso: string): string {
   return new Date(iso).toLocaleDateString('es-CR', {
     day: '2-digit',
@@ -38,10 +57,21 @@ const LuxuryMinimalismAccountSkin: React.FC<AccountPageProps> = ({
   profile,
   orders,
   currency,
+  ordersEnabled,
+  bookingsEnabled,
   isLoading,
   error,
   isDeleting,
+  isEditing,
+  isSaving,
+  editName,
+  editPhone,
   onRetry,
+  onStartEdit,
+  onCancelEdit,
+  onEditNameChange,
+  onEditPhoneChange,
+  onSaveProfile,
   onSignOut,
   onDeleteAccount,
   onGoBack,
@@ -60,7 +90,7 @@ const LuxuryMinimalismAccountSkin: React.FC<AccountPageProps> = ({
           color: 'var(--pwa-text)',
           margin: '0 0 6px',
         }}>
-          Tu cuenta
+          Tu actividad
         </h1>
         <p style={{
           fontFamily: 'var(--pwa-font-body)',
@@ -93,24 +123,112 @@ const LuxuryMinimalismAccountSkin: React.FC<AccountPageProps> = ({
         )}
 
         <p style={label}>Tus datos</p>
-        <dl style={{
-          fontFamily: 'var(--pwa-font-body)',
-          fontSize: '13px',
-          color: 'var(--pwa-text)',
-          margin: '0 0 32px',
-        }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0' }}>
-            <dt style={{ color: 'var(--pwa-text-secondary)' }}>Correo</dt>
-            <dd style={{ margin: 0, wordBreak: 'break-all' }}>{profile?.email ?? '—'}</dd>
-          </div>
-          <div style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0' }}>
-            <dt style={{ color: 'var(--pwa-text-secondary)' }}>Teléfono</dt>
-            <dd style={{ margin: 0 }}>{profile?.phone ?? '—'}</dd>
-          </div>
-        </dl>
+        {isEditing ? (
+          <form
+            onSubmit={(e) => { e.preventDefault(); onSaveProfile(); }}
+            style={{ margin: '0 0 32px', display: 'flex', flexDirection: 'column', gap: '12px' }}
+          >
+            <div>
+              <label htmlFor="account-name" style={fieldLabel}>Nombre</label>
+              <input
+                id="account-name"
+                value={editName}
+                onChange={(e) => onEditNameChange(e.target.value)}
+                autoComplete="name"
+                style={fieldInput}
+              />
+            </div>
+            <div>
+              <label htmlFor="account-phone" style={fieldLabel}>Teléfono</label>
+              <input
+                id="account-phone"
+                value={editPhone}
+                onChange={(e) => onEditPhoneChange(e.target.value)}
+                inputMode="tel"
+                autoComplete="tel"
+                style={fieldInput}
+              />
+            </div>
+            {/* El correo es la identidad de la cuenta: cambiarlo sería activar otra. */}
+            <p style={{ fontFamily: 'var(--pwa-font-body)', fontSize: '11px', color: 'var(--pwa-text-secondary)', margin: 0 }}>
+              Tu correo ({profile?.email ?? '—'}) identifica tu cuenta y no se puede cambiar.
+            </p>
+            <div style={{ display: 'flex', gap: '8px' }}>
+              <button
+                type="submit"
+                disabled={isSaving || !editName.trim()}
+                style={{
+                  flex: 1,
+                  padding: '12px',
+                  fontSize: '13px',
+                  fontWeight: 600,
+                  backgroundColor: 'var(--pwa-accent)',
+                  color: 'var(--pwa-on-accent)',
+                  border: 'none',
+                  borderRadius: 'var(--pwa-radius-button)',
+                  cursor: 'pointer',
+                  opacity: isSaving || !editName.trim() ? 0.6 : 1,
+                }}
+              >
+                {isSaving ? 'Guardando...' : 'Guardar'}
+              </button>
+              <button
+                type="button"
+                onClick={onCancelEdit}
+                style={{
+                  padding: '12px 18px',
+                  fontSize: '13px',
+                  color: 'var(--pwa-text-secondary)',
+                  background: 'none',
+                  border: '1px solid var(--pwa-border)',
+                  borderRadius: 'var(--pwa-radius-button)',
+                  cursor: 'pointer',
+                }}
+              >
+                Cancelar
+              </button>
+            </div>
+          </form>
+        ) : (
+          <>
+            <dl style={{
+              fontFamily: 'var(--pwa-font-body)',
+              fontSize: '13px',
+              color: 'var(--pwa-text)',
+              margin: '0 0 12px',
+            }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0' }}>
+                <dt style={{ color: 'var(--pwa-text-secondary)' }}>Correo</dt>
+                <dd style={{ margin: 0, wordBreak: 'break-all' }}>{profile?.email ?? '—'}</dd>
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0' }}>
+                <dt style={{ color: 'var(--pwa-text-secondary)' }}>Teléfono</dt>
+                <dd style={{ margin: 0 }}>{profile?.phone ?? '—'}</dd>
+              </div>
+            </dl>
+            <button
+              type="button"
+              onClick={onStartEdit}
+              style={{
+                fontSize: '12px',
+                color: 'var(--pwa-accent)',
+                background: 'none',
+                border: 'none',
+                cursor: 'pointer',
+                textDecoration: 'underline',
+                padding: 0,
+                margin: '0 0 32px',
+              }}
+            >
+              Editar mis datos
+            </button>
+          </>
+        )}
 
-        <p style={label}>Tus pedidos</p>
-        {isLoading ? (
+        {ordersEnabled && (
+          <>
+            <p style={label}>Tus pedidos</p>
+            {isLoading ? (
           <p style={{ fontSize: '13px', color: 'var(--pwa-text-secondary)' }}>Cargando...</p>
         ) : orders.length === 0 ? (
           <p style={{
@@ -150,6 +268,24 @@ const LuxuryMinimalismAccountSkin: React.FC<AccountPageProps> = ({
               </li>
             ))}
           </ul>
+            )}
+          </>
+        )}
+
+        {/* Un negocio Business ve las dos secciones. El historial real de reservas todavía no
+            existe en el backend (segunda ola de SPEC-022): se dice, no se finge. */}
+        {bookingsEnabled && (
+          <>
+            <p style={label}>Tus reservas</p>
+            <p style={{
+              fontFamily: 'var(--pwa-font-body)',
+              fontSize: '13px',
+              color: 'var(--pwa-text-secondary)',
+              margin: '0 0 32px',
+            }}>
+              Todavía no podés ver tus reservas acá. Muy pronto.
+            </p>
+          </>
         )}
 
         <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>

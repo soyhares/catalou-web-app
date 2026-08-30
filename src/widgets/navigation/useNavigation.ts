@@ -13,6 +13,7 @@ export interface NavigationProps {
   activeRoute: string;
   cartCount: number;
   ordersEnabled: boolean;
+  bookingsEnabled: boolean;
   companyName: string;
   logoUrl: string | null;
   isDrawerOpen: boolean;
@@ -21,12 +22,6 @@ export interface NavigationProps {
   onCloseDrawer: () => void;
   onNavigate: (path: string) => void;
 }
-
-const BASE_LINKS: NavLink[] = [
-  { label: 'Inicio', path: '/catalog' },
-  { label: 'Citas', path: '/appointments' },
-  { label: 'Nosotros', path: '/about' },
-];
 
 function resolveActiveRoute(pathname: string): string {
   if (pathname.startsWith('/products/')) return '/catalog';
@@ -59,22 +54,27 @@ export function useNavigation(): NavigationProps {
     [navigate],
   );
 
-  const bookingsEnabled = branding.featuresEnabled?.bookings === true;
   const ordersEnabled = branding.featuresEnabled?.orders === true;
-  const visibleLinks = bookingsEnabled
-    ? BASE_LINKS
-    : BASE_LINKS.filter((l) => l.path !== '/appointments');
 
-  // SPEC-022 (T058): el acceso a la cuenta aparece solo con sesión en ESTE negocio. Sin
-  // sesión no se ofrece nada: la cuenta se activa desde un pedido, no desde un login.
-  const links = readSession(slug)
-    ? [...visibleLinks, { label: 'Mi cuenta', path: '/account' }]
-    : visibleLinks;
+  // Dos tabs. Citas dejó de ser uno: subió al header del catálogo como CTA, al lado del
+  // carrito, para que un negocio con pedidos y reservas muestre los dos accesos ahí.
+  //
+  // El segundo tab es la actividad de la persona. Sin sesión no se esconde — muestra
+  // "Nosotros", que además es desde donde se ofrece entrar a la cuenta. Antes este tab
+  // simplemente no existía sin sesión, así que quien perdía la suya se quedaba sin puerta.
+  const hasSession = readSession(slug) !== null;
+  const links: NavLink[] = [
+    { label: 'Inicio', path: '/catalog' },
+    hasSession
+      ? { label: 'Mi actividad', path: '/account' }
+      : { label: 'Nosotros', path: '/about' },
+  ];
 
   return {
     activeRoute: resolveActiveRoute(location.pathname),
     cartCount,
     ordersEnabled,
+    bookingsEnabled: branding.featuresEnabled?.bookings === true,
     companyName: branding.companyName,
     logoUrl: branding.logoUrl,
     isDrawerOpen,

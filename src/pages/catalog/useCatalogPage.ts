@@ -45,11 +45,11 @@ export interface CatalogPageProps {
   ordersEnabled: boolean;
   bookingsEnabled: boolean;
   isPushSubscribed: boolean;
-  showPushModal: boolean;
   onSearchChange: (q: string) => void;
   onCartClick: () => void;
-  onBellClick: () => void;
-  onClosePushModal: () => void;
+  /** El logo del negocio es la entrada a "Nosotros", que dejó de ser un tab. */
+  onLogoClick: () => void;
+  onAppointmentsClick: () => void;
   onRetry: () => void;
 }
 
@@ -66,23 +66,21 @@ export function useCatalogPage(): CatalogPageProps {
   const [searchQuery, setSearchQuery] = useState('');
   const [debouncedQuery, setDebouncedQuery] = useState('');
   const [selectedSubcategoryId, setSelectedSubcategoryId] = useState<string | null>(null);
-  const [showPushModal, setShowPushModal] = useState(false);
 
   const selectedCatalogId = searchParams.get('catalogo');
   const cartCount = cartItems.reduce((s, i) => s + i.quantity, 0);
   const ordersEnabled = branding.featuresEnabled?.orders === true;
   const bookingsEnabled = branding.featuresEnabled?.bookings === true;
 
-  function onBellClick() {
-    if (isPushSubscribed) {
-      void navigate('/appointments');
-    } else {
-      setShowPushModal(true);
-    }
+  function onLogoClick() {
+    void navigate('/about');
   }
 
-  function onClosePushModal() {
-    setShowPushModal(false);
+  // Va derecho a citas. Antes este botón era una campana que, sin suscripción push, abría un
+  // modal en vez de llevar a ningún lado: el acceso a reservas quedaba detrás de un permiso
+  // que la persona no había pedido. El ofrecimiento de push tiene su lugar tras reservar.
+  function onAppointmentsClick() {
+    void navigate('/appointments');
   }
 
   useEffect(() => {
@@ -212,11 +210,10 @@ export function useCatalogPage(): CatalogPageProps {
     ordersEnabled,
     bookingsEnabled,
     isPushSubscribed,
-    showPushModal,
     onSearchChange,
     onCartClick,
-    onBellClick,
-    onClosePushModal,
+    onAppointmentsClick,
+    onLogoClick,
     onRetry: () => void load(),
   };
 }
