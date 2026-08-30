@@ -141,7 +141,7 @@ const LuxuryMinimalismAccountSkin: React.FC<AccountPageProps> = ({
                   </p>
                   <p style={{ fontSize: '11px', color: 'var(--pwa-text-secondary)', margin: '2px 0 0' }}>
                     {STATUS_LABELS[order.status] ?? order.status}
-                    {order.itemCount ? ` · ${order.itemCount} ítems` : ''}
+                    {order.itemCount ? ` · ${order.itemCount} ${order.itemCount === 1 ? 'ítem' : 'ítems'}` : ''}
                   </p>
                 </div>
                 <span style={{ fontSize: '13px', color: 'var(--pwa-text)' }}>
