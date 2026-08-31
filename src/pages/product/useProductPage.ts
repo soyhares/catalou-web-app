@@ -73,6 +73,13 @@ export function useProductPage(): ProductPageProps {
         const [p, catalog] = await Promise.all([fetchProduct(slug, id), fetchCatalog(slug)]);
         setProduct(p);
         setActiveImage(p.mainImageUrl);
+        // a variant type with a single value is not a choice: preselect it so the shopper
+        // only picks what is actually ambiguous (and a fully-single product is ready to add)
+        setSelectedValueByType(
+          Object.fromEntries(
+            p.variantTypes.filter((t) => t.values.length === 1).map((t) => [t.id, t.values[0]]),
+          ),
+        );
         const matchedProduct = catalog.products.find((cp) => cp.id === id);
         const category = matchedProduct ? catalog.categories.find((c) => c.id === matchedProduct.categoryId) : undefined;
         setCategoryName(category?.name ?? null);

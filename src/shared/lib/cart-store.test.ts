@@ -73,6 +73,22 @@ describe('cart-store', () => {
     expect(await getCartItems('tenant-b')).toHaveLength(1);
   });
 
+  it('merges a repeated add of the same product + combination into one line', async () => {
+    await addCartItem({ ...BASE_ITEM, variantValueIds: ['v1', 'v2'] });
+    await addCartItem({ ...BASE_ITEM, variantValueIds: ['v2', 'v1'], quantity: 2 });
+    const items = await getCartItems('tenant-a');
+    expect(items).toHaveLength(1);
+    expect(items[0].quantity).toBe(3);
+  });
+
+  it('does not merge a different variant combination, nor lines with a note', async () => {
+    await addCartItem({ ...BASE_ITEM, variantValueIds: ['v1'] });
+    await addCartItem({ ...BASE_ITEM, variantValueIds: ['v2'] });
+    await addCartItem({ ...BASE_ITEM, variantValueIds: ['v1'], note: 'Sin cebolla' });
+    await addCartItem({ ...BASE_ITEM, variantValueIds: ['v1'], note: 'Sin cebolla' });
+    expect(await getCartItems('tenant-a')).toHaveLength(4);
+  });
+
   // SPEC-021 — per-line customer note
   it('addCartItem persists a note; an item without one has no note key', async () => {
     await addCartItem({ ...BASE_ITEM, note: 'Sin cebolla' });
