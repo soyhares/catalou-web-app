@@ -196,6 +196,15 @@ export interface operations {
                     "application/json": components["schemas"]["Error"];
                 };
             };
+            /** @description `EMAIL_DELIVERY_FAILED` — el proveedor rechazó el correo (ADR-027). Es la única excepción al 200 genérico de este endpoint, y existe porque el código vive SOLO en ese mensaje: sin este error la persona esperaría indefinidamente algo que nunca salió. No revela si el correo tenía cuenta: solo se llega acá cuando ya se decidió emitir un código. */
+            502: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
         };
     };
     verifyCustomerActivation: {
