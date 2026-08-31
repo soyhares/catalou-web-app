@@ -1,7 +1,6 @@
 import { createContext, useContext, useEffect, useState, type ReactNode } from 'react';
 import { useBranding } from '@app/BrandingContext';
 import { PWA_THEMES, defaultTheme, type CatalogTheme, type AppearancePayload } from '@shared/styles/pwa-themes';
-import { loadThemeFont } from '@shared/lib/font-loader';
 
 export type { CatalogTheme };
 
@@ -122,7 +121,6 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
   }, [mobileQuery]);
 
   useEffect(() => {
-    loadThemeFont(THEME);
     if (!slug) {
       applyThemeTokens(EMPTY_OVERRIDES);
       return;
