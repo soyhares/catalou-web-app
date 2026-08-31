@@ -9,7 +9,6 @@ import {
   type PublicSubcategory,
 } from '@entities/catalog/api';
 import { useCart } from '@shared/lib/use-cart';
-import { usePushSubscription } from '@features/push-notifications/usePushSubscription';
 import { resolveCardActionKind, CARD_ACTION_LABEL } from './purpose';
 
 export interface CardAction {
@@ -44,7 +43,6 @@ export interface CatalogPageProps {
   businessCategory: string | null;
   ordersEnabled: boolean;
   bookingsEnabled: boolean;
-  isPushSubscribed: boolean;
   onSearchChange: (q: string) => void;
   onCartClick: () => void;
   /** El logo del negocio es la entrada a "Nosotros", que dejó de ser un tab. */
@@ -58,7 +56,6 @@ export function useCatalogPage(): CatalogPageProps {
   const navigate = useNavigate();
   const { add, items: cartItems } = useCart(slug);
   const [searchParams, setSearchParams] = useSearchParams();
-  const { isSubscribed: isPushSubscribed } = usePushSubscription();
 
   const [catalog, setCatalog] = useState<CatalogData | null>(null);
   const [loading, setLoading] = useState(true);
@@ -209,7 +206,6 @@ export function useCatalogPage(): CatalogPageProps {
     businessCategory: branding.businessCategory,
     ordersEnabled,
     bookingsEnabled,
-    isPushSubscribed,
     onSearchChange,
     onCartClick,
     onAppointmentsClick,

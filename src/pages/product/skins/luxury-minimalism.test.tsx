@@ -24,7 +24,7 @@ const baseProps: ProductPageProps = {
   onBack: vi.fn(), onGoHome: vi.fn(), onImageSelect: vi.fn(),
   showPrices: true, currency: 'USD', businessModel: 'DIRECT', companyName: 'ASEALLERGAN',
   categoryName: 'Convenios', logoUrl: null, businessCategory: null,
-  ordersEnabled: false, bookingsEnabled: false, cartCount: 0, isPushSubscribed: false,
+  ordersEnabled: false, bookingsEnabled: false, cartCount: 0,
   onCartClick: vi.fn(), onAppointmentsClick: vi.fn(),
 };
 
