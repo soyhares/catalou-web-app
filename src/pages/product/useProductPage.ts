@@ -5,7 +5,6 @@ import { fetchProduct, type ProductPublic, type VariantValuePublic, type Variant
 import { fetchCatalog } from '@entities/catalog/api';
 import { resolveCardActionKind, type CardActionKind } from '../catalog/purpose';
 import { useCart } from '@shared/lib/use-cart';
-import { usePushSubscription } from '@features/push-notifications/usePushSubscription';
 
 export interface ProductPageProps {
   product: ProductPublic | null;
@@ -44,7 +43,6 @@ export interface ProductPageProps {
   ordersEnabled: boolean;
   bookingsEnabled: boolean;
   cartCount: number;
-  isPushSubscribed: boolean;
   onCartClick: () => void;
   onAppointmentsClick: () => void;
 }
@@ -54,7 +52,6 @@ export function useProductPage(): ProductPageProps {
   const { slug, branding } = useBranding();
   const navigate = useNavigate();
   const { add: addToCart, items: cartItems } = useCart(slug);
-  const { isSubscribed: isPushSubscribed } = usePushSubscription();
 
   const [product, setProduct] = useState<ProductPublic | null>(null);
   const [categoryName, setCategoryName] = useState<string | null>(null);
@@ -224,7 +221,6 @@ export function useProductPage(): ProductPageProps {
     ordersEnabled,
     bookingsEnabled,
     cartCount: cartItems.reduce((s, i) => s + i.quantity, 0),
-    isPushSubscribed,
     onCartClick,
     onAppointmentsClick,
   };
