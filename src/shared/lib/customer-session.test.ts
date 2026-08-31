@@ -4,7 +4,11 @@ import {
   clearSession,
   readSession,
   readLastEmail,
+  expireSession,
   getAccessToken,
+  markKnownCustomer,
+  hasLocalHistory,
+  clearTenantTraces,
   type CustomerSession,
 } from './customer-session';
 
@@ -97,5 +101,59 @@ describe('getAccessToken', () => {
 
     await expect(getAccessToken(SLUG)).resolves.toBeNull();
     expect(fetchSpy).not.toHaveBeenCalled();
+  });
+});
+
+/**
+ * La puerta de reingreso y el borrado de rastros al darse de baja.
+ *
+ * Los dos reportes que las originaron son el mismo defecto visto desde dos lados: la PWA
+ * ofrecía "entrar a mi cuenta" a cualquiera, y la API responde 200 sin mandar nada a quien no
+ * es cliente (FR-031). Resultado: gente esperando un código que nunca iba a existir, incluida
+ * la que acababa de darse de baja.
+ */
+describe('rastro local del cliente', () => {
+  beforeEach(() => localStorage.clear());
+
+  it('un dispositivo en limpio no tiene historia: no se le ofrece reingreso', () => {
+    expect(hasLocalHistory(SLUG)).toBe(false);
+  });
+
+  it('la marca de un negocio no habilita la puerta en otro', () => {
+    markKnownCustomer(SLUG);
+    expect(hasLocalHistory(SLUG)).toBe(true);
+    expect(hasLocalHistory('otro')).toBe(false);
+  });
+
+  it('el correo recordado cuenta como historia, para quien ya usaba la PWA sin la marca', () => {
+    saveSession(SLUG, session());
+    expireSession(SLUG);
+    expect(readLastEmail(SLUG)).not.toBeNull();
+    expect(hasLocalHistory(SLUG)).toBe(true);
+  });
+
+  it('darse de baja borra todo rastro: la puerta desaparece', () => {
+    saveSession(SLUG, session());
+    markKnownCustomer(SLUG);
+    localStorage.setItem(`catalou_account_offer_${SLUG}`, '{}');
+    localStorage.setItem(`booking-contact-${SLUG}`, '{}');
+
+    clearTenantTraces(SLUG);
+
+    expect(hasLocalHistory(SLUG)).toBe(false);
+    expect(readSession(SLUG)).toBeNull();
+    expect(localStorage.getItem(`catalou_account_offer_${SLUG}`)).toBeNull();
+    expect(localStorage.getItem(`booking-contact-${SLUG}`)).toBeNull();
+  });
+
+  it('la baja en un negocio no toca al negocio cuyo slug lo contiene', () => {
+    // `endsWith(slug)` a secas borraba `super-demo` al darse de baja en `demo`.
+    markKnownCustomer(SLUG);
+    markKnownCustomer(`super${SLUG}`);
+
+    clearTenantTraces(SLUG);
+
+    expect(hasLocalHistory(SLUG)).toBe(false);
+    expect(hasLocalHistory(`super${SLUG}`)).toBe(true);
   });
 });

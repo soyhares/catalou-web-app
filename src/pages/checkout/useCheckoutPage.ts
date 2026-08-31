@@ -6,7 +6,8 @@ import { clearCart } from '@shared/lib/cart-store';
 import { useOnlineStatus } from '@shared/hooks/useOnlineStatus';
 import { submitOrder, type OrderType } from '@entities/order/api';
 import { formatPrice } from '@shared/lib/formatPrice';
-import { readSession } from '@shared/lib/customer-session';
+import { ApiError } from '@shared/lib/api';
+import { readSession, markKnownCustomer } from '@shared/lib/customer-session';
 import { getCustomerProfile } from '@entities/customer/api';
 import type { CartItem } from '@shared/lib/cart-store';
 
@@ -137,6 +138,9 @@ export function useCheckoutPage(): CheckoutPageProps {
       })),
     })
       .then((confirmation) => {
+        // Este dispositivo ya interactuó con el negocio: a partir de acá se le puede ofrecer
+        // volver a entrar a su cuenta, porque ya hay un pedido con el que la API responde.
+        markKnownCustomer(slug);
         // SPEC-021: carry the noted lines to the confirmation screen before the cart is cleared
         const notedItems = items
           .filter((item) => item.note)
@@ -145,7 +149,13 @@ export function useCheckoutPage(): CheckoutPageProps {
             variantLabel: item.variantLabel,
             note: item.note as string,
           }));
-        return clearCart(slug).then(() => ({ notedItems, orderId: confirmation.orderId }));
+        // Vaciar el carrito es limpieza local y va DESPUÉS de que el pedido ya existe en el
+        // servidor. Si IndexedDB falla (modo privado, cuota, Safari en PWA instalada), este
+        // `.catch` es lo único que impide mostrar "no se pudo enviar el pedido" por un pedido
+        // que sí se envió — y dejar a la persona reintentando y duplicándolo.
+        return clearCart(slug)
+          .catch(() => undefined)
+          .then(() => ({ notedItems, orderId: confirmation.orderId }));
       })
       .then(({ notedItems, orderId }) => {
         // SPEC-022: the order anchors the account offer to this business, and the email is
@@ -155,8 +165,15 @@ export function useCheckoutPage(): CheckoutPageProps {
           state: { notedItems, orderId, email: form.email.trim() },
         });
       })
-      .catch(() => {
-        setSubmitError('No se pudo enviar el pedido. Intenta nuevamente.');
+      .catch((err: unknown) => {
+        // Un 4xx trae un motivo redactado por la API y accionable por quien compra (el módulo
+        // está apagado, faltó un dato). Un 5xx no le dice nada: ahí el modal de reporte ya se
+        // abrió solo desde `publicFetch`, y este texto solo acompaña.
+        const reason =
+          err instanceof ApiError && err.status < 500 && !err.message.startsWith('Request failed')
+            ? err.message
+            : null;
+        setSubmitError(reason ?? 'No se pudo enviar el pedido. Intenta nuevamente.');
       })
       .finally(() => {
         setIsSubmitting(false);

@@ -5,6 +5,7 @@ import { PageTransition } from '@shared/ui/PageTransition';
 import { AddedToCartToast } from '@shared/ui/AddedToCartToast';
 import { RouteNoticeToast, dispatchRouteUnavailable } from '@shared/ui/RouteNoticeToast';
 import { InstallPromptSheet } from '@widgets/install-prompt/InstallPromptSheet';
+import { ErrorReportModal } from '@shared/ui/ErrorReportModal';
 import Navigation from '@widgets/navigation';
 import { useBranding } from '@app/BrandingContext';
 import { CustomerGuard } from '@app/CustomerGuard';
@@ -84,6 +85,7 @@ export function AppRouter() {
       <AddedToCartToast />
       <RouteNoticeToast />
       <InstallPromptSheet />
+      <ErrorReportModal />
     </BrowserRouter>
   );
 }
