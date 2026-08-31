@@ -3,8 +3,7 @@ import type { components } from '@generated/customers';
 import {
   getAccessToken,
   expireSession,
-  clearSession,
-  clearLastEmail,
+  clearTenantTraces,
   type CustomerSession,
   type CustomerProfile,
 } from '@shared/lib/customer-session';
@@ -126,8 +125,8 @@ export async function deleteOwnAccount(slug: string): Promise<void> {
   await customerFetch<void>(slug, `/customers/${encodeURIComponent(slug)}/me`, {
     method: 'DELETE',
   });
-  clearSession(slug);
-  // La cuenta ya no existe: ofrecer reingreso con su correo sería ofrecerle una puerta a
-  // ninguna parte. `expireSession` es para lo que se pierde sin pedirlo; esto lo pidió.
-  clearLastEmail(slug);
+  // La cuenta ya no existe: el dispositivo no debe conservar ninguna marca de haberla tenido.
+  // Si quedara alguna, la PWA le seguiría ofreciendo reingreso y la API respondería 200 sin
+  // mandar nada — la puerta a ninguna parte que produjo el reporte de "la borré y entro igual".
+  clearTenantTraces(slug);
 }

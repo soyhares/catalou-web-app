@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useBranding } from '@app/BrandingContext';
 import { getCatalogProfile, type CatalogProfile } from '@entities/shopper-profile/api';
-import { readSession, readLastEmail } from '@shared/lib/customer-session';
+import { readSession, readLastEmail, hasLocalHistory } from '@shared/lib/customer-session';
 
 export type { CatalogProfile };
 
@@ -65,7 +65,10 @@ export function useAboutPage(): AboutPageProps {
     isLoading,
     error,
     companyName: branding.companyName,
-    showSignIn: readSession(slug) === null,
+    // Solo para quien ya pidió o tuvo cuenta acá. La cuenta nace de un pedido (FR-002): a
+    // quien nunca pidió, la API no le manda ningún código, así que ofrecerle la puerta es
+    // mandarlo a esperar un correo que no existe.
+    showSignIn: readSession(slug) === null && hasLocalHistory(slug),
     onBack,
     onGoHome,
     onSignIn,

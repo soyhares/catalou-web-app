@@ -41,6 +41,18 @@ const key = (slug: string) => `catalou_customer_session_${slug}`;
  */
 const lastEmailKey = (slug: string) => `catalou_customer_last_email_${slug}`;
 
+/**
+ * Marca de que este dispositivo ya interactuó con este negocio: hizo un pedido o tuvo cuenta.
+ *
+ * Es lo que decide si se ofrece la puerta de reingreso. Sin ella, la PWA le ofrecía "entrar a
+ * mi cuenta" a cualquiera, y la API —que responde 200 aunque no mande nada, para no revelar
+ * quién es cliente de quién (FR-031)— lo dejaba esperando un correo que nunca iba a llegar.
+ *
+ * No es una credencial ni prueba nada ante el servidor: solo evita ofrecer una puerta que para
+ * esa persona no existe.
+ */
+const knownKey = (slug: string) => `catalou_customer_known_${slug}`;
+
 /** Refresh a bit early so an in-flight request never races the expiry. */
 const REFRESH_MARGIN_MS = 60_000;
 
@@ -100,6 +112,53 @@ export function readLastEmail(slug: string): string | null {
 export function clearLastEmail(slug: string): void {
   try {
     localStorage.removeItem(lastEmailKey(slug));
+  } catch {
+    // ignore
+  }
+}
+
+/** Se llama al confirmar un pedido y al activar la cuenta. */
+export function markKnownCustomer(slug: string): void {
+  try {
+    localStorage.setItem(knownKey(slug), '1');
+  } catch {
+    // Modo privado: la puerta de reingreso no se ofrecerá, que es el lado seguro del error.
+  }
+}
+
+/**
+ * ¿Este dispositivo tiene algún rastro de haber pedido o tenido cuenta en este negocio?
+ *
+ * El correo recordado cuenta como rastro por sí solo: es de una sesión que existió acá, y
+ * cubre a quien ya usaba la PWA antes de que existiera la marca.
+ */
+export function hasLocalHistory(slug: string): boolean {
+  try {
+    return localStorage.getItem(knownKey(slug)) !== null || readLastEmail(slug) !== null;
+  } catch {
+    return false;
+  }
+}
+
+/**
+ * Borra todo rastro local de este negocio al darse de baja.
+ *
+ * Barre por sufijo en vez de enumerar claves: así una key nueva de otro feature no sobrevive
+ * a la baja solo porque nadie se acordó de agregarla acá. Cubre sesión, correo recordado,
+ * marca de cliente conocido, estado del ofrecimiento de cuenta, cooldown de prompts y el
+ * contacto guardado de reservas.
+ *
+ * El carrito (IndexedDB) NO se toca: no es rastro de la cuenta, y vaciarlo al darse de baja
+ * sería una pérdida sorpresa de algo que la persona no pidió borrar.
+ */
+export function clearTenantTraces(slug: string): void {
+  try {
+    // El separador importa: con `endsWith(slug)` a secas, darse de baja en `demo` borraría
+    // también la sesión del negocio `superdemo` abierto en el mismo navegador.
+    const suffixes = [`_${slug}`, `-${slug}`];
+    for (const k of Object.keys(localStorage)) {
+      if (suffixes.some((s) => k.endsWith(s))) localStorage.removeItem(k);
+    }
   } catch {
     // ignore
   }

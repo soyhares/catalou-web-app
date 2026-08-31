@@ -2,7 +2,12 @@ import { useState } from 'react';
 import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import { useBranding } from '@app/BrandingContext';
 import { requestActivation, verifyActivation } from '@entities/customer/api';
-import { saveSession, readLastEmail, clearLastEmail } from '@shared/lib/customer-session';
+import {
+  saveSession,
+  readLastEmail,
+  clearLastEmail,
+  markKnownCustomer,
+} from '@shared/lib/customer-session';
 import { recordOffer } from '@features/account-offer/offer-state';
 
 /**
@@ -106,6 +111,7 @@ export function useActivateAccountPage(): ActivateAccountPageProps {
       .then(({ session, linkedOrderCount: linked }) => {
         saveSession(slug, session);
         clearLastEmail(slug);
+        markKnownCustomer(slug);
         recordOffer(slug, 'activated');
         setLinkedOrderCount(linked);
       })

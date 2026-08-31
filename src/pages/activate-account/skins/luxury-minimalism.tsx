@@ -89,7 +89,7 @@ const LuxuryMinimalismActivateAccountSkin: React.FC<ActivateAccountPageProps> = 
       <p style={{ fontFamily: 'var(--pwa-font-body)', fontSize: '13px', color: 'var(--pwa-text-secondary)', lineHeight: 1.6, margin: '0 0 28px' }}>
         {isExpiredSession
           ? 'Por seguridad cerramos la sesión cada tanto. Te enviamos un código nuevo y seguís donde estabas.'
-          : 'Te enviamos un código de 6 dígitos al correo con el que hiciste tus pedidos'}
+          : 'Te enviamos un código de 6 dígitos al correo con el que hiciste tus pedidos en este negocio'}
       </p>
 
       <label htmlFor="activation-email" className="sr-only">
@@ -199,7 +199,11 @@ const LuxuryMinimalismActivateAccountSkin: React.FC<ActivateAccountPageProps> = 
           margin: '0 0 28px',
         }}
       >
-        Te enviamos un código de 6 dígitos {(maskedEmail ?? email) ? `a ${maskedEmail ?? email}` : 'a tu correo'}
+        {/* La API responde igual exista o no la cuenta, para no revelar quién es cliente de
+            quién (FR-031). Prometer el correo en firme dejaba esperando a quien nunca pidió
+            acá; esta redacción no revela nada y no miente. */}
+        Si ya hiciste un pedido con ese correo, te llega un código de 6 dígitos{' '}
+        {(maskedEmail ?? email) ? `a ${maskedEmail ?? email}` : 'a tu correo'}
       </p>
 
       <label htmlFor="activation-code" className="sr-only">
