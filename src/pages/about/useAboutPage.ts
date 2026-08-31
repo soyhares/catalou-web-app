@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useBranding } from '@app/BrandingContext';
 import { getCatalogProfile, type CatalogProfile } from '@entities/shopper-profile/api';
-import { readSession } from '@shared/lib/customer-session';
+import { readSession, readLastEmail } from '@shared/lib/customer-session';
 
 export type { CatalogProfile };
 
@@ -54,9 +54,10 @@ export function useAboutPage(): AboutPageProps {
   }, [navigate]);
 
   const onSignIn = useCallback(() => {
-    // Sin state: la pantalla arranca por el paso del correo.
-    void navigate('/activate-account');
-  }, [navigate]);
+    // Arranca por el paso del correo. Si ya hubo sesión en este negocio, la pantalla lo
+    // prellena sola desde `readLastEmail`.
+    void navigate(readLastEmail(slug) ? '/activate-account?expired=1' : '/activate-account');
+  }, [navigate, slug]);
 
   return {
     profile,

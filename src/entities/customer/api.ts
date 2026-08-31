@@ -2,7 +2,9 @@ import { publicFetch, ApiError } from '@shared/lib/api';
 import type { components } from '@generated/customers';
 import {
   getAccessToken,
+  expireSession,
   clearSession,
+  clearLastEmail,
   type CustomerSession,
   type CustomerProfile,
 } from '@shared/lib/customer-session';
@@ -70,8 +72,10 @@ export type CustomerOrderSummary = components['schemas']['CustomerOrderSummary']
 /**
  * Igual que `publicFetch`, pero con el bearer del cliente de ESTE negocio.
  *
- * Un 401 limpia la sesión local: el token dejó de servir y dejarlo guardado solo produce
- * pantallas que fallan en silencio. Nunca cae de vuelta a otra identidad.
+ * Un 401 cierra la sesión local: el token dejó de servir y dejarlo guardado solo produce
+ * pantallas que fallan en silencio. Se usa `expireSession` y no `clearSession` porque esto no
+ * lo pidió la persona — recordar su correo es lo que hace que el reingreso sea un toque y no
+ * un formulario. Nunca cae de vuelta a otra identidad.
  */
 async function customerFetch<T>(
   slug: string,
@@ -87,7 +91,7 @@ async function customerFetch<T>(
       headers: { ...options.headers, Authorization: `Bearer ${token}` },
     });
   } catch (err) {
-    if (err instanceof ApiError && err.status === 401) clearSession(slug);
+    if (err instanceof ApiError && err.status === 401) expireSession(slug);
     throw err;
   }
 }
@@ -123,4 +127,7 @@ export async function deleteOwnAccount(slug: string): Promise<void> {
     method: 'DELETE',
   });
   clearSession(slug);
+  // La cuenta ya no existe: ofrecer reingreso con su correo sería ofrecerle una puerta a
+  // ninguna parte. `expireSession` es para lo que se pierde sin pedirlo; esto lo pidió.
+  clearLastEmail(slug);
 }

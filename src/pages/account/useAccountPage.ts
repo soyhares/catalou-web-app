@@ -69,12 +69,11 @@ export function useAccountPage(): AccountPageProps {
         setOrders(history.items);
       })
       .catch((err: unknown) => {
-        // Un 401 ya dejó la sesión limpia: reintentar acá fallaría para siempre y el guard ya
-        // corrió, así que la persona quedaría encerrada en una pantalla sin salida. Se la
-        // devuelve al catálogo, donde el ofrecimiento vuelve a estar disponible.
+        // Un 401 ya cerró la sesión: reintentar acá fallaría para siempre. Se la manda a
+        // reingresar con el correo puesto, no al catálogo sin explicación — antes acababa en
+        // el catálogo sin saber qué había pasado ni cómo volver.
         if (err instanceof ApiError && err.status === 401) {
-          clearSession(slug);
-          void navigate('/catalog', { replace: true });
+          void navigate('/activate-account?expired=1', { replace: true });
           return;
         }
         setError('No pudimos cargar tu cuenta. Intentá de nuevo.');
