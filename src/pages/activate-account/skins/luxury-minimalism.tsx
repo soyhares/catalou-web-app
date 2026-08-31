@@ -68,6 +68,7 @@ const LuxuryMinimalismActivateAccountSkin: React.FC<ActivateAccountPageProps> = 
   onSubmit,
   onCancel,
   onDone,
+  isExpiredSession,
 }) => linkedOrderCount === null && step === 'email' ? (
   /* Paso 1 — reingreso: solo el correo. Quien viene de un pedido o del enlace del correo
      nunca ve esta pantalla, porque ya trae el email. */
@@ -82,11 +83,13 @@ const LuxuryMinimalismActivateAccountSkin: React.FC<ActivateAccountPageProps> = 
       <div style={accentRule} />
 
       <h1 style={{ fontFamily: 'var(--pwa-font-heading)', fontSize: '1.6rem', fontWeight: 400, color: 'var(--pwa-text)', margin: '0 0 12px' }}>
-        Entrá a tu cuenta
+        {isExpiredSession ? 'Tu sesión venció' : 'Entrá a tu cuenta'}
       </h1>
 
       <p style={{ fontFamily: 'var(--pwa-font-body)', fontSize: '13px', color: 'var(--pwa-text-secondary)', lineHeight: 1.6, margin: '0 0 28px' }}>
-        Te enviamos un código de 6 dígitos al correo con el que hiciste tus pedidos
+        {isExpiredSession
+          ? 'Por seguridad cerramos la sesión cada tanto. Te enviamos un código nuevo y seguís donde estabas.'
+          : 'Te enviamos un código de 6 dígitos al correo con el que hiciste tus pedidos'}
       </p>
 
       <label htmlFor="activation-email" className="sr-only">

@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import { useBranding } from '@app/BrandingContext';
 import { requestActivation, verifyActivation } from '@entities/customer/api';
-import { saveSession } from '@shared/lib/customer-session';
+import { saveSession, readLastEmail, clearLastEmail } from '@shared/lib/customer-session';
 import { recordOffer } from '@features/account-offer/offer-state';
 
 /**
@@ -22,6 +22,8 @@ export type ActivateStep = 'email' | 'code';
 
 export interface ActivateAccountPageProps {
   step: ActivateStep;
+  /** La sesión venció sola: hay que decirlo, no dejar a la persona adivinando. */
+  isExpiredSession: boolean;
   email: string;
   code: string;
   /** Correo enmascarado que devolvió el servidor: se muestra tras pedir el código. */
@@ -49,11 +51,17 @@ export function useActivateAccountPage(): ActivateAccountPageProps {
   const [searchParams] = useSearchParams();
 
   const navState = location.state as { email?: string; orderId?: string } | null;
-  const initialEmail = navState?.email ?? searchParams.get('email') ?? '';
+  const isExpiredSession = searchParams.get('expired') === '1';
+  const initialEmail =
+    navState?.email ?? searchParams.get('email') ?? (isExpiredSession ? readLastEmail(slug) : null) ?? '';
   const orderId = navState?.orderId;
 
   const [email, setEmail] = useState(initialEmail);
-  const [step, setStep] = useState<ActivateStep>(initialEmail ? 'code' : 'email');
+  // Una sesión vencida arranca en el paso del correo aunque ya lo tengamos: el código viejo
+  // no sirve, hay que pedir uno nuevo. Lo que se ahorra es teclear la dirección.
+  const [step, setStep] = useState<ActivateStep>(
+    initialEmail && !isExpiredSession ? 'code' : 'email',
+  );
   const [code, setCode] = useState(searchParams.get('code') ?? '');
   const [maskedEmail, setMaskedEmail] = useState<string | null>(null);
   const [isRequesting, setIsRequesting] = useState(false);
@@ -97,6 +105,7 @@ export function useActivateAccountPage(): ActivateAccountPageProps {
     verifyActivation(slug, { email: trimmed, code })
       .then(({ session, linkedOrderCount: linked }) => {
         saveSession(slug, session);
+        clearLastEmail(slug);
         recordOffer(slug, 'activated');
         setLinkedOrderCount(linked);
       })
@@ -113,6 +122,7 @@ export function useActivateAccountPage(): ActivateAccountPageProps {
 
   return {
     step,
+    isExpiredSession,
     email,
     code,
     maskedEmail,
