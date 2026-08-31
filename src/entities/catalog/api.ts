@@ -1,4 +1,5 @@
 import { publicFetch } from '@shared/lib/api';
+import type { VariantTypePublic } from '@entities/product/api';
 
 export interface PublicSubcategory {
   id: string;
@@ -22,6 +23,8 @@ export interface PublicProduct {
   type: 'product' | 'service';
   durationMinutes: number | null;
   description?: string | null;
+  // absent on responses from an API older than the variant-aware listing
+  variantTypes?: VariantTypePublic[];
 }
 
 export interface CatalogData {

@@ -182,6 +182,8 @@ export interface components {
             type: "product" | "service" | "informative";
             /** @description Only relevant when type is service */
             durationMinutes?: number | null;
+            /** @description Tipos de variante disponibles para este producto (ej. Talla, Color). Array vacío = producto sin variantes, se agrega directo al carrito sin selección (FR-010). Cuando todos los tipos tienen exactamente un valor la combinación es única: la tarjeta del catálogo la resuelve sola y agrega sin pasar por el detalle. Si algún tipo tiene dos o más valores, la tarjeta navega al detalle para que se elija. */
+            variantTypes?: components["schemas"]["VariantTypeDetail"][];
         };
         ProductDetail: components["schemas"]["ProductCard"] & {
             description?: string | null;
@@ -202,8 +204,6 @@ export interface components {
                 /** Format: uri */
                 url: string;
             }[];
-            /** @description Tipos de variante disponibles para este producto (ej. Talla, Color). Array vacío = producto sin variantes, se agrega directo al carrito sin selección (FR-010). */
-            variantTypes?: components["schemas"]["VariantTypeDetail"][];
         };
         VariantTypeDetail: {
             /** Format: uuid */

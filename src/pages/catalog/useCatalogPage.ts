@@ -8,6 +8,7 @@ import {
   type PublicCategory,
   type PublicSubcategory,
 } from '@entities/catalog/api';
+import { resolveUniqueCombination, type UniqueCombination } from '@entities/product/variants';
 import { useCart } from '@shared/lib/use-cart';
 import { resolveCardActionKind, CARD_ACTION_LABEL } from './purpose';
 
@@ -152,19 +153,19 @@ export function useCatalogPage(): CatalogPageProps {
     void navigate('/cart');
   }
 
-  function addToCart(product: PublicProduct) {
+  function addToCart(product: PublicProduct, combo: UniqueCombination) {
     void add({
       companySlug: slug,
       productId: product.id,
       productName: product.name,
-      // quick-add from the grid is for variant-free items; products with variant
-      // types are configured on the detail page (backend rejects an empty combination)
-      variantValueIds: [],
-      variantLabel: null,
+      variantValueIds: combo.valueIds,
+      variantLabel: combo.label,
       quantity: 1,
-      unitPrice: parseFloat(product.basePrice) || 0,
+      unitPrice: (parseFloat(product.basePrice) || 0) + combo.priceModifier,
     }).then(() => {
       window.dispatchEvent(new CustomEvent('cart-item-added', { detail: { name: product.name } }));
+    }).catch((err: unknown) => {
+      console.error('[useCatalogPage] addToCart failed:', err);
     });
   }
 
@@ -175,7 +176,17 @@ export function useCatalogPage(): CatalogPageProps {
       ordersEnabled,
       bookingsEnabled,
     });
-    if (kind === 'add') return { label: CARD_ACTION_LABEL.add, run: () => addToCart(product) };
+    if (kind === 'add') {
+      // quick-add only when the combination is unambiguous; otherwise the shopper picks it on
+      // the detail page (the backend rejects an order line missing a value for any type)
+      const combo = resolveUniqueCombination(product.variantTypes ?? []);
+      return {
+        label: CARD_ACTION_LABEL.add,
+        run: combo
+          ? () => addToCart(product, combo)
+          : () => void navigate(`/products/${product.id}`),
+      };
+    }
     if (kind === 'book') {
       return { label: CARD_ACTION_LABEL.book, run: () => void navigate(`/book?itemId=${product.id}`) };
     }

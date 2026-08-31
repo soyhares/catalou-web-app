@@ -50,12 +50,29 @@ function genId(): string {
   return Date.now().toString(36) + '-' + Math.random().toString(36).slice(2, 11);
 }
 
+// Two adds of the same product with the same variant combination are one line of quantity 2,
+// not two lines of 1. Lines carrying a note never merge: the note belongs to that line.
+export function isSameCartLine(a: Omit<CartItem, 'id'>, b: CartItem): boolean {
+  if (a.note || b.note) return false;
+  return (
+    a.companySlug === b.companySlug &&
+    a.productId === b.productId &&
+    a.variantValueIds.length === b.variantValueIds.length &&
+    [...a.variantValueIds].sort().join('|') === [...b.variantValueIds].sort().join('|')
+  );
+}
+
 export async function addCartItem(item: Omit<CartItem, 'id'>): Promise<CartItem> {
+  const existing = (await getCartItems(item.companySlug)).find((line) =>
+    isSameCartLine(item, line),
+  );
   const db = await openDB();
-  const newItem: CartItem = { ...item, id: genId() };
+  const next: CartItem = existing
+    ? { ...existing, quantity: existing.quantity + item.quantity }
+    : { ...item, id: genId() };
   return new Promise((resolve, reject) => {
-    const req = tx(db, 'readwrite').add(newItem);
-    req.onsuccess = () => resolve(newItem);
+    const req = tx(db, 'readwrite').put(next);
+    req.onsuccess = () => resolve(next);
     req.onerror = () => reject(req.error);
   });
 }
