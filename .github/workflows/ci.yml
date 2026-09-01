@@ -2,7 +2,8 @@ name: CI — Web App (PWA)
 
 on:
   push:
-    branches: [main]
+    branches: [main]      # → solo CI; el deploy a dev llega en la Fase 2
+    tags: ['v*']          # → despliega a producción (la orden de pase)
   pull_request:
     branches: [main]
 
@@ -75,16 +76,34 @@ jobs:
           ls catalou-web-app/dist/sw.js || ls catalou-web-app/dist/workbox-*.js || \
           (echo "ERROR: No service worker found in dist/" && exit 1)
 
+  # Producción solo se despliega al pushear un tag `v*` — esa es la orden de pase.
+  # Mergear a main ya no despliega nada: corre el CI y espera.
+  # ponytail: el destino `dev` entra con la Fase 2, cuando existan los subdominios
+  # y el Supabase de dev. Declararlo antes dejaría un deploy roto en cada merge.
   deploy:
-    name: Deploy to Cloudflare Pages
+    name: Deploy to Cloudflare Pages (production)
     needs: ci
-    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    if: startsWith(github.ref, 'refs/tags/v')
     runs-on: ubuntu-latest
 
     steps:
       - uses: actions/checkout@v4
         with:
+          fetch-depth: 0
           path: catalou-web-app
+
+      # Un tag sobre un commit que no está en main desplegaría igual: es lo único que este
+      # esquema no trae de fábrica.
+      - name: Refuse a tag that is not on main
+        working-directory: catalou-web-app
+        run: |
+          git fetch origin main
+          if ! git merge-base --is-ancestor HEAD FETCH_HEAD; then
+            echo "❌ El tag ${GITHUB_REF#refs/tags/} apunta a un commit que no está en main."
+            echo "   Producción solo se despliega desde main."
+            exit 1
+          fi
+          echo "🚀 PRODUCCIÓN — tag ${GITHUB_REF#refs/tags/}, commit en main"
 
       - name: Check out catalou-platform-core
         uses: actions/checkout@v4
