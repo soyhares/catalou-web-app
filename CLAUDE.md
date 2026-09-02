@@ -53,6 +53,36 @@ src/
 - Never use inline styles — Tailwind classes only
 - Environment variables must be prefixed with `VITE_` and documented in `.env.example`
 
+## Ambientes y despliegue (ADR-031, ADR-032)
+
+**Mergear a `main` despliega al sandbox. Producción se toca con un tag `v*`, y con nada más.**
+
+| Ambiente | Dónde | Se despliega con |
+|---|---|---|
+| Local | `pnpm dev` con `VITE_DEV_SLUG=demo` | nada |
+| Sandbox | `{slug}-sandbox.catalou.com` | merge a `main` |
+| Producción | `{slug}.catalou.com` | `git tag -a v1.0.0 && git push origin v1.0.0` |
+
+- El sandbox usa **un solo nivel de subdominio** (`demo-sandbox`, no `demo.sandbox`): el SSL
+  gratuito de Cloudflare cubre un nivel y el handshake TLS falla en dos.
+- Los dos destinos son **Workers de Cloudflare distintos** (`--env sandbox` en `wrangler.toml`).
+- **El CI corre `wrangler deploy`. Nunca desplegar a mano.**
+- Un tag que apunte a un commit fuera de `main` lo rechaza el workflow. Rollback = tagear un
+  commit anterior.
+- Si el cambio toca un contrato OpenAPI, `catalou-platform-core` se mergea **primero** (ADR-018).
+
+### Al verificar en el navegador: el service worker miente
+
+Esta PWA cachea su shell. Después de desplegar, el navegador puede seguir sirviendo el bundle
+y el **CSP viejos** aunque el servidor ya mande los nuevos, así que un fix desplegado se ve
+como un fix roto. **Desregistrar el service worker y recargar duro antes de concluir nada.**
+Costó tiempo en la sesión 72 y otra vez en la 76, las dos veces con el CI en verde.
+
+`public/_headers` lleva el CSP: todo host de API nuevo se declara en `connect-src`, y el
+manifest dinámico necesita `manifest-src`. Nada de eso lo ve `tsc`.
+
+El ciclo completo: `catalou-platform-core/protocols/change-and-release.md`.
+
 ## What Claude must never do in this repo
 - Write backend logic or database queries
 - Import from `catalou-web-admin` or `catalou-api-core` source code
