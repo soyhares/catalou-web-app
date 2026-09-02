@@ -12,9 +12,15 @@ zone_name = "catalou.com"
 # Sandbox (ADR-032). Worker aparte, con su propio nombre y ruta: el de producción
 # no se toca. Se despliega con `wrangler deploy --env sandbox` desde CI en cada
 # merge a main.
+#
+# La ruta es `*-sandbox` y no `*.sandbox` por TLS, no por gusto: el certificado
+# Universal SSL de Cloudflare cubre un solo nivel de subdominio, así que
+# `demo.sandbox.catalou.com` no tiene certificado y el handshake falla (verificado).
+# Cubrir dos niveles exige Advanced Certificate Manager, $10/mes. Los tenants del
+# sandbox se siembran con sufijo `-sandbox` en el slug.
 [env.sandbox]
 name = "catalou-web-app-sandbox"
 
 [[env.sandbox.routes]]
-pattern = "*.sandbox.catalou.com/*"
+pattern = "*-sandbox.catalou.com/*"
 zone_name = "catalou.com"

@@ -120,8 +120,8 @@ jobs:
           VITE_API_URL: https://api-sandbox.catalou.com
           VITE_SUPABASE_URL: https://dohpjcnwyxjgvrubqelj.supabase.co
           VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY_SANDBOX }}
-          VITE_CATALOU_DOMAIN: sandbox.catalou.com
-          VITE_CATALOG_DOMAIN: sandbox.catalou.com
+          VITE_CATALOU_DOMAIN: catalou.com
+          VITE_CATALOG_DOMAIN: catalou.com
           VITE_DEV_SLUG: ""
         run: pnpm build
 
