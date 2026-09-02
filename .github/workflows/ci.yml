@@ -76,6 +76,62 @@ jobs:
           ls catalou-web-app/dist/sw.js || ls catalou-web-app/dist/workbox-*.js || \
           (echo "ERROR: No service worker found in dist/" && exit 1)
 
+  # Merge a `main` → despliega al SANDBOX. Worker aparte (`--env sandbox` en
+  # wrangler.toml), así que el de producción no se toca.
+  deploy-sandbox:
+    name: Deploy to sandbox
+    needs: ci
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          path: catalou-web-app
+
+      - name: Check out catalou-platform-core
+        uses: actions/checkout@v4
+        with:
+          repository: soyhares/catalou-platform-core
+          token: ${{ secrets.PLATFORM_CORE_TOKEN }}
+          path: catalou-platform-core
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Set up pnpm
+        uses: pnpm/action-setup@v3
+        with:
+          version: '10'
+
+      - name: Install dependencies
+        working-directory: catalou-web-app
+        run: pnpm install --frozen-lockfile
+
+      - name: Generate OpenAPI types
+        working-directory: catalou-web-app
+        run: pnpm generate
+
+      - name: Build
+        working-directory: catalou-web-app
+        env:
+          VITE_API_URL: https://api-sandbox.catalou.com
+          VITE_SUPABASE_URL: https://dohpjcnwyxjgvrubqelj.supabase.co
+          VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY_SANDBOX }}
+          VITE_CATALOU_DOMAIN: sandbox.catalou.com
+          VITE_CATALOG_DOMAIN: sandbox.catalou.com
+          VITE_DEV_SLUG: ""
+        run: pnpm build
+
+      - name: Deploy to sandbox
+        working-directory: catalou-web-app
+        run: pnpm dlx wrangler deploy --env sandbox
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+
   # Producción solo se despliega al pushear un tag `v*` — esa es la orden de pase.
   # Mergear a main ya no despliega nada: corre el CI y espera.
   # ponytail: el destino `dev` entra con la Fase 2, cuando existan los subdominios
