@@ -2,7 +2,7 @@ name: CI — Web App (PWA)
 
 on:
   push:
-    branches: [main]      # → solo CI; el deploy a dev llega en la Fase 2
+    branches: [main]      # → despliega al sandbox
     tags: ['v*']          # → despliega a producción (la orden de pase)
   pull_request:
     branches: [main]
@@ -133,9 +133,7 @@ jobs:
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
 
   # Producción solo se despliega al pushear un tag `v*` — esa es la orden de pase.
-  # Mergear a main ya no despliega nada: corre el CI y espera.
-  # ponytail: el destino `dev` entra con la Fase 2, cuando existan los subdominios
-  # y el Supabase de dev. Declararlo antes dejaría un deploy roto en cada merge.
+  # Mergear a main despliega al sandbox, nunca a producción.
   deploy:
     name: Deploy to Cloudflare Pages (production)
     needs: ci
