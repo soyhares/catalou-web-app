@@ -8,3 +8,13 @@ not_found_handling = "single-page-application"
 [[routes]]
 pattern = "*.catalou.com/*"
 zone_name = "catalou.com"
+
+# Sandbox (ADR-032). Worker aparte, con su propio nombre y ruta: el de producción
+# no se toca. Se despliega con `wrangler deploy --env sandbox` desde CI en cada
+# merge a main.
+[env.sandbox]
+name = "catalou-web-app-sandbox"
+
+[[env.sandbox.routes]]
+pattern = "*.sandbox.catalou.com/*"
+zone_name = "catalou.com"
