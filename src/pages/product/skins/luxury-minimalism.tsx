@@ -78,6 +78,7 @@ const LuxuryMinimalismProductSkin: React.FC<ProductPageProps> = (props) => {
     canProceed,
     addedFeedback,
     ctaKind,
+    whatsappNumber,
     noteOpen,
     note,
     onNoteToggle,
@@ -537,7 +538,7 @@ const LuxuryMinimalismProductSkin: React.FC<ProductPageProps> = (props) => {
             )}
 
             {ctaKind === 'none' && (
-              <WhatsAppProductConsultButton productName={product.name} imageUrl={activeImage} variant="primary" />
+              <WhatsAppProductConsultButton productName={product.name} whatsappNumber={whatsappNumber} imageUrl={activeImage} variant="primary" />
             )}
 
             {product.type === 'informative' && product.moreInfoUrl && (
@@ -595,7 +596,7 @@ const LuxuryMinimalismProductSkin: React.FC<ProductPageProps> = (props) => {
               </div>
             )}
 
-            {ctaKind !== 'none' && <WhatsAppProductConsultButton productName={product.name} imageUrl={activeImage} />}
+            {ctaKind !== 'none' && <WhatsAppProductConsultButton productName={product.name} whatsappNumber={whatsappNumber} imageUrl={activeImage} />}
           </div>
         </div>
 

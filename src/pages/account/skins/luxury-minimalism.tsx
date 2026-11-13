@@ -1,14 +1,7 @@
 import React, { useState } from 'react';
 import { formatPrice } from '@shared/lib/formatPrice';
+import { orderStatusLabel } from '@entities/order/status-labels';
 import type { AccountPageProps } from '../useAccountPage';
-
-const STATUS_LABELS: Record<string, string> = {
-  PENDING: 'Pendiente',
-  CONFIRMED: 'Confirmado',
-  ASSOCIATION_CONFIRMED: 'Aprobado',
-  COMPLETED: 'Entregado',
-  CANCELLED: 'Cancelado',
-};
 
 const rule: React.CSSProperties = {
   width: '40px',
@@ -258,7 +251,7 @@ const LuxuryMinimalismAccountSkin: React.FC<AccountPageProps> = ({
                     {formatDate(order.createdAt)}
                   </p>
                   <p style={{ fontSize: '11px', color: 'var(--pwa-text-secondary)', margin: '2px 0 0' }}>
-                    {STATUS_LABELS[order.status] ?? order.status}
+                    {orderStatusLabel(order.status)}
                     {order.itemCount ? ` · ${order.itemCount} ${order.itemCount === 1 ? 'ítem' : 'ítems'}` : ''}
                   </p>
                 </div>

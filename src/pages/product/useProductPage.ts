@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { useBranding } from '@app/BrandingContext';
 import { fetchProduct, type ProductPublic, type VariantValuePublic, type VariantTypePublic } from '@entities/product/api';
 import { fetchCatalog } from '@entities/catalog/api';
+import { getCatalogProfile } from '@entities/shopper-profile/api';
 import { resolveCardActionKind, type CardActionKind } from '../catalog/purpose';
 import { useCart } from '@shared/lib/use-cart';
 
@@ -36,6 +37,8 @@ export interface ProductPageProps {
   showPrices: boolean;
   currency: 'USD' | 'CRC';
   businessModel: 'DIRECT' | 'ASSOCIATED' | 'BOTH';
+  // WhatsApp del negocio para "Consultar por WhatsApp"; null si no es Directo o no lo cargó
+  whatsappNumber: string | null;
   companyName: string;
   categoryName: string | null;
   logoUrl: string | null;
@@ -63,6 +66,19 @@ export function useProductPage(): ProductPageProps {
   const [addedFeedback, setAddedFeedback] = useState(false);
   const [noteOpen, setNoteOpen] = useState(false);
   const [note, setNote] = useState('');
+  const [whatsappNumber, setWhatsappNumber] = useState<string | null>(null);
+
+  // La consulta por WhatsApp solo existe para negocios Directos: se busca el número acá y se
+  // le pasa al botón por props, para que shared/ui no dependa de app.
+  useEffect(() => {
+    setWhatsappNumber(null);
+    if (!slug || branding.businessModel !== 'DIRECT') return;
+    let cancelled = false;
+    getCatalogProfile(slug)
+      .then((p) => { if (!cancelled) setWhatsappNumber(p.whatsappNumber); })
+      .catch(() => {});
+    return () => { cancelled = true; };
+  }, [slug, branding.businessModel]);
 
   useEffect(() => {
     if (!id || !slug) return;
@@ -221,6 +237,7 @@ export function useProductPage(): ProductPageProps {
     showPrices: branding.showPrices,
     currency: branding.currency ?? 'CRC',
     businessModel: branding.businessModel,
+    whatsappNumber,
     companyName: branding.companyName,
     categoryName,
     logoUrl: branding.logoUrl,
