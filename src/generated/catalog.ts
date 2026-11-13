@@ -75,6 +75,46 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/catalog/{slug}/orders/track/{token}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Seguimiento público del pedido por token (SPEC-023, FR-030 a FR-035)
+         * @description Público, sin autenticación: el portador del token es quien accede (ADR-033 §5). La búsqueda es por (companyId resuelto desde el slug, token); un token válido bajo otro slug responde 404. El 404 es idéntico para token inexistente, vencido (closedAt + 30 días) o de otro negocio (FR-033). Sigue disponible en solo lectura aunque el módulo Pedidos esté apagado (FR-034). Respuesta con lista cerrada de campos (FR-031). Rate limit por IP (~120/h). No se indexa ni se guarda en cachés compartidas (FR-035).
+         */
+        get: operations["getOrderTracking"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/catalog/{slug}/orders/track/{token}/review": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Valoración privada del pedido (SPEC-023, FR-037 a FR-039)
+         * @description Público, sin autenticación: autoriza el token de seguimiento. Solo con status COMPLETED y completedAt + 30 días > ahora. Una valoración por pedido, no editable. El companyId se copia del pedido. El comentario se sanitiza antes de guardarse. Rate limit por IP (~10/h).
+         */
+        post: operations["submitOrderReview"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/catalog/{slug}/confirm-association": {
         parameters: {
             query?: never;
@@ -144,6 +184,19 @@ export interface components {
         CatalogResponse: {
             categories: components["schemas"]["CategoryWithSubcategories"][];
             products: components["schemas"]["ProductCard"][];
+            checkout?: components["schemas"]["CheckoutOptions"];
+        };
+        /** @description Opciones de checkout Directo habilitadas por el negocio (SPEC-023, FR-011). Solo flags: nunca números de SINPE, IBAN ni titulares, que se muestran únicamente después de crear el pedido (FR-015). Opcional en CatalogResponse durante la fase 1 del despliegue. */
+        CheckoutOptions: {
+            acceptsDirectOrders: boolean;
+            fulfillmentTypes: ("DELIVERY" | "PICKUP")[];
+            paymentTimings: ("UPFRONT" | "ON_DELIVERY")[];
+            /** @description Pares válidos método/momento. CASH solo con ON_DELIVERY; SINPE_MOVIL solo si la moneda del negocio es CRC. */
+            paymentMethods: {
+                /** @enum {string} */
+                method: "SINPE_MOVIL" | "BANK_TRANSFER" | "CASH";
+                timings: ("UPFRONT" | "ON_DELIVERY")[];
+            }[];
         };
         CategoryWithSubcategories: {
             /** Format: uuid */
@@ -223,11 +276,27 @@ export interface components {
             /** @enum {string} */
             orderType: "DIRECT" | "FINANCED";
             visitorName: string;
+            /** @description Para pedidos DIRECT: número de Costa Rica de 8 dígitos, con o sin el prefijo +506 (FR-012). Se guarda normalizado como +506XXXXXXXX. */
             visitorPhone: string;
             /** Format: email */
             visitorEmail: string;
-            /** @description Dirección de entrega del pedido. */
-            deliveryAddress: string;
+            /** @description Dirección de entrega del pedido. Obligatoria cuando fulfillmentType es DELIVERY (FR-011); se omite con PICKUP. Se valida en el servidor, no en `required`. */
+            deliveryAddress?: string;
+            /**
+             * @description Tipo de entrega elegido entre CheckoutOptions.fulfillmentTypes (SPEC-023). Opcional en la fase 1 (shells viejos en la caché del service worker); un PR posterior lo vuelve obligatorio para DIRECT antes del tag de la fase 4.
+             * @enum {string}
+             */
+            fulfillmentType?: "DELIVERY" | "PICKUP";
+            /**
+             * @description Momento de pago elegido entre CheckoutOptions.paymentTimings (SPEC-023). Opcional en la fase 1; obligatorio para DIRECT a partir de la fase 4.
+             * @enum {string}
+             */
+            paymentTiming?: "UPFRONT" | "ON_DELIVERY";
+            /**
+             * @description Método de pago elegido; el par método/momento debe estar en CheckoutOptions.paymentMethods (SPEC-023). Opcional en la fase 1; obligatorio para DIRECT a partir de la fase 4.
+             * @enum {string}
+             */
+            paymentMethod?: "SINPE_MOVIL" | "BANK_TRANSFER" | "CASH";
             /** @description Required when orderType is FINANCED. Identifies the member within the association for the tripartite approval flow. */
             affiliateNumber?: string;
             items: {
@@ -252,6 +321,104 @@ export interface components {
              * @description Cliente registrado al que pertenece el pedido, si lo hay. Null en pedidos de invitado, que siguen siendo un estado válido y permanente, no un error (FR-012). Opcional y nullable a propósito: requerirlo rompería todos los clientes generados ya desplegados.
              */
             customerId?: string | null;
+            /**
+             * @description Referencia legible del pedido (SPEC-023)
+             * @example ORD-7F3A21C9
+             */
+            reference?: string;
+            /** @description Token de seguimiento. Solo pedidos DIRECT; null en FINANCED (SPEC-023) */
+            trackingToken?: string | null;
+            /**
+             * Format: uri
+             * @description URL de seguimiento armada con CATALOG_PWA_URL_TEMPLATE del ambiente. Solo pedidos DIRECT; null en FINANCED (SPEC-023)
+             */
+            trackingUrl?: string | null;
+            whatsappNotice?: components["schemas"]["MerchantNoticeData"];
+        };
+        /** @description Datos ya filtrados por showPrices para que la PWA arme el mensaje al negocio por WhatsApp (SPEC-023, FR-016). total es null si los precios están ocultos. Nunca incluye enlaces al panel ni los datos de cuenta del negocio. Null en pedidos FINANCED. */
+        MerchantNoticeData: {
+            /** @example 50687654321 */
+            merchantWhatsappE164: string | null;
+            businessName: string;
+            customerName: string;
+            reference: string;
+            /** Format: decimal */
+            total?: number | null;
+            currency?: string;
+            /** @enum {string} */
+            fulfillmentType: "DELIVERY" | "PICKUP";
+            /** @enum {string} */
+            paymentTiming: "UPFRONT" | "ON_DELIVERY";
+            /** @enum {string} */
+            paymentMethod: "SINPE_MOVIL" | "BANK_TRANSFER" | "CASH";
+        } | null;
+        /** @description Snapshot de los datos de cobro congelado al crear el pedido (FR-014). Solo del método elegido: sinpe* para SINPE_MOVIL, iban* para BANK_TRANSFER, ninguno para CASH. */
+        PaymentInstructions: {
+            /** @enum {string} */
+            method: "SINPE_MOVIL" | "BANK_TRANSFER" | "CASH";
+            sinpePhone?: string;
+            sinpeHolder?: string;
+            ibanBank?: string;
+            ibanHolder?: string;
+            iban?: string;
+        };
+        /** @description Seguimiento público del pedido (SPEC-023). Lista cerrada de campos (FR-031). Nunca incluye correo, teléfono ni dirección del cliente, customerNote, el UUID del pedido ni la identidad del personal. */
+        OrderTracking: {
+            reference: string;
+            businessName: string;
+            merchantWhatsappE164?: string | null;
+            /** @enum {string} */
+            status: "PENDING" | "CONFIRMED" | "PREPARING" | "SHIPPED" | "COMPLETED" | "CANCELLED";
+            /** @enum {string} */
+            fulfillmentType: "DELIVERY" | "PICKUP";
+            timeline: {
+                status: string;
+                /** Format: date-time */
+                at: string;
+            }[];
+            items: {
+                productName: string;
+                variantLabel?: string | null;
+                quantity: number;
+                /**
+                 * Format: decimal
+                 * @description Null cuando showPrices es false (FR-032)
+                 */
+                lineTotal?: number | null;
+                imageUrl?: string | null;
+            }[];
+            /** @description showPrices = true: total y, si hay ajuste, adjustment + reason + amountToCharge. showPrices = false: solo amountToCharge (cuando existe); total, adjustment y reason en null (FR-032). */
+            amounts?: {
+                /** Format: decimal */
+                total?: number | null;
+                /** Format: decimal */
+                adjustment?: number | null;
+                reason?: string | null;
+                /** Format: decimal */
+                amountToCharge?: number | null;
+                currency?: string;
+            };
+            payment: {
+                /** @enum {string} */
+                timing: "UPFRONT" | "ON_DELIVERY";
+                /** @enum {string} */
+                method: "SINPE_MOVIL" | "BANK_TRANSFER" | "CASH";
+                /** @enum {string} */
+                status: "PENDING" | "VERIFIED";
+                /** @description Solo mientras el pago esté PENDING y el pedido no esté cerrado */
+                instructions?: components["schemas"]["PaymentInstructions"] | null;
+            };
+            /** @description Solo mientras status = PENDING, para rearmar el aviso al negocio tras recargar la página. Null en cualquier otro estado. */
+            customerFirstName?: string | null;
+            /** @description Solo mientras status = PENDING; null en cualquier otro estado. Mismo contenido que OrderConfirmation.whatsappNotice. MerchantNoticeData ya admite null. */
+            noticeData?: components["schemas"]["MerchantNoticeData"];
+            /** @description COMPLETED, sin valoración y dentro de los 30 días desde completedAt */
+            reviewable: boolean;
+            reviewed?: boolean;
+        };
+        CreateOrderReviewRequest: {
+            rating: number;
+            comment?: string;
         };
         OrderAssociationReview: {
             /** Format: uuid */
@@ -277,8 +444,10 @@ export interface components {
                 unitPriceSnapshot: number;
             }[];
         };
+        /** @description Forma real de los errores de la API (`error-handler.ts` y routers): `error` con el mensaje legible y `code` opcional de máquina. Corregido en SPEC-023: el contrato decía `{message}`. */
         ErrorResponse: {
-            message: string;
+            error: string;
+            code?: string;
         };
         FeatureDisabledResponse: {
             error: string;
@@ -299,9 +468,16 @@ export interface components {
     parameters: {
         /** @description Company slug (e.g., "acme" for acme.catalou.com) */
         slug: string;
+        /** @description Token de seguimiento del pedido Directo (SPEC-023): 32 bytes aleatorios en base64url, 43 caracteres. No adivinable; válido solo bajo el slug de su negocio. */
+        trackingToken: string;
     };
     requestBodies: never;
-    headers: never;
+    headers: {
+        /** @description Siempre `no-store` (FR-035) */
+        CacheControlNoStore: "no-store";
+        /** @description Siempre `noindex` (FR-035) */
+        XRobotsTagNoIndex: "noindex";
+    };
     pathItems: never;
 }
 export type $defs = Record<string, never>;
@@ -446,6 +622,18 @@ export interface operations {
                     "application/json": components["schemas"]["FeatureDisabledResponse"];
                 };
             };
+            /** @description MERCHANT_SETUP_INCOMPLETE (SPEC-023). El negocio no puede recibir pedidos Directos nuevos (sin WhatsApp o sin cobros válidos, con la gracia vencida). El mensaje al cliente no expone el detalle de qué falta. */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"] & {
+                        /** @enum {string} */
+                        code: "MERCHANT_SETUP_INCOMPLETE";
+                    };
+                };
+            };
             /** @description Validation error or financed orders not configured */
             422: {
                 headers: {
@@ -454,6 +642,118 @@ export interface operations {
                 content: {
                     "application/json": components["schemas"]["ValidationErrorResponse"];
                 };
+            };
+        };
+    };
+    getOrderTracking: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description Company slug (e.g., "acme" for acme.catalou.com) */
+                slug: components["parameters"]["slug"];
+                /** @description Token de seguimiento del pedido Directo (SPEC-023): 32 bytes aleatorios en base64url, 43 caracteres. No adivinable; válido solo bajo el slug de su negocio. */
+                token: components["parameters"]["trackingToken"];
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Seguimiento del pedido */
+            200: {
+                headers: {
+                    "Cache-Control": components["headers"]["CacheControlNoStore"];
+                    "X-Robots-Tag": components["headers"]["XRobotsTagNoIndex"];
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OrderTracking"];
+                };
+            };
+            /** @description No encontrado (indistinguible entre inexistente, vencido u otro negocio) */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Demasiados intentos desde este origen */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    submitOrderReview: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description Company slug (e.g., "acme" for acme.catalou.com) */
+                slug: components["parameters"]["slug"];
+                /** @description Token de seguimiento del pedido Directo (SPEC-023): 32 bytes aleatorios en base64url, 43 caracteres. No adivinable; válido solo bajo el slug de su negocio. */
+                token: components["parameters"]["trackingToken"];
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CreateOrderReviewRequest"];
+            };
+        };
+        responses: {
+            /** @description Valoración guardada */
+            201: {
+                headers: {
+                    "Cache-Control": components["headers"]["CacheControlNoStore"];
+                    "X-Robots-Tag": components["headers"]["XRobotsTagNoIndex"];
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description No encontrado (indistinguible entre inexistente, vencido u otro negocio) */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description REVIEW_ALREADY_EXISTS. El pedido ya tiene una valoración. */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"] & {
+                        /** @enum {string} */
+                        code: "REVIEW_ALREADY_EXISTS";
+                    };
+                };
+            };
+            /** @description ORDER_NOT_DELIVERED (el pedido no está en COMPLETED) o REVIEW_WINDOW_CLOSED (pasaron más de 30 días desde completedAt). También errores de validación del cuerpo. */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"] & {
+                        /** @enum {string} */
+                        code?: "ORDER_NOT_DELIVERED" | "REVIEW_WINDOW_CLOSED";
+                    };
+                };
+            };
+            /** @description Demasiados intentos desde este origen */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
             };
         };
     };
