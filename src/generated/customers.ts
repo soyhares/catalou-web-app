@@ -147,8 +147,14 @@ export interface components {
             /** Format: date-time */
             createdAt: string;
             status: string;
-            total: number;
+            /** @description Amount to show the customer (SPEC-023): `amountToCharge ?? grandTotal` when the tenant shows prices. With `showPrices = false` it is `amountToCharge` if the business already set one, and `null` otherwise (SC-005) — never the hidden catalog total. */
+            total: number | null;
             itemCount?: number;
+            /**
+             * Format: uri
+             * @description Link to the order's tracking page (SPEC-023, FR-036). Only for `DIRECT` orders; null for other orders or once the tracking link has expired.
+             */
+            trackingUrl?: string | null;
         };
         Error: {
             error: string;

@@ -255,9 +255,12 @@ const LuxuryMinimalismAccountSkin: React.FC<AccountPageProps> = ({
                     {order.itemCount ? ` · ${order.itemCount} ${order.itemCount === 1 ? 'ítem' : 'ítems'}` : ''}
                   </p>
                 </div>
-                <span style={{ fontSize: '13px', color: 'var(--pwa-text)' }}>
-                  {formatPrice(order.total, currency as 'USD' | 'CRC')}
-                </span>
+                {/* SPEC-023: `total` es null con precios ocultos y sin monto acordado. */}
+                {order.total !== null && (
+                  <span style={{ fontSize: '13px', color: 'var(--pwa-text)' }}>
+                    {formatPrice(order.total, currency as 'USD' | 'CRC')}
+                  </span>
+                )}
               </li>
             ))}
           </ul>

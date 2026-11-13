@@ -282,8 +282,10 @@ export interface components {
         BookingStatus: "pending" | "association_pending" | "confirmed" | "rescheduled" | "rejected" | "completed";
         /** @enum {string} */
         ContactType: "email" | "phone";
+        /** @description Forma real de los errores de la API (`error-handler.ts` y routers): `error` con el mensaje legible y `code` opcional de máquina. Corregido en SPEC-023: el contrato decía `{message}`. */
         ErrorResponse: {
-            message: string;
+            error: string;
+            code?: string;
         };
         FeatureDisabledResponse: {
             error: string;
