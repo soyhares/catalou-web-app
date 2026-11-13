@@ -29,6 +29,14 @@ export default defineConfig(({ mode }) => {
               handler: 'NetworkOnly' as const,
             },
             {
+              // SPEC-023 (R10): el seguimiento y la valoración del pedido NUNCA se cachean.
+              // Un estado viejo se serviría hasta 300 s, y un dispositivo compartido mostraría
+              // los datos de un pedido a otra persona. Va antes de la regla de /catalog a
+              // propósito: workbox resuelve en orden de registro y /catalog la reclamaría.
+              urlPattern: /\/orders\/track\//,
+              handler: 'NetworkOnly' as const,
+            },
+            {
               urlPattern: /\/companies\/[^/]+\/branding$/,
               handler: 'StaleWhileRevalidate' as const,
               options: {
