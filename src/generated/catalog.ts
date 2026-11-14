@@ -456,6 +456,12 @@ export interface components {
             /** @description The flag name that is disabled (e.g. "orders"). */
             feature: string;
         };
+        /** @description Error de regla de negocio al crear un pedido. `error` es texto técnico para logs; el cliente decide el mensaje por `code`. PAYMENT_OPTION_UNAVAILABLE: el par método y momento de pago no está habilitado. FULFILLMENT_UNAVAILABLE: envío o retiro no habilitado. PAYMENT_SETTINGS_MISSING: el negocio no tiene cobros configurados. DELIVERY_ADDRESS_REQUIRED: envío sin dirección. INVALID_PHONE: teléfono no válido para Costa Rica. PRODUCT_UNAVAILABLE: un producto o variante ya no está disponible. ORDER_INVALID: cualquier otra regla. */
+        OrderValidationErrorResponse: {
+            error: string;
+            /** @enum {string} */
+            code: "PAYMENT_OPTION_UNAVAILABLE" | "FULFILLMENT_UNAVAILABLE" | "PAYMENT_SETTINGS_MISSING" | "DELIVERY_ADDRESS_REQUIRED" | "INVALID_PHONE" | "PRODUCT_UNAVAILABLE" | "ORDER_INVALID";
+        };
         ValidationErrorResponse: {
             message: string;
             errors: {
@@ -634,13 +640,13 @@ export interface operations {
                     };
                 };
             };
-            /** @description Validation error or financed orders not configured */
+            /** @description Dos formas. Validación de forma del body (Zod): `ValidationErrorResponse`. Regla de negocio del pedido: `OrderValidationErrorResponse`, con `code` estable para que la PWA muestre su propio mensaje en español y nunca el texto de `error` (T089, hallazgo 7). */
             422: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["ValidationErrorResponse"];
+                    "application/json": components["schemas"]["ValidationErrorResponse"] | components["schemas"]["OrderValidationErrorResponse"];
                 };
             };
         };
@@ -736,7 +742,7 @@ export interface operations {
                     };
                 };
             };
-            /** @description ORDER_NOT_DELIVERED (el pedido no está en COMPLETED) o REVIEW_WINDOW_CLOSED (pasaron más de 30 días desde completedAt). También errores de validación del cuerpo. */
+            /** @description ORDER_NOT_DELIVERED (el pedido no está en COMPLETED). También errores de validación del cuerpo. REVIEW_WINDOW_CLOSED queda reservado: un pedido entregado hace más de 30 días ya tiene el seguimiento vencido y responde el mismo 404 que un token inexistente, antes de evaluar la ventana (T089, hallazgo 5). */
             422: {
                 headers: {
                     [name: string]: unknown;

@@ -6,7 +6,7 @@ import { clearCart } from '@shared/lib/cart-store';
 import { useOnlineStatus } from '@shared/hooks/useOnlineStatus';
 import { submitOrder, type OrderType } from '@entities/order/api';
 import { formatPrice } from '@shared/lib/formatPrice';
-import { ApiError } from '@shared/lib/api';
+import { orderSubmitErrorInfo } from '@entities/order/submit-errors';
 import { readSession, markKnownCustomer } from '@shared/lib/customer-session';
 import { getCustomerProfile } from '@entities/customer/api';
 import { fetchCheckoutOptions } from '@entities/catalog/api';
@@ -212,6 +212,8 @@ export function useCheckoutPage(): CheckoutPageProps {
     const errs = validateDeliveryStep();
     setErrors(errs);
     if (Object.keys(errs).length > 0) return;
+    // El motivo de un rechazo anterior ya se atendió en este paso: no se arrastra al siguiente.
+    setSubmitError(null);
     setStep('details');
     window.scrollTo({ top: 0 });
   }
@@ -328,14 +330,20 @@ export function useCheckoutPage(): CheckoutPageProps {
         });
       })
       .catch((err: unknown) => {
-        // Un 4xx trae un motivo redactado por la API y accionable por quien compra (el módulo
-        // está apagado, faltó un dato). Un 5xx no le dice nada: ahí el modal de reporte ya se
-        // abrió solo desde `publicFetch`, y este texto solo acompaña.
-        const reason =
-          err instanceof ApiError && err.status < 500 && !err.message.startsWith('Request failed')
-            ? err.message
-            : null;
-        setSubmitError(reason ?? 'No se pudo enviar el pedido. Intentá nuevamente.');
+        // El texto de la API es técnico (y en inglés): lo que ve quien compra sale del mapa
+        // por `code`, con mensaje genérico para cualquier otro caso. Un 5xx ya abrió el modal
+        // de reporte desde `publicFetch`, y este texto solo acompaña.
+        const info = orderSubmitErrorInfo(err);
+        setSubmitError(info.message);
+        // Lo que hay que corregir está en "Entrega y pago" (solo existe en el pedido Directo).
+        if (isDirect && info.step === 'delivery') {
+          setStep('delivery');
+          window.scrollTo({ top: 0 });
+        }
+        if (info.field) {
+          const field = info.field;
+          setErrors((prev) => ({ ...prev, [field]: info.message }));
+        }
       })
       .finally(() => {
         setIsSubmitting(false);
