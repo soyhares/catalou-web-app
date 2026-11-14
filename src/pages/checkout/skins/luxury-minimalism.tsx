@@ -404,6 +404,11 @@ const LuxuryMinimalismCheckoutSkin: React.FC<CheckoutPageProps> = ({
 
         {crPhoneField}
 
+        {/* Un pedido rechazado por algo de este paso vuelve acá con el motivo. */}
+        {submitError && (
+          <p role="alert" className="text-[13px] text-[var(--pwa-error)]">{submitError}</p>
+        )}
+
         <button type="submit" className={PRIMARY_BUTTON}>
           Revisar pedido
         </button>
