@@ -742,7 +742,7 @@ export interface operations {
                     };
                 };
             };
-            /** @description ORDER_NOT_DELIVERED (el pedido no está en COMPLETED) o REVIEW_WINDOW_CLOSED (pasaron más de 30 días desde completedAt). También errores de validación del cuerpo. */
+            /** @description ORDER_NOT_DELIVERED (el pedido no está en COMPLETED). También errores de validación del cuerpo. REVIEW_WINDOW_CLOSED queda reservado: un pedido entregado hace más de 30 días ya tiene el seguimiento vencido y responde el mismo 404 que un token inexistente, antes de evaluar la ventana (T089, hallazgo 5). */
             422: {
                 headers: {
                     [name: string]: unknown;
