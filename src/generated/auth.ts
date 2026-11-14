@@ -161,7 +161,7 @@ export interface paths {
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
-        /** @description Filled by the Operator during/after a coordination call with the client — no password field, the client sets their own via email (see ADR-021). */
+        /** @description Filled by the Operator during/after a coordination call with the client — no password field, the client sets their own via email (see ADR-021). When the chosen plan or `featuresEnabled` include Orders, `whatsappNumber` and `paymentSettings` are also required (SPEC-023, D58); the conditional requirement is enforced server-side. */
         RegisterRequest: {
             companyName: string;
             /** Format: email */
@@ -201,6 +201,27 @@ export interface components {
              * @description Email of the intermediary organization for approval notifications
              */
             associationEmail?: string;
+            /** @description Business WhatsApp number (SPEC-023, D58). REQUIRED when the chosen plan or `featuresEnabled` include Orders — rejected with 422 otherwise. Must be normalizable for `wa.me`: 8 Costa Rican digits (prefixed with 506 on read) or already starting with 506. */
+            whatsappNumber?: string;
+            /** @description Payment and fulfillment settings (SPEC-023, D58). REQUIRED and must be a valid setup (at least one fulfillment type and one available method/timing pair; SINPE Móvil only with CRC; CASH only on delivery) when the chosen plan or `featuresEnabled` include Orders — rejected with 422 otherwise. */
+            paymentSettings?: components["schemas"]["PaymentSettingsInput"];
+        };
+        PaymentSettingsInput: {
+            sinpe?: {
+                phone: string;
+                holder: string;
+            } | null;
+            iban?: {
+                bank: string;
+                holder: string;
+                /** @description No spaces; mod-97 is checked server-side */
+                iban: string;
+            } | null;
+            cashOnDeliveryEnabled: boolean;
+            upfrontEnabled: boolean;
+            onDeliveryEnabled: boolean;
+            deliveryEnabled: boolean;
+            pickupEnabled: boolean;
         };
         RegisterResponse: {
             user: components["schemas"]["AuthUser"];
@@ -248,8 +269,10 @@ export interface components {
         AcceptInvitationRequest: {
             password: string;
         };
+        /** @description Forma real de los errores de la API (`error-handler.ts` y routers): `error` con el mensaje legible y `code` opcional de máquina. Corregido en SPEC-023: el contrato decía `{message}`. */
         ErrorResponse: {
-            message: string;
+            error: string;
+            code?: string;
         };
         ValidationErrorResponse: {
             message: string;
@@ -316,7 +339,7 @@ export interface operations {
                     "application/json": components["schemas"]["ErrorResponse"];
                 };
             };
-            /** @description Validation error, or Associated business model requested on a non-Business plan */
+            /** @description Validation error, Associated business model requested on a non-Business plan, or (SPEC-023, D58, FR-006) the chosen plan/features include Orders and `whatsappNumber` or a valid `paymentSettings` is missing — the `errors[]` entries name the offending fields (`whatsappNumber`, `paymentSettings`, `paymentSettings.*`). */
             422: {
                 headers: {
                     [name: string]: unknown;

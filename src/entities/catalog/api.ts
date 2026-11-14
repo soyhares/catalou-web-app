@@ -1,5 +1,6 @@
 import { publicFetch } from '@shared/lib/api';
 import type { VariantTypePublic } from '@entities/product/api';
+import type { components } from '@generated/catalog';
 
 export interface PublicSubcategory {
   id: string;
@@ -43,4 +44,16 @@ export async function fetchCatalog(
   if (params?.subcategoryId) qs.set('subcategoryId', params.subcategoryId);
   const query = qs.toString() ? `?${qs.toString()}` : '';
   return publicFetch(`/catalog/${slug}${query}`);
+}
+
+export type CheckoutOptions = components['schemas']['CheckoutOptions'];
+
+/**
+ * SPEC-023 (FR-011): opciones de entrega y pago del checkout Directo. Viajan en la misma
+ * respuesta de GET /catalog/{slug} que el service worker ya tiene en caché. `null` cuando la
+ * API todavía no las manda (fase 1 del despliegue): el checkout sigue como antes.
+ */
+export async function fetchCheckoutOptions(slug: string): Promise<CheckoutOptions | null> {
+  const data = await publicFetch<components['schemas']['CatalogResponse']>(`/catalog/${slug}`);
+  return data?.checkout ?? null;
 }
