@@ -1,7 +1,59 @@
 import React, { useState } from 'react';
 import { formatPrice } from '@shared/lib/formatPrice';
+import { Link } from 'react-router-dom';
 import { orderStatusLabel } from '@entities/order/status-labels';
+import { trackingPathFromUrl } from '@entities/order/tracking-api';
 import type { AccountPageProps } from '../useAccountPage';
+
+type OrderSummary = AccountPageProps['orders'][number];
+
+/**
+ * Una fila del historial. SPEC-023 (FR-036): el pedido con seguimiento enlaza a su página;
+ * `total` llega null con precios ocultos y sin monto acordado, y entonces no se muestra precio.
+ */
+function OrderHistoryRow({ order, currency }: { order: OrderSummary; currency: string }) {
+  const trackingPath = trackingPathFromUrl(order.trackingUrl);
+  const content = (
+    <>
+      <span className="block">
+        <span className="block text-[13px] text-[var(--pwa-text)]">{formatDate(order.createdAt)}</span>
+        <span className="mt-0.5 block text-[11px] text-[var(--pwa-text-secondary)]">
+          {orderStatusLabel(order.status)}
+          {order.itemCount ? ` · ${order.itemCount} ${order.itemCount === 1 ? 'ítem' : 'ítems'}` : ''}
+        </span>
+      </span>
+      <span className="flex items-center gap-2">
+        {order.total !== null && order.total !== undefined && (
+          <span className="text-[13px] tabular-nums text-[var(--pwa-text)]">
+            {formatPrice(order.total, currency === 'USD' ? 'USD' : 'CRC')}
+          </span>
+        )}
+        {trackingPath && <span className="sr-only">Ver seguimiento</span>}
+        {trackingPath && (
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" focusable="false" className="h-4 w-4 text-[var(--pwa-text-secondary)]">
+            <path d="M9 18l6-6-6-6" />
+          </svg>
+        )}
+      </span>
+    </>
+  );
+  const row = 'flex min-h-[44px] items-center justify-between gap-3 py-3 font-[family-name:var(--pwa-font-body)]';
+
+  return (
+    <li className="border-b border-[var(--pwa-border)]">
+      {trackingPath ? (
+        <Link
+          to={trackingPath}
+          className={`${row} no-underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--pwa-text)]`}
+        >
+          {content}
+        </Link>
+      ) : (
+        <div className={row}>{content}</div>
+      )}
+    </li>
+  );
+}
 
 const rule: React.CSSProperties = {
   width: '40px',
@@ -235,33 +287,7 @@ const LuxuryMinimalismAccountSkin: React.FC<AccountPageProps> = ({
         ) : (
           <ul style={{ listStyle: 'none', padding: 0, margin: '0 0 32px' }}>
             {orders.map((order) => (
-              <li
-                key={order.id}
-                style={{
-                  display: 'flex',
-                  justifyContent: 'space-between',
-                  alignItems: 'baseline',
-                  gap: '12px',
-                  padding: '12px 0',
-                  borderBottom: '1px solid var(--pwa-border)',
-                }}
-              >
-                <div>
-                  <p style={{ fontSize: '13px', color: 'var(--pwa-text)', margin: 0 }}>
-                    {formatDate(order.createdAt)}
-                  </p>
-                  <p style={{ fontSize: '11px', color: 'var(--pwa-text-secondary)', margin: '2px 0 0' }}>
-                    {orderStatusLabel(order.status)}
-                    {order.itemCount ? ` · ${order.itemCount} ${order.itemCount === 1 ? 'ítem' : 'ítems'}` : ''}
-                  </p>
-                </div>
-                {/* SPEC-023: `total` es null con precios ocultos y sin monto acordado. */}
-                {order.total !== null && (
-                  <span style={{ fontSize: '13px', color: 'var(--pwa-text)' }}>
-                    {formatPrice(order.total, currency as 'USD' | 'CRC')}
-                  </span>
-                )}
-              </li>
+              <OrderHistoryRow key={order.id} order={order} currency={currency} />
             ))}
           </ul>
             )}

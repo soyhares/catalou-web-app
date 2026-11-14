@@ -1,33 +1,15 @@
 import { publicFetch } from '@shared/lib/api';
 import { getAccessToken } from '@shared/lib/customer-session';
+import type { components } from '@generated/catalog';
 
-export type OrderType = 'DIRECT' | 'FINANCED';
-export type OrderStatus = 'PENDING';
-
-export interface SubmitOrderItem {
-  productId: string;
-  // one value per variant type of the product; [] when it has none
-  variantValueIds: string[];
-  quantity: number;
-  // free-text note the shopper wrote for this product (SPEC-021); omit when none
-  customerNote?: string;
-}
-
-export interface SubmitOrderInput {
-  orderType: OrderType;
-  visitorName: string;
-  visitorPhone: string;
-  visitorEmail: string;
-  deliveryAddress: string;
-  affiliateNumber?: string;
-  items: SubmitOrderItem[];
-}
-
-export interface OrderConfirmation {
-  orderId: string;
-  orderType: OrderType;
-  status: OrderStatus;
-}
+// SPEC-023: el cuerpo y la respuesta salen del contrato generado. `fulfillmentType`,
+// `paymentTiming` y `paymentMethod` son opcionales en la fase 1 y `deliveryAddress` solo
+// viaja con envío; la confirmación de un pedido Directo trae `reference` y `trackingToken`.
+export type SubmitOrderInput = components['schemas']['CreateOrderRequest'];
+export type SubmitOrderItem = SubmitOrderInput['items'][number];
+export type OrderType = SubmitOrderInput['orderType'];
+export type OrderConfirmation = components['schemas']['OrderConfirmation'];
+export type OrderStatus = OrderConfirmation['status'];
 
 export interface OrderSummaryItem {
   productNameSnapshot: string;

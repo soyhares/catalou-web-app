@@ -9,9 +9,33 @@ import { formatPrice } from '@shared/lib/formatPrice';
 import { ApiError } from '@shared/lib/api';
 import { readSession, markKnownCustomer } from '@shared/lib/customer-session';
 import { getCustomerProfile } from '@entities/customer/api';
+import { fetchCheckoutOptions } from '@entities/catalog/api';
 import type { CartItem } from '@shared/lib/cart-store';
+import {
+  EMPTY_SELECTION,
+  availableFulfillmentTypes,
+  availableMethods,
+  availableTimings,
+  confirmationDestination,
+  normalizeCrPhone,
+  reconcileSelection,
+  toCrE164,
+  validateDeliveryPayment,
+  type CheckoutOptions,
+  type DeliveryPaymentField,
+  type DeliveryPaymentSelection,
+  type FulfillmentType,
+  type PaymentMethod,
+  type PaymentTiming,
+} from './delivery-payment';
 
 export type { CartItem };
+export type { CheckoutOptions, DeliveryPaymentSelection, FulfillmentType, PaymentMethod, PaymentTiming };
+
+/** Paso del checkout Directo: primero entrega y pago (SPEC-023), después datos y resumen. */
+export type CheckoutStep = 'delivery' | 'details';
+
+export type CheckoutField = keyof CheckoutForm | DeliveryPaymentField;
 
 export interface CheckoutForm {
   name: string;
@@ -25,7 +49,19 @@ export interface CheckoutPageProps {
   items: CartItem[];
   total: string;
   form: CheckoutForm;
-  errors: Partial<Record<keyof CheckoutForm, string>>;
+  errors: Partial<Record<CheckoutField, string>>;
+  /** Solo pedidos DIRECT; FINANCED es un formulario de un paso. */
+  step: CheckoutStep;
+  /** `undefined` mientras carga; `null` si la API no manda opciones (checkout de antes). */
+  checkoutOptions: CheckoutOptions | null | undefined;
+  /** El negocio no está recibiendo pedidos Directos: no se ofrece enviar. */
+  directOrdersBlocked: boolean;
+  selection: DeliveryPaymentSelection;
+  fulfillmentChoices: FulfillmentType[];
+  timingChoices: PaymentTiming[];
+  methodChoices: PaymentMethod[];
+  /** Los 8 dígitos locales del teléfono, sin el +506 que se muestra fijo. */
+  phoneDigits: string;
   isSubmitting: boolean;
   submitError: string | null;
   showPrices: boolean;
@@ -35,6 +71,12 @@ export interface CheckoutPageProps {
   hasBothOrderTypes: boolean;
   businessModel: 'DIRECT' | 'ASSOCIATED' | 'BOTH';
   onFieldChange: (field: keyof CheckoutForm, value: string) => void;
+  onPhoneDigitsChange: (value: string) => void;
+  onFulfillmentChange: (value: FulfillmentType) => void;
+  onTimingChange: (value: PaymentTiming) => void;
+  onMethodChange: (value: PaymentMethod) => void;
+  /** Valida entrega y pago y pasa a los datos del pedido. */
+  onContinue: () => void;
   onOrderTypeChange: (type: OrderType) => void;
   onSubmit: () => void;
   onBack: () => void;
@@ -84,14 +126,94 @@ export function useCheckoutPage(): CheckoutPageProps {
     getCustomerProfile(slug).then(prefill).catch(() => undefined);
   }, [slug]);
 
-  const [errors, setErrors] = useState<Partial<Record<keyof CheckoutForm, string>>>({});
+  // SPEC-023 (T074): opciones de entrega y pago que habilitó el negocio.
+  const [checkoutOptions, setCheckoutOptions] = useState<CheckoutOptions | null | undefined>(undefined);
+  const [selection, setSelection] = useState<DeliveryPaymentSelection>(EMPTY_SELECTION);
+  const [step, setStep] = useState<CheckoutStep>('delivery');
+
+  useEffect(() => {
+    let cancelled = false;
+    fetchCheckoutOptions(slug)
+      .then((options) => {
+        if (cancelled) return;
+        setCheckoutOptions(options);
+        if (options) setSelection((prev) => reconcileSelection(options, prev));
+      })
+      // Sin opciones el checkout sigue como antes de SPEC-023; el servidor decide.
+      .catch(() => {
+        if (!cancelled) setCheckoutOptions(null);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [slug]);
+
+  const [errors, setErrors] = useState<Partial<Record<CheckoutField, string>>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
 
   const subtotalNum = items.reduce((sum, item) => sum + item.unitPrice * item.quantity, 0);
 
+  const isDirect = orderType === 'DIRECT';
+  const directOrdersBlocked = isDirect && checkoutOptions?.acceptsDirectOrders === false;
+  const phoneDigits = normalizeCrPhone(form.phone);
+
   function onOrderTypeChange(type: OrderType) {
     setOrderType(type);
+    setStep('delivery');
+    setErrors({});
+    setSubmitError(null);
+  }
+
+  function clearErrors(...fields: CheckoutField[]) {
+    setErrors((prev) => {
+      if (!fields.some((f) => prev[f])) return prev;
+      const next = { ...prev };
+      for (const f of fields) delete next[f];
+      return next;
+    });
+  }
+
+  function updateSelection(patch: Partial<DeliveryPaymentSelection>, cleared: CheckoutField[]) {
+    setSelection((prev) => {
+      const next = { ...prev, ...patch };
+      return checkoutOptions ? reconcileSelection(checkoutOptions, next) : next;
+    });
+    clearErrors(...cleared);
+  }
+
+  function onFulfillmentChange(value: FulfillmentType) {
+    updateSelection({ fulfillmentType: value }, ['fulfillmentType', 'deliveryAddress']);
+  }
+
+  function onTimingChange(value: PaymentTiming) {
+    updateSelection({ paymentTiming: value }, ['paymentTiming', 'paymentMethod']);
+  }
+
+  function onMethodChange(value: PaymentMethod) {
+    updateSelection({ paymentMethod: value }, ['paymentMethod']);
+  }
+
+  function onPhoneDigitsChange(value: string) {
+    onFieldChange('phone', normalizeCrPhone(value));
+  }
+
+  function validateDeliveryStep(): Partial<Record<CheckoutField, string>> {
+    return validateDeliveryPayment({
+      options: checkoutOptions ?? null,
+      selection,
+      deliveryAddress: form.deliveryAddress,
+      phoneDigits,
+    });
+  }
+
+  function onContinue() {
+    if (directOrdersBlocked || checkoutOptions === undefined) return;
+    const errs = validateDeliveryStep();
+    setErrors(errs);
+    if (Object.keys(errs).length > 0) return;
+    setStep('details');
+    window.scrollTo({ top: 0 });
   }
 
   function onFieldChange(field: keyof CheckoutForm, value: string) {
@@ -103,33 +225,60 @@ export function useCheckoutPage(): CheckoutPageProps {
   }
 
   function validate(): boolean {
-    const errs: Partial<Record<keyof CheckoutForm, string>> = {};
+    const errs: Partial<Record<CheckoutField, string>> = {};
     if (!form.name.trim()) errs.name = 'Campo requerido';
-    if (!form.phone.trim()) errs.phone = 'Campo requerido';
     if (!form.email.trim()) {
       errs.email = 'Campo requerido';
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) {
       errs.email = 'Correo inválido';
     }
-    if (!form.deliveryAddress.trim()) errs.deliveryAddress = 'Campo requerido';
-    if (orderType === 'FINANCED' && !form.affiliateNumber.trim()) {
-      errs.affiliateNumber = 'Campo requerido';
+    if (isDirect) {
+      const deliveryErrs = validateDeliveryStep();
+      Object.assign(errs, deliveryErrs);
+      // Lo que falta está en el paso anterior: se vuelve ahí para que se vea el error.
+      if (Object.keys(deliveryErrs).length > 0) setStep('delivery');
+    } else {
+      if (!form.phone.trim()) errs.phone = 'Campo requerido';
+      if (!form.deliveryAddress.trim()) errs.deliveryAddress = 'Campo requerido';
+      if (!form.affiliateNumber.trim()) errs.affiliateNumber = 'Campo requerido';
     }
     setErrors(errs);
     return Object.keys(errs).length === 0;
   }
 
+  function buildDirectFields() {
+    // Pedido Directo: teléfono de Costa Rica normalizado (FR-012). Con opciones del negocio
+    // viajan entrega y pago, y la dirección solo con envío (FR-011).
+    if (!checkoutOptions) {
+      return { visitorPhone: toCrE164(phoneDigits), deliveryAddress: form.deliveryAddress.trim() };
+    }
+    return {
+      visitorPhone: toCrE164(phoneDigits),
+      fulfillmentType: selection.fulfillmentType ?? undefined,
+      paymentTiming: selection.paymentTiming ?? undefined,
+      paymentMethod: selection.paymentMethod ?? undefined,
+      deliveryAddress:
+        selection.fulfillmentType === 'DELIVERY' ? form.deliveryAddress.trim() : undefined,
+    };
+  }
+
   function onSubmit() {
+    if (directOrdersBlocked) return;
+    if (isDirect && checkoutOptions === undefined) return;
     if (!validate()) return;
     setIsSubmitting(true);
     setSubmitError(null);
     submitOrder(slug, {
       orderType,
       visitorName: form.name.trim(),
-      visitorPhone: form.phone.trim(),
       visitorEmail: form.email.trim(),
-      deliveryAddress: form.deliveryAddress.trim(),
-      affiliateNumber: orderType === 'FINANCED' ? form.affiliateNumber.trim() : undefined,
+      ...(isDirect
+        ? buildDirectFields()
+        : {
+            visitorPhone: form.phone.trim(),
+            deliveryAddress: form.deliveryAddress.trim(),
+            affiliateNumber: form.affiliateNumber.trim(),
+          }),
       items: items.map((item) => ({
         productId: item.productId,
         variantValueIds: item.variantValueIds,
@@ -155,14 +304,27 @@ export function useCheckoutPage(): CheckoutPageProps {
         // que sí se envió — y dejar a la persona reintentando y duplicándolo.
         return clearCart(slug)
           .catch(() => undefined)
-          .then(() => ({ notedItems, orderId: confirmation.orderId }));
+          .then(() => ({ notedItems, confirmation }));
       })
-      .then(({ notedItems, orderId }) => {
+      .then(({ notedItems, confirmation }) => {
+        const email = form.email.trim();
+        const destination = confirmationDestination(confirmation);
+        // SPEC-023 (T075): el pedido Directo aterriza en su página de seguimiento, que
+        // sobrevive a recargas al volver de WhatsApp. Se reemplaza el historial para que
+        // "atrás" no reabra un checkout ya enviado.
+        if (destination.kind === 'tracking') {
+          void navigate(destination.path, {
+            replace: true,
+            state: { orderId: confirmation.orderId, email },
+          });
+          return;
+        }
+        // FINANCED, o una API que todavía no manda token: la confirmación de siempre.
         // SPEC-022: the order anchors the account offer to this business, and the email is
         // the one the shopper just typed — no extra data is asked for (FR-006).
-        void navigate('/order-confirmed', {
+        void navigate(destination.path, {
           replace: true,
-          state: { notedItems, orderId, email: form.email.trim() },
+          state: { notedItems, orderId: confirmation.orderId, email },
         });
       })
       .catch((err: unknown) => {
@@ -173,7 +335,7 @@ export function useCheckoutPage(): CheckoutPageProps {
           err instanceof ApiError && err.status < 500 && !err.message.startsWith('Request failed')
             ? err.message
             : null;
-        setSubmitError(reason ?? 'No se pudo enviar el pedido. Intenta nuevamente.');
+        setSubmitError(reason ?? 'No se pudo enviar el pedido. Intentá nuevamente.');
       })
       .finally(() => {
         setIsSubmitting(false);
@@ -181,7 +343,12 @@ export function useCheckoutPage(): CheckoutPageProps {
   }
 
   function onBack() {
-    navigate(-1);
+    if (isDirect && step === 'details') {
+      setStep('delivery');
+      window.scrollTo({ top: 0 });
+      return;
+    }
+    void navigate(-1);
   }
 
   const currency = branding.currency ?? 'CRC';
@@ -191,6 +358,14 @@ export function useCheckoutPage(): CheckoutPageProps {
     total: formatPrice(subtotalNum, currency),
     form,
     errors,
+    step: isDirect ? step : 'details',
+    checkoutOptions,
+    directOrdersBlocked,
+    selection,
+    fulfillmentChoices: checkoutOptions ? availableFulfillmentTypes(checkoutOptions) : [],
+    timingChoices: checkoutOptions ? availableTimings(checkoutOptions) : [],
+    methodChoices: checkoutOptions ? availableMethods(checkoutOptions, selection.paymentTiming) : [],
+    phoneDigits,
     isSubmitting,
     submitError,
     showPrices: branding.showPrices ?? false,
@@ -200,6 +375,11 @@ export function useCheckoutPage(): CheckoutPageProps {
     hasBothOrderTypes: branding.orderType === 'BOTH',
     businessModel: branding.businessModel,
     onFieldChange,
+    onPhoneDigitsChange,
+    onFulfillmentChange,
+    onTimingChange,
+    onMethodChange,
+    onContinue,
     onOrderTypeChange,
     onSubmit,
     onBack,
