@@ -1,3 +1,4 @@
+import { useLocation } from 'react-router-dom';
 import { useBranding } from '@app/BrandingContext';
 import { useInstallPrompt } from '@shared/lib/useInstallPrompt';
 import {
@@ -7,11 +8,13 @@ import {
 
 export function InstallPromptSheet() {
   const { slug } = useBranding();
+  // En el seguimiento y la valoración la barra tapa las acciones del pedido (p. ej. "Ahora no").
+  const onOrderPage = useLocation().pathname.startsWith('/pedido/');
   const { status, triggerPrompt, dismiss } = useInstallPrompt();
 
   // SPEC-022 (T036): this sheet is mounted globally, so whether it may appear is no longer
   // its own call. The coordinator gives way to the notification and account surfaces first.
-  const wantsToShow = status === 'available' || status === 'ios';
+  const wantsToShow = !onOrderPage && (status === 'available' || status === 'ios');
   const mayShow = usePostConversionPrompt(slug, 'install', wantsToShow);
 
   function dismissForever() {

@@ -73,12 +73,12 @@ interface FinalHeaderProps {
 }
 
 /** Entregado: check grande, agradecimiento y, si corresponde, la valoración como acción principal. */
-export function CompletedHeader({ meta, children }: FinalHeaderProps) {
+export function CompletedHeader({ meta, children, pickup = false }: FinalHeaderProps & { pickup?: boolean }) {
   return (
     <header data-testid="final-completed" className="mb-6 flex flex-col items-center text-center">
       <DrawnCheck size="lg" />
       <p className={`${subtle} m-0 mt-4 text-xs`}>{meta}</p>
-      <h1 className={`${heading} m-0 mt-1 text-[1.75rem] leading-tight`}>Pedido entregado</h1>
+      <h1 className={`${heading} m-0 mt-1 text-[1.75rem] leading-tight`}>{pickup ? 'Pedido retirado' : 'Pedido entregado'}</h1>
       <p className={`${subtle} m-0 mt-1 text-sm`}>¡Gracias por tu compra!</p>
       {children && <div className="mt-5 flex w-full flex-col gap-2">{children}</div>}
     </header>

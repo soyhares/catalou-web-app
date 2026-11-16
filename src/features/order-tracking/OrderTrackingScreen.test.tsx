@@ -136,6 +136,11 @@ describe('estados de cierre', () => {
     expect(screen.getByRole('heading', { level: 1 }).textContent).toBe('Pedido entregado');
   });
 
+  it('Entregado en un retiro dice "Pedido retirado"', () => {
+    render(ui(ready(tracking('COMPLETED', { fulfillmentType: 'PICKUP', reviewable: true }))));
+    expect(screen.getByRole('heading', { level: 1 }).textContent).toBe('Pedido retirado');
+  });
+
   it('Entregado y ya valorado: sin CTA, con el agradecimiento', () => {
     render(ui(ready(tracking('COMPLETED', { reviewable: false, reviewed: true }))));
     expect(screen.queryByRole('link', { name: 'Valorar tu pedido' })).toBeNull();

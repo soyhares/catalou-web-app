@@ -56,6 +56,8 @@ export interface ActivateAccountPageProps {
   onSubmit: () => void;
   onCancel: () => void;
   onDone: () => void;
+  /** Texto del botón final: vuelve al pedido si la persona llegó desde su seguimiento. */
+  doneLabel: string;
 }
 
 export function useActivateAccountPage(): ActivateAccountPageProps {
@@ -136,8 +138,11 @@ export function useActivateAccountPage(): ActivateAccountPageProps {
     void navigate(cancelPath, { replace: true });
   }
 
+  // Llegó desde su pedido: el botón final vuelve ahí (cancelPath ya es esa ruta, validada).
+  const fromOrder = cancelPath !== '/catalog';
+
   function onDone() {
-    void navigate('/catalog', { replace: true });
+    void navigate(cancelPath, { replace: true });
   }
 
   return {
@@ -156,5 +161,6 @@ export function useActivateAccountPage(): ActivateAccountPageProps {
     onSubmit,
     onCancel,
     onDone,
+    doneLabel: fromOrder ? 'Volver a tu pedido' : 'Seguir explorando',
   };
 }

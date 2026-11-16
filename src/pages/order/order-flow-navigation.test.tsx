@@ -1,4 +1,4 @@
-import { fireEvent, render, screen } from '@testing-library/react';
+import { fireEvent, render, renderHook, screen } from '@testing-library/react';
 import { MemoryRouter, Route, Routes, useLocation } from 'react-router-dom';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import type { OrderTracking } from '@entities/order/tracking-api';
@@ -6,7 +6,7 @@ import { OrderReviewScreen } from '@features/order-review';
 import type { OrderReviewController } from '@features/order-review/useOrderReview';
 import OrderTrackingPage from './index';
 import ActivateAccountPage from '../activate-account';
-import { cancelDestination } from '../activate-account/useActivateAccountPage';
+import { cancelDestination, useActivateAccountPage } from '../activate-account/useActivateAccountPage';
 
 /**
  * "Ahora no" en el flujo del pedido vuelve al seguimiento, nunca al catálogo.
@@ -95,6 +95,19 @@ describe('"Ahora no" en el flujo del pedido', () => {
     );
     fireEvent.click(await screen.findByRole('button', { name: 'Ahora no' }));
     expect(screen.getByTestId('where').textContent).toBe('/catalog');
+  });
+
+  it('el botón final de la cuenta vuelve al pedido si se llegó desde él', () => {
+    const wrap = (state: object) =>
+      function Wrapper({ children }: { children: React.ReactNode }) {
+        return <MemoryRouter initialEntries={[{ pathname: '/activate-account', state }]}>{children}</MemoryRouter>;
+      };
+    const fromOrder = renderHook(() => useActivateAccountPage(), {
+      wrapper: wrap({ email: 'ana@correo.com', returnTo: '/pedido/tok' }),
+    });
+    expect(fromOrder.result.current.doneLabel).toBe('Volver a tu pedido');
+    const standalone = renderHook(() => useActivateAccountPage(), { wrapper: wrap({ email: 'ana@correo.com' }) });
+    expect(standalone.result.current.doneLabel).toBe('Seguir explorando');
   });
 
   it('returnTo solo acepta rutas de seguimiento', () => {

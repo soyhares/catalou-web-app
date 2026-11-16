@@ -245,7 +245,7 @@ function TrackingDetail({
   let header: ReactNode;
   if (tracking.status === 'COMPLETED') {
     header = (
-      <CompletedHeader meta={meta}>
+      <CompletedHeader meta={meta} pickup={tracking.fulfillmentType === 'PICKUP'}>
         {reviewCta}
         {reviewedNote}
       </CompletedHeader>
