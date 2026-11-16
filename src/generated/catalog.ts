@@ -95,6 +95,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/catalog/{slug}/orders/track/{token}/invoice": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Factura del pedido por el enlace de seguimiento (SPEC-023, FR-031a)
+         * @description Público, sin autenticación: autoriza el mismo token de seguimiento, con la misma resolución y reglas que getOrderTracking (búsqueda por (companyId resuelto desde el slug, token), solo pedidos con seguimiento, vencimiento a los 30 días del cierre). Devuelve el PDF de la factura servido desde la API, para que el enlace que se comparte quede en el dominio del negocio ({slug}.catalou.com/pedido/{token}/factura) y nunca exponga la URL del almacenamiento. El 404 es idéntico, con el mismo cuerpo que el seguimiento, para token inexistente, vencido, de otro negocio o pedido sin factura todavía. A diferencia del DTO OrderTracking, el PDF trae los datos de contacto del cliente (riesgo aceptado, ver FR-031a). Comparte el rate limit por IP del seguimiento (~120/h). No se indexa ni se guarda en cachés compartidas (FR-035).
+         */
+        get: operations["getOrderInvoice"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/catalog/{slug}/orders/track/{token}/review": {
         parameters: {
             query?: never;
@@ -699,6 +719,60 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+        };
+    };
+    getOrderInvoice: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description Company slug (e.g., "acme" for acme.catalou.com) */
+                slug: components["parameters"]["slug"];
+                /** @description Token de seguimiento del pedido Directo (SPEC-023): 32 bytes aleatorios en base64url, 43 caracteres. No adivinable; válido solo bajo el slug de su negocio. */
+                token: components["parameters"]["trackingToken"];
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description PDF de la factura */
+            200: {
+                headers: {
+                    /** @description `inline; filename="Factura <REFERENCIA> - <NEGOCIO>.pdf"; filename*=UTF-8''<mismo nombre codificado>`. En `filename` los caracteres no ASCII y las comillas se reemplazan; `filename*` lleva el nombre exacto. */
+                    "Content-Disposition"?: string;
+                    "Cache-Control": components["headers"]["CacheControlNoStore"];
+                    "X-Robots-Tag": components["headers"]["XRobotsTagNoIndex"];
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/pdf": string;
+                };
+            };
+            /** @description No encontrado (indistinguible entre inexistente, vencido, otro negocio o pedido sin factura) */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Demasiados intentos desde este origen */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description No se pudo obtener el PDF del almacenamiento. Cuerpo genérico: nunca incluye la URL de origen. */
+            502: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
             };
         };
     };

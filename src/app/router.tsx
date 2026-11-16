@@ -18,6 +18,7 @@ const OrderConfirmedPage = lazy(() => import('@pages/order-confirmed'));
 // SPEC-023: seguimiento y valoración públicos por token (sin guard, FR-034).
 const OrderTrackingPage = lazy(() => import('@pages/order'));
 const OrderReviewPage = lazy(() => import('@pages/order/OrderReviewPage'));
+const OrderInvoicePage = lazy(() => import('@pages/order/OrderInvoicePage'));
 const ConfirmAssociationPage = lazy(
   () => import('@pages/confirm-association/ConfirmAssociationPage'),
 );
@@ -65,6 +66,7 @@ function AnimatedRoutes() {
           {/* SPEC-023: fuera de OrdersGuard a propósito; el enlace sigue en solo lectura con Pedidos apagado (FR-034). */}
           <Route path="/pedido/:token" element={<PageTransition><OrderTrackingPage /></PageTransition>} />
           <Route path="/pedido/:token/valoracion" element={<PageTransition><OrderReviewPage /></PageTransition>} />
+          <Route path="/pedido/:token/factura" element={<OrderInvoicePage />} />
           <Route path="/order-confirmed" element={<OrdersGuard><PageTransition><OrderConfirmedPage /></PageTransition></OrdersGuard>} />
           <Route path="/confirm-association" element={<PageTransition><ConfirmAssociationPage /></PageTransition>} />
           <Route path="/confirm-booking" element={<PageTransition><ConfirmBookingPage /></PageTransition>} />
