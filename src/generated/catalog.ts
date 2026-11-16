@@ -351,6 +351,14 @@ export interface components {
             paymentTiming: "UPFRONT" | "ON_DELIVERY";
             /** @enum {string} */
             paymentMethod: "SINPE_MOVIL" | "BANK_TRANSFER" | "CASH";
+            /** @description Ítems del pedido para que el mensaje al negocio enlace cada producto. productUrl es la ficha en la PWA del negocio (`/products/:id`), o null si el producto ya no existe. La PWA decide cuántos incluir en el mensaje. */
+            items: {
+                productName: string;
+                variantLabel?: string | null;
+                quantity: number;
+                /** @example https://demo.catalou.com/products/6f1c2a7e-2b9d-4c3e-9a51-0d8f3b2c7e10 */
+                productUrl: string | null;
+            }[];
         } | null;
         /** @description Snapshot de los datos de cobro congelado al crear el pedido (FR-014). Solo del método elegido: sinpe* para SINPE_MOVIL, iban* para BANK_TRANSFER, ninguno para CASH. */
         PaymentInstructions: {
