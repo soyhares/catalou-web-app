@@ -25,6 +25,15 @@ import { recordOffer } from '@features/account-offer/offer-state';
 
 export type ActivateStep = 'email' | 'code';
 
+/**
+ * "Ahora no" vuelve adonde estaba la persona si llegó desde su pedido (`returnTo` en el state de
+ * la navegación); si no, al catálogo. Solo se aceptan rutas del seguimiento del pedido: el state
+ * no decide navegaciones arbitrarias.
+ */
+export function cancelDestination(returnTo: unknown): string {
+  return typeof returnTo === 'string' && /^\/pedido\/[^/?#]+$/.test(returnTo) ? returnTo : '/catalog';
+}
+
 export interface ActivateAccountPageProps {
   step: ActivateStep;
   /** La sesión venció sola: hay que decirlo, no dejar a la persona adivinando. */
@@ -55,7 +64,8 @@ export function useActivateAccountPage(): ActivateAccountPageProps {
   const location = useLocation();
   const [searchParams] = useSearchParams();
 
-  const navState = location.state as { email?: string; orderId?: string } | null;
+  const navState = location.state as { email?: string; orderId?: string; returnTo?: string } | null;
+  const cancelPath = cancelDestination(navState?.returnTo);
   const isExpiredSession = searchParams.get('expired') === '1';
   const initialEmail =
     navState?.email ?? searchParams.get('email') ?? (isExpiredSession ? readLastEmail(slug) : null) ?? '';
@@ -123,6 +133,10 @@ export function useActivateAccountPage(): ActivateAccountPageProps {
   }
 
   function onCancel() {
+    void navigate(cancelPath, { replace: true });
+  }
+
+  function onDone() {
     void navigate('/catalog', { replace: true });
   }
 
@@ -141,6 +155,6 @@ export function useActivateAccountPage(): ActivateAccountPageProps {
     onCodeChange,
     onSubmit,
     onCancel,
-    onDone: onCancel,
+    onDone,
   };
 }

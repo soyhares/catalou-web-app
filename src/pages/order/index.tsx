@@ -22,7 +22,12 @@ export default function OrderTrackingPage() {
     <>
       <OrderTrackingScreen load={load} onRetry={retry} reviewPath={`/pedido/${encodeURIComponent(token)}/valoracion`} />
       {load.kind === 'ready' && (
-        <AccountOffer slug={slug} orderId={state?.orderId ?? null} email={state?.email ?? null} />
+        <AccountOffer
+          slug={slug}
+          orderId={state?.orderId ?? null}
+          email={state?.email ?? null}
+          returnTo={location.pathname}
+        />
       )}
     </>
   );

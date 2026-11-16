@@ -88,7 +88,7 @@ function renderBody(props: OrderReviewScreenProps): ReactNode {
         const copy = STATE_COPY[load.state];
         return (
           <Message title={copy.title} body={copy.body(load.order.businessName)}>
-            <Link to={orderPath} className={outlineButton}>Ver tu pedido</Link>
+            <Link to={orderPath} replace className={outlineButton}>Ver tu pedido</Link>
           </Message>
         );
       }
@@ -152,7 +152,8 @@ function ReviewForm({
         <button type="submit" disabled={isSubmitting} className={accentButton}>
           {isSubmitting ? 'Enviando...' : 'Enviar valoración'}
         </button>
-        <Link to={orderPath} className={outlineButton}>Ahora no</Link>
+        {/* `replace`: volver atrás desde el pedido no reabre el formulario que se pospuso. */}
+        <Link to={orderPath} replace className={outlineButton}>Ahora no</Link>
       </div>
     </form>
   );
