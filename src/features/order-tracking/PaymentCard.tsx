@@ -9,14 +9,18 @@ const card = 'mb-2.5 rounded-[var(--pwa-radius-md)] border border-[var(--pwa-bor
  * Tarjeta de pago, separada de la línea de tiempo (FR-031). Montos según D53 (FR-032). Los
  * datos para pagar solo llegan mientras el pago está pendiente y el pedido abierto.
  */
-export function PaymentCard({ tracking }: { tracking: OrderTracking }) {
+export function PaymentCard({ tracking, changeId = 0 }: { tracking: OrderTracking; changeId?: number }) {
   const { payment } = tracking;
   const rows = paymentAmountRows(tracking.amounts);
   const verified = payment.status === 'VERIFIED';
   const showInstructions = !verified && payment.instructions && tracking.status !== 'CANCELLED';
 
   return (
-    <section aria-labelledby="payment-card-title" className={card}>
+    <section
+      key={changeId}
+      aria-labelledby="payment-card-title"
+      className={`${card} ${changeId > 0 ? 'motion-safe:animate-status-halo' : ''}`}
+    >
       <div className="flex items-center justify-between gap-2.5 py-0.5">
         <h2 id="payment-card-title" className="m-0 text-[13px] font-bold">Pago</h2>
         <span className="inline-flex items-center gap-1.5 rounded-[var(--pwa-radius-chip)] border border-[var(--pwa-border)] px-2.5 py-1 text-xs font-bold">

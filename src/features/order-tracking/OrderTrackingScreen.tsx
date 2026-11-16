@@ -16,6 +16,7 @@ import { PaymentCard } from './PaymentCard';
 import { PaymentInstructionsBlock } from './PaymentInstructionsBlock';
 import { OrderItemsList } from './OrderItemsList';
 import { IconMessage } from './icons';
+import { useTrackingChange, type TrackingChange } from './useTrackingChange';
 import { fulfillmentLabel, landingTotal } from './payment';
 
 /**
@@ -45,16 +46,25 @@ const accentButton =
   'flex min-h-[46px] w-full items-center justify-center gap-2 rounded-[var(--pwa-radius-button)] bg-[var(--pwa-accent)] px-4 py-3 text-sm font-bold text-[var(--pwa-on-accent)] no-underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--pwa-text)]';
 
 export function OrderTrackingScreen({ load, onRetry, reviewPath }: OrderTrackingScreenProps) {
+  const change = useTrackingChange(load.kind === 'ready' ? load.data : null);
   return (
     <main className={page}>
       {/* FR-035: la página del pedido no se indexa. React 19 lo sube al <head>. */}
       <meta name="robots" content="noindex, nofollow" />
-      <div className={column}>{renderLoad(load, onRetry, reviewPath)}</div>
+      <div role="status" aria-live="polite" className="sr-only">
+        {change.announcement}
+      </div>
+      <div className={column}>{renderLoad(load, onRetry, reviewPath, change)}</div>
     </main>
   );
 }
 
-function renderLoad(load: OrderTrackingLoad, onRetry: () => void, reviewPath: string): ReactNode {
+function renderLoad(
+  load: OrderTrackingLoad,
+  onRetry: () => void,
+  reviewPath: string,
+  change: TrackingChange,
+): ReactNode {
   switch (load.kind) {
     case 'loading':
       return (
@@ -91,7 +101,7 @@ function renderLoad(load: OrderTrackingLoad, onRetry: () => void, reviewPath: st
       return load.data.status === 'PENDING' ? (
         <ReceivedLanding tracking={load.data} />
       ) : (
-        <TrackingDetail tracking={load.data} reviewPath={reviewPath} />
+        <TrackingDetail tracking={load.data} reviewPath={reviewPath} change={change} />
       );
   }
 }
@@ -192,7 +202,15 @@ function ReceivedLanding({ tracking }: { tracking: OrderTracking }) {
 }
 
 /** Seguimiento después de Recibido (mockup 4). */
-function TrackingDetail({ tracking, reviewPath }: { tracking: OrderTracking; reviewPath: string }) {
+function TrackingDetail({
+  tracking,
+  reviewPath,
+  change,
+}: {
+  tracking: OrderTracking;
+  reviewPath: string;
+  change: TrackingChange;
+}) {
   const steps = buildTrackingTimeline(tracking.status, tracking.timeline, tracking.fulfillmentType);
   return (
     <>
@@ -200,12 +218,15 @@ function TrackingDetail({ tracking, reviewPath }: { tracking: OrderTracking; rev
       <p className={`${muted} m-0 text-xs`}>
         {tracking.businessName} · {fulfillmentLabel(tracking.fulfillmentType)}
       </p>
-      <h1 className={`${heading} mb-2.5 mt-0.5 text-[1.6rem]`}>
+      <h1
+        key={change.statusChangeId}
+        className={`${heading} mb-2.5 mt-0.5 w-fit rounded-[var(--pwa-radius-sm)] text-[1.6rem] ${change.statusChangeId > 0 ? 'motion-safe:animate-status-halo' : ''}`}
+      >
         {orderStatusLabel(tracking.status, tracking.fulfillmentType)}
       </h1>
 
-      <TrackingTimeline steps={steps} />
-      <PaymentCard tracking={tracking} />
+      <TrackingTimeline steps={steps} changeId={change.statusChangeId} />
+      <PaymentCard tracking={tracking} changeId={change.paymentChangeId} />
       <OrderItemsList items={tracking.items} currency={currencyOf(tracking)} />
 
       <div className="mt-4 flex flex-col gap-2">
