@@ -1,10 +1,9 @@
-import { act, render, screen } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { beforeEach, describe, expect, it } from 'vitest';
 import type { OrderTracking } from '@entities/order/tracking-api';
 import { OrderTrackingScreen } from './OrderTrackingScreen';
 import type { OrderTrackingLoad, TrackingFreshness } from './useOrderTracking';
-import { FRESHNESS_TICK_MS } from './freshness';
 
 const tracking = (status: string, extra: Partial<OrderTracking> = {}) =>
   ({
@@ -33,55 +32,114 @@ const ui = (load: OrderTrackingLoad, freshness: TrackingFreshness = fresh()) => 
     <OrderTrackingScreen load={load} onRetry={() => {}} reviewPath="/pedido/tok/valoracion" freshness={freshness} />
   </MemoryRouter>
 );
-const indicator = () => screen.queryByTestId('live-indicator');
+const nextStep = () => screen.queryByTestId('next-step');
+const lastUpdated = () => screen.queryByTestId('last-updated');
 const moment = () => screen.queryByTestId('confirmed-moment');
+/** 9:41 de la mañana, hora local: la que se espera ver en "Última actualización". */
+const AT_941 = new Date(2026, 10, 12, 9, 41).getTime();
 
 beforeEach(() => sessionStorage.clear());
 
-describe('indicador "Se actualiza solo"', () => {
-  afterEach(() => vi.useRealTimers());
-
-  it.each(['PENDING', 'CONFIRMED', 'PREPARING', 'SHIPPED'])('visible con el pedido abierto (%s)', (status) => {
+describe('paso siguiente vivo', () => {
+  it.each([
+    ['PENDING', 'Confirmado'],
+    ['CONFIRMED', 'En preparación'],
+    ['PREPARING', 'Enviado'],
+  ])('con el pedido abierto (%s) muestra el próximo paso esperando al negocio', (status, label) => {
     render(ui(ready(tracking(status))));
-    expect(indicator()).not.toBeNull();
-    expect(indicator()?.textContent).toContain('Se actualiza solo');
-    expect(indicator()?.textContent).toContain('Actualizado recién');
-    expect(indicator()?.querySelector('[class*="motion-safe:animate-live-ping"]')).not.toBeNull();
+    const step = nextStep();
+    expect(step).not.toBeNull();
+    expect(step?.textContent).toContain(label);
+    expect(step?.textContent).toContain('Esperando al negocio');
+    expect(step?.textContent).toContain(`Próximo paso: ${label}, esperando al negocio`);
+    expect(step?.getAttribute('aria-current')).toBeNull();
   });
 
-  it.each(['COMPLETED', 'CANCELLED'])('oculto con el pedido cerrado (%s)', (status) => {
+  it('el brillo es decorativo y solo corre con movimiento permitido', () => {
+    render(ui(ready(tracking('CONFIRMED'))));
+    const shimmer = screen.getByTestId('next-step-shimmer');
+    expect(shimmer.className).toContain('motion-safe:animate-next-shimmer');
+    expect(shimmer.className).toContain('motion-reduce:hidden');
+    expect(shimmer.closest('[aria-hidden="true"]')).not.toBeNull();
+  });
+
+  it('en Enviado con envío el próximo es Entregado, pendiente de entrega', () => {
+    render(ui(ready(tracking('SHIPPED'))));
+    expect(nextStep()?.textContent).toContain('Entregado');
+    expect(nextStep()?.textContent).toContain('Pendiente de entrega');
+  });
+
+  it('en Listo para retirar el próximo dice pendiente de retiro', () => {
+    render(ui(ready(tracking('SHIPPED', { fulfillmentType: 'PICKUP' }))));
+    expect(nextStep()?.textContent).toContain('Pendiente de retiro');
+    expect(nextStep()?.textContent).toContain('Próximo paso: Entregado, pendiente de retiro');
+    expect(screen.queryByText('Esperando al negocio')).toBeNull();
+  });
+
+  it('cuando llega el cambio, el paso siguiente pasa a actual con su entrada y aparece el nuevo', () => {
+    const { rerender } = render(ui(ready(tracking('CONFIRMED'))));
+    expect(nextStep()?.textContent).toContain('En preparación');
+
+    rerender(ui(ready(tracking('PREPARING'))));
+    const current = document.querySelector('[aria-current="step"]');
+    expect(current?.textContent).toContain('En preparación');
+    expect(current?.className).toContain('motion-safe:animate-step-in');
+    expect(nextStep()?.textContent).toContain('Enviado');
+  });
+
+  it.each(['COMPLETED', 'CANCELLED'])('con el pedido cerrado (%s) no hay paso siguiente', (status) => {
     render(ui(ready(tracking(status))));
-    expect(indicator()).toBeNull();
-    expect(screen.queryByText('Se actualiza solo')).toBeNull();
+    expect(nextStep()).toBeNull();
+    expect(screen.queryByText('Esperando al negocio')).toBeNull();
   });
 
-  it('"Actualizado hace" avanza solo, sin que llegue otra respuesta', () => {
-    vi.useFakeTimers();
-    render(ui(ready(tracking('PREPARING')), fresh({ lastUpdatedAt: Date.now() })));
-    expect(indicator()?.textContent).toContain('Actualizado recién');
+  it('el indicador viejo ya no existe', () => {
+    render(ui(ready(tracking('PREPARING'))));
+    expect(screen.queryByText(/Se actualiza solo/)).toBeNull();
+    expect(screen.queryByText(/Actualizado hace|Actualizado recién|Reintentando/)).toBeNull();
+    expect(document.querySelector('[class*="animate-live-ping"]')).toBeNull();
+  });
+});
 
-    act(() => {
-      vi.advanceTimersByTime(FRESHNESS_TICK_MS * 4);
-    });
-    expect(indicator()?.textContent).toContain('Actualizado hace 2 min');
+describe('"Última actualización"', () => {
+  it.each(['PENDING', 'CONFIRMED', 'PREPARING', 'SHIPPED'])('con el pedido abierto (%s) muestra la hora', (status) => {
+    render(ui(ready(tracking(status)), fresh({ lastUpdatedAt: AT_941 })));
+    expect(lastUpdated()?.textContent).toContain('Última actualización');
+    expect(lastUpdated()?.textContent).toContain('9:41');
+    expect(lastUpdated()?.textContent).toMatch(/a\.\sm\./);
   });
 
-  it('si el último refresco falló dice "Reintentando…" y conserva la antigüedad del dato', () => {
-    render(ui(ready(tracking('PREPARING')), fresh({ lastUpdatedAt: Date.now() - 3 * 60_000, lastRefreshFailed: true })));
-    expect(indicator()?.textContent).toContain('Reintentando…');
-    expect(indicator()?.textContent).toContain('Actualizado hace 3 min');
-    expect(indicator()?.querySelector('[class*="animate-live-ping"]')).toBeNull();
+  it('en cada refresco la hora entra con un fundido', () => {
+    const { rerender } = render(ui(ready(tracking('PREPARING')), fresh({ lastUpdatedAt: AT_941 })));
+    const before = lastUpdated()?.querySelector('time');
+    expect(before?.className).toContain('motion-safe:animate-time-fade');
+
+    rerender(ui(ready(tracking('PREPARING')), fresh({ lastUpdatedAt: AT_941 + 60_000 })));
+    const after = lastUpdated()?.querySelector('time');
+    expect(after?.textContent).toContain('9:42');
+    expect(after).not.toBe(before);
   });
 
-  it('durante una consulta se marca ocupado, sin cambiar el texto', () => {
-    render(ui(ready(tracking('PREPARING')), fresh({ isRefreshing: true })));
-    expect(indicator()?.getAttribute('aria-busy')).toBe('true');
-    expect(indicator()?.textContent).toContain('Se actualiza solo');
+  it('si el último refresco falló conserva la última hora buena, sin aviso de error', () => {
+    render(ui(ready(tracking('PREPARING')), fresh({ lastUpdatedAt: AT_941, lastRefreshFailed: true })));
+    expect(lastUpdated()?.textContent).toContain('9:41');
+    expect(screen.queryByText(/Reintentando|error|falló/i)).toBeNull();
+  });
+
+  it.each(['COMPLETED', 'CANCELLED'])('oculta con el pedido cerrado (%s)', (status) => {
+    render(ui(ready(tracking(status)), fresh({ lastUpdatedAt: AT_941 })));
+    expect(lastUpdated()).toBeNull();
+    expect(screen.queryByText(/Última actualización/)).toBeNull();
+  });
+
+  it('sin respuesta buena todavía, no se muestra', () => {
+    render(ui(ready(tracking('PREPARING')), fresh({ lastUpdatedAt: null })));
+    expect(lastUpdated()).toBeNull();
   });
 });
 
 describe('momento de Confirmado', () => {
-  it('celebra al pasar a CONFIRMED con la página abierta, y el indicador sigue', () => {
+  it('celebra al pasar a CONFIRMED con la página abierta, y el paso siguiente sigue', () => {
     const { rerender } = render(ui(ready(tracking('PENDING'))));
     expect(moment()).toBeNull();
 
@@ -89,7 +147,7 @@ describe('momento de Confirmado', () => {
     expect(moment()?.textContent).toContain('¡Tu pedido fue confirmado!');
     expect(moment()?.textContent).toContain('El negocio ya lo tiene en marcha.');
     expect(moment()?.querySelector('[class*="motion-safe:animate-check-draw"]')).not.toBeNull();
-    expect(indicator()).not.toBeNull();
+    expect(nextStep()).not.toBeNull();
   });
 
   it('celebra una sola vez por pedido: recargar no lo repite', () => {

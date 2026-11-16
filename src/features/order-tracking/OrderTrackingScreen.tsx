@@ -9,16 +9,15 @@ import {
   buildWaLink,
 } from '@shared/lib/whatsapp-link';
 import { orderStatusLabel } from '@entities/order/status-labels';
-import type { OrderTrackingLoad, TrackingFreshness } from './useOrderTracking';
+import { isFinalOrderStatus, type OrderTrackingLoad, type TrackingFreshness } from './useOrderTracking';
 import { buildTrackingTimeline } from './timeline';
-import { TrackingTimeline } from './TrackingTimeline';
+import { LastUpdated, TrackingTimeline } from './TrackingTimeline';
 import { PaymentCard } from './PaymentCard';
 import { PaymentInstructionsBlock } from './PaymentInstructionsBlock';
 import { OrderItemsList } from './OrderItemsList';
 import { IconMessage } from './icons';
 import { useTrackingChange, type TrackingChange } from './useTrackingChange';
 import { fulfillmentLabel, landingTotal } from './payment';
-import { LiveIndicator } from './LiveIndicator';
 import { useConfirmationCelebration } from './useConfirmationCelebration';
 import { CancelledHeader, CompletedHeader, ConfirmedMoment } from './OrderMoments';
 
@@ -30,8 +29,9 @@ import { CancelledHeader, CompletedHeader, ConfirmedMoment } from './OrderMoment
  * (FR-017). Después es el seguimiento: línea de tiempo y tarjeta de pago separadas (FR-031).
  * Nunca muestra el aviso de modelo Asociado: los pedidos con seguimiento son Directos (FR-047).
  *
- * Mientras el pedido está abierto, "Se actualiza solo" dice que la página consulta sola; la
- * primera vez que se ve Confirmado hay un momento breve; Entregado y Cancelado tienen su cierre.
+ * Mientras el pedido está abierto, la línea de tiempo muestra el paso siguiente "vivo" y debajo
+ * "Última actualización" con la hora del último refresco bueno; la primera vez que se ve
+ * Confirmado hay un momento breve; Entregado y Cancelado tienen su cierre.
  */
 
 interface OrderTrackingScreenProps {
@@ -39,7 +39,7 @@ interface OrderTrackingScreenProps {
   onRetry: () => void;
   /** Ruta de la valoración de este pedido. */
   reviewPath: string;
-  /** Frescura del refresco silencioso (`useOrderTracking`). Sin ella no se muestra el indicador. */
+  /** Frescura del refresco silencioso (`useOrderTracking`). Sin ella no se muestra "Última actualización". */
   freshness?: TrackingFreshness;
 }
 
@@ -165,6 +165,9 @@ function ReceivedLanding({ tracking, freshness }: { tracking: OrderTracking; fre
   // Se arma al renderizar, nunca después de un await (iOS bloquea esa navegación).
   const noticeHref = notice ? buildMerchantNoticeLink(notice, tracking.merchantWhatsappE164) : null;
   const asksForReceipt = tracking.payment.timing === 'UPFRONT' && tracking.payment.method !== 'CASH';
+  // Versión corta de la línea de tiempo: Recibido y el paso siguiente vivo (Confirmado).
+  const steps = buildTrackingTimeline(tracking.status, tracking.timeline, tracking.fulfillmentType).slice(0, 2);
+  const lastUpdatedAt = freshness?.lastUpdatedAt ?? null;
 
   return (
     <>
@@ -175,12 +178,6 @@ function ReceivedLanding({ tracking, freshness }: { tracking: OrderTracking; fre
       <p className={`${muted} mb-3 mt-0.5 text-center text-xs`}>
         Referencia <span className="font-bold text-[var(--pwa-text)]">{tracking.reference}</span> · {tracking.businessName}
       </p>
-      {freshness && (
-        <div className="mb-4">
-          <LiveIndicator freshness={freshness} align="center" />
-        </div>
-      )}
-
       {(total || instructions) && (
         <div className={card}>
           {total && (
@@ -217,6 +214,11 @@ function ReceivedLanding({ tracking, freshness }: { tracking: OrderTracking; fre
         <p className={`${muted} m-0 text-center text-xs`}>Guardá esta página: acá vas a ver cómo avanza tu pedido.</p>
       </div>
 
+      <div className="mt-5">
+        <TrackingTimeline steps={steps} />
+        {lastUpdatedAt !== null && <LastUpdated at={lastUpdatedAt} />}
+      </div>
+
       <OrderItemsList items={tracking.items} currency={currencyOf(tracking)} />
     </>
   );
@@ -241,7 +243,9 @@ function TrackingDetail({
     <p className={`${muted} m-0 text-center text-xs`}>Gracias por tu valoración.</p>
   ) : null;
 
-  // Entregado y Cancelado ya no cambian: sin indicador en vivo (la página dejó de consultar).
+  // Entregado y Cancelado ya no cambian: sin paso siguiente ni "Última actualización" (la página
+  // dejó de consultar).
+  const lastUpdatedAt = isFinalOrderStatus(tracking.status) ? null : (freshness?.lastUpdatedAt ?? null);
   let header: ReactNode;
   if (tracking.status === 'COMPLETED') {
     header = (
@@ -273,15 +277,10 @@ function TrackingDetail({
         </p>
         <h1
           key={change.statusChangeId}
-          className={`${heading} mb-2 mt-0.5 w-fit rounded-[var(--pwa-radius-sm)] text-[1.6rem] ${change.statusChangeId > 0 ? 'motion-safe:animate-status-halo' : ''}`}
+          className={`${heading} mb-5 mt-0.5 w-fit rounded-[var(--pwa-radius-sm)] text-[1.6rem] ${change.statusChangeId > 0 ? 'motion-safe:animate-status-halo' : ''}`}
         >
           {orderStatusLabel(tracking.status, tracking.fulfillmentType)}
         </h1>
-        {freshness && (
-          <div className="mb-4">
-            <LiveIndicator freshness={freshness} />
-          </div>
-        )}
       </>
     );
   }
@@ -290,7 +289,10 @@ function TrackingDetail({
     <>
       {header}
 
-      <TrackingTimeline steps={steps} changeId={change.statusChangeId} />
+      <div className="mb-3">
+        <TrackingTimeline steps={steps} changeId={change.statusChangeId} />
+        {lastUpdatedAt !== null && <LastUpdated at={lastUpdatedAt} />}
+      </div>
       <PaymentCard tracking={tracking} changeId={change.paymentChangeId} />
       <OrderItemsList items={tracking.items} currency={currencyOf(tracking)} />
 
