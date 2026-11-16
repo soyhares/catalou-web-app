@@ -10,7 +10,7 @@ export type OrderTrackingLoad =
   | { kind: 'rate-limited' }
   | { kind: 'error' };
 
-/** Qué tan fresco está lo que se ve, para el indicador "Se actualiza solo". */
+/** Qué tan fresco está lo que se ve. La pantalla muestra `lastUpdatedAt` como "Última actualización". */
 export interface TrackingFreshness {
   /** `Date.now()` de la última respuesta buena (carga o refresco); null antes de la primera. */
   lastUpdatedAt: number | null;
