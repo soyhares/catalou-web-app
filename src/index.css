@@ -1,2 +1,29 @@
 @import "tailwindcss";
 @import "./shared/styles/pwa-base.css";
+
+/* Cambio de estado en /pedido/:token. Se usan siempre con `motion-safe:`; cortas y sin bucles. */
+@theme {
+  --animate-step-in: step-in 450ms ease-out both;
+  --animate-dot-pulse: dot-pulse 600ms ease-in-out 2;
+  --animate-status-halo: status-halo 700ms ease-out 1;
+
+  @keyframes step-in {
+    0% { opacity: 0; transform: translateY(8px); }
+    100% { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes dot-pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.35); }
+  }
+  @keyframes status-halo {
+    0% {
+      transform: scale(0.98);
+      box-shadow: 0 0 0 0 color-mix(in srgb, var(--pwa-accent) 45%, transparent);
+    }
+    40% { transform: scale(1.02); }
+    100% {
+      transform: scale(1);
+      box-shadow: 0 0 0 12px color-mix(in srgb, var(--pwa-accent) 0%, transparent);
+    }
+  }
+}
