@@ -1,11 +1,36 @@
 @import "tailwindcss";
 @import "./shared/styles/pwa-base.css";
 
-/* Cambio de estado en /pedido/:token. Se usan siempre con `motion-safe:`; cortas y sin bucles. */
+/* Cambio de estado en /pedido/:token. Se usan siempre con `motion-safe:`; cortas y sin bucles,
+ * salvo `live-ping`: el pulso discreto del indicador "Se actualiza solo", que solo corre mientras
+ * el pedido está abierto. Los trazos dibujados (`ring-draw`, `check-draw`) piden `pathLength="1"`
+ * y `[stroke-dasharray:1]` en el SVG; sin movimiento quedan dibujados desde el principio. */
 @theme {
   --animate-step-in: step-in 450ms ease-out both;
   --animate-dot-pulse: dot-pulse 600ms ease-in-out 2;
   --animate-status-halo: status-halo 700ms ease-out 1;
+  --animate-live-ping: live-ping 2.4s cubic-bezier(0, 0, 0.2, 1) infinite;
+  --animate-moment-in: moment-in 450ms ease-out both;
+  --animate-ring-draw: stroke-draw 650ms cubic-bezier(0.65, 0, 0.35, 1) 100ms both;
+  --animate-check-draw: stroke-draw 500ms cubic-bezier(0.65, 0, 0.35, 1) 650ms both;
+  --animate-moment-halo: moment-halo 900ms ease-out 1000ms both;
+
+  @keyframes live-ping {
+    0% { transform: scale(1); opacity: 0.5; }
+    70%, 100% { transform: scale(2.6); opacity: 0; }
+  }
+  @keyframes moment-in {
+    0% { opacity: 0; transform: translateY(6px) scale(0.98); }
+    100% { opacity: 1; transform: translateY(0) scale(1); }
+  }
+  @keyframes stroke-draw {
+    0% { stroke-dashoffset: 1; }
+    100% { stroke-dashoffset: 0; }
+  }
+  @keyframes moment-halo {
+    0% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--pwa-accent) 40%, transparent); }
+    100% { box-shadow: 0 0 0 14px color-mix(in srgb, var(--pwa-accent) 0%, transparent); }
+  }
 
   @keyframes step-in {
     0% { opacity: 0; transform: translateY(8px); }

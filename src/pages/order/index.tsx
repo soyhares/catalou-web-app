@@ -16,11 +16,16 @@ export default function OrderTrackingPage() {
   const { slug } = useBranding();
   const location = useLocation();
   const state = location.state as { orderId?: string; email?: string } | null;
-  const { load, retry } = useOrderTracking(slug, token);
+  const { load, retry, lastUpdatedAt, isRefreshing, lastRefreshFailed } = useOrderTracking(slug, token);
 
   return (
     <>
-      <OrderTrackingScreen load={load} onRetry={retry} reviewPath={`/pedido/${encodeURIComponent(token)}/valoracion`} />
+      <OrderTrackingScreen
+        load={load}
+        onRetry={retry}
+        reviewPath={`/pedido/${encodeURIComponent(token)}/valoracion`}
+        freshness={{ lastUpdatedAt, isRefreshing, lastRefreshFailed }}
+      />
       {load.kind === 'ready' && (
         <AccountOffer
           slug={slug}

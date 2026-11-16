@@ -24,7 +24,9 @@ const ui = (load: OrderTrackingLoad) => (
   </MemoryRouter>
 );
 const live = () => screen.getByRole('status');
-const animated = (container: HTMLElement) => container.querySelectorAll('[class*="animate-"]');
+// Solo las animaciones de cambio: el pulso del indicador en vivo y el momento de Confirmado tienen sus propios tests.
+const animated = (container: HTMLElement) =>
+  container.querySelectorAll('[class*="animate-step-in"], [class*="animate-dot-pulse"], [class*="animate-status-halo"]');
 
 describe('OrderTrackingScreen: animación de cambio', () => {
   it('en la carga inicial no marca cambio', () => {

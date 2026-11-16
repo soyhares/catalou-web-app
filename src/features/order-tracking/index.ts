@@ -1,2 +1,2 @@
 export { OrderTrackingScreen } from './OrderTrackingScreen';
-export { useOrderTracking, type OrderTrackingLoad } from './useOrderTracking';
+export { useOrderTracking, type OrderTrackingLoad, type TrackingFreshness } from './useOrderTracking';
