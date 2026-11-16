@@ -20,9 +20,14 @@ interface AccountOfferProps {
   slug: string;
   orderId: string | null;
   email: string | null;
+  /**
+   * Adónde vuelve "Ahora no" en la pantalla del código. Desde el seguimiento del pedido es
+   * `/pedido/:token`: sin esto, posponer el código mandaba a la persona al catálogo.
+   */
+  returnTo?: string;
 }
 
-export function AccountOffer({ slug, orderId, email }: AccountOfferProps) {
+export function AccountOffer({ slug, orderId, email, returnTo }: AccountOfferProps) {
   const navigate = useNavigate();
   const [maskedEmail, setMaskedEmail] = useState<string | null>(null);
   const [dismissed, setDismissed] = useState(false);
@@ -51,7 +56,7 @@ export function AccountOffer({ slug, orderId, email }: AccountOfferProps) {
         </p>
         <button
           type="button"
-          onClick={() => void navigate('/activate-account', { state: { email, slug } })}
+          onClick={() => void navigate('/activate-account', { state: { email, slug, returnTo } })}
           className="mt-3 w-full py-3 text-sm font-semibold"
           style={{
             backgroundColor: 'var(--pwa-accent)',

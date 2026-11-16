@@ -20,8 +20,16 @@ function trackPath(slug: string, token: string): string {
   return `/catalog/${encodeURIComponent(slug)}/orders/track/${encodeURIComponent(token)}`;
 }
 
-export async function getOrderTracking(slug: string, token: string): Promise<OrderTracking> {
-  return publicFetch<OrderTracking>(trackPath(slug, token));
+/**
+ * `silent`: el refresco automático no abre el modal de reporte ante un 5xx; la página ya lo
+ * muestra como "Reintentando…" y vuelve a probar sola en el próximo ciclo.
+ */
+export async function getOrderTracking(
+  slug: string,
+  token: string,
+  { silent = false }: { silent?: boolean } = {},
+): Promise<OrderTracking> {
+  return publicFetch<OrderTracking>(trackPath(slug, token), {}, { reportServerErrors: !silent });
 }
 
 /**

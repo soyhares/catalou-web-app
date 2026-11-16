@@ -25,6 +25,15 @@ import { recordOffer } from '@features/account-offer/offer-state';
 
 export type ActivateStep = 'email' | 'code';
 
+/**
+ * "Ahora no" vuelve adonde estaba la persona si llegó desde su pedido (`returnTo` en el state de
+ * la navegación); si no, al catálogo. Solo se aceptan rutas del seguimiento del pedido: el state
+ * no decide navegaciones arbitrarias.
+ */
+export function cancelDestination(returnTo: unknown): string {
+  return typeof returnTo === 'string' && /^\/pedido\/[^/?#]+$/.test(returnTo) ? returnTo : '/catalog';
+}
+
 export interface ActivateAccountPageProps {
   step: ActivateStep;
   /** La sesión venció sola: hay que decirlo, no dejar a la persona adivinando. */
@@ -47,6 +56,8 @@ export interface ActivateAccountPageProps {
   onSubmit: () => void;
   onCancel: () => void;
   onDone: () => void;
+  /** Texto del botón final: vuelve al pedido si la persona llegó desde su seguimiento. */
+  doneLabel: string;
 }
 
 export function useActivateAccountPage(): ActivateAccountPageProps {
@@ -55,7 +66,8 @@ export function useActivateAccountPage(): ActivateAccountPageProps {
   const location = useLocation();
   const [searchParams] = useSearchParams();
 
-  const navState = location.state as { email?: string; orderId?: string } | null;
+  const navState = location.state as { email?: string; orderId?: string; returnTo?: string } | null;
+  const cancelPath = cancelDestination(navState?.returnTo);
   const isExpiredSession = searchParams.get('expired') === '1';
   const initialEmail =
     navState?.email ?? searchParams.get('email') ?? (isExpiredSession ? readLastEmail(slug) : null) ?? '';
@@ -123,7 +135,14 @@ export function useActivateAccountPage(): ActivateAccountPageProps {
   }
 
   function onCancel() {
-    void navigate('/catalog', { replace: true });
+    void navigate(cancelPath, { replace: true });
+  }
+
+  // Llegó desde su pedido: el botón final vuelve ahí (cancelPath ya es esa ruta, validada).
+  const fromOrder = cancelPath !== '/catalog';
+
+  function onDone() {
+    void navigate(cancelPath, { replace: true });
   }
 
   return {
@@ -141,6 +160,7 @@ export function useActivateAccountPage(): ActivateAccountPageProps {
     onCodeChange,
     onSubmit,
     onCancel,
-    onDone: onCancel,
+    onDone,
+    doneLabel: fromOrder ? 'Volver a tu pedido' : 'Seguir explorando',
   };
 }
