@@ -1,4 +1,4 @@
-import { publicFetch } from '@shared/lib/api';
+import { apiUrl, publicFetch } from '@shared/lib/api';
 import type { components } from '@generated/catalog';
 
 /**
@@ -22,6 +22,15 @@ function trackPath(slug: string, token: string): string {
 
 export async function getOrderTracking(slug: string, token: string): Promise<OrderTracking> {
   return publicFetch<OrderTracking>(trackPath(slug, token));
+}
+
+/**
+ * SPEC-023 (FR-031a): URL de la API que sirve el PDF de la factura de este pedido. La PWA no la
+ * descarga con `fetch`: `/pedido/:token/factura` navega el documento hacia ella, así el enlace
+ * que se comparte queda en el dominio del negocio. Mismo token y mismo 404 que el seguimiento.
+ */
+export function orderInvoiceUrl(slug: string, token: string): string {
+  return apiUrl(`${trackPath(slug, token)}/invoice`);
 }
 
 /** 201 sin cuerpo. 409 `REVIEW_ALREADY_EXISTS`; 422 `ORDER_NOT_DELIVERED` o `REVIEW_WINDOW_CLOSED`. */
