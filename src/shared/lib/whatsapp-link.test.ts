@@ -2,6 +2,7 @@ import { describe, it, expect } from 'vitest';
 import {
   buildWaLink,
   buildMerchantNoticeMessage,
+  MAX_NOTICE_ITEMS,
   buildMerchantNoticeLink,
   buildOrderInquiryMessage,
   type MerchantNotice,
@@ -43,7 +44,10 @@ const baseNotice: MerchantNotice = {
   fulfillmentType: 'PICKUP',
   paymentTiming: 'UPFRONT',
   paymentMethod: 'SINPE_MOVIL',
+  items: [],
 };
+
+const PRODUCT_URL = 'https://panaderia.catalou.com/products/p1';
 
 describe('buildMerchantNoticeMessage (FR-016)', () => {
   it('arma el mensaje completo de un pedido por adelantado con SINPE Móvil', () => {
@@ -98,7 +102,32 @@ describe('buildMerchantNoticeMessage (FR-016)', () => {
     ).toContain('Pago por transferencia bancaria, por adelantado. Te mando el comprobante por acá.');
   });
 
-  it('no lleva enlaces, datos de cuenta del negocio, emojis ni guion largo', () => {
+  it('lista los productos con cantidad, variante y enlace a la ficha, antes de entrega y pago', () => {
+    const text = buildMerchantNoticeMessage({
+      ...baseNotice,
+      items: [
+        { productName: 'Pan de masa madre', variantLabel: null, quantity: 2, productUrl: PRODUCT_URL },
+        { productName: 'Queque', variantLabel: 'Tamaño: Grande', quantity: 1, productUrl: null },
+      ],
+    });
+    expect(text).toContain(
+      `en tu catálogo.\n\n2 x Pan de masa madre: ${PRODUCT_URL}\n1 x Queque (Tamaño: Grande)\n\nTotal:`,
+    );
+  });
+
+  it(`incluye hasta ${MAX_NOTICE_ITEMS} productos y resume el resto`, () => {
+    const items = Array.from({ length: MAX_NOTICE_ITEMS + 3 }, (_, i) => ({
+      productName: `P${i}`,
+      variantLabel: null,
+      quantity: 1,
+      productUrl: PRODUCT_URL,
+    }));
+    const text = buildMerchantNoticeMessage({ ...baseNotice, items });
+    expect(text.match(/^1 x P\d+/gm)).toHaveLength(MAX_NOTICE_ITEMS);
+    expect(text).toContain('y 3 más');
+  });
+
+  it('sin productos, solo enlaces a fichas; nunca datos de cuenta, emojis ni guion largo', () => {
     const text = buildMerchantNoticeMessage(baseNotice);
     expect(text).not.toMatch(/https?:\/\//);
     expect(text).not.toContain('87654321');
