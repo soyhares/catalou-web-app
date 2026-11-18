@@ -2,8 +2,9 @@
 @import "./shared/styles/pwa-base.css";
 
 /* Cambio de estado en /pedido/:token. Se usan siempre con `motion-safe:`; cortas y sin bucles,
- * salvo `next-shimmer`: el brillo lento que recorre el paso siguiente de la línea de tiempo, que
- * solo existe mientras el pedido está abierto. `time-fade` es el fundido de la hora de
+ * salvo `current-ring` y `current-shimmer`: el anillo que late alrededor del punto del paso
+ * actual y el brillo que recorre su rótulo, en el acento del negocio. Solo existen mientras el
+ * pedido está abierto (el paso en curso es el que se anima, no el que todavía no llegó). `time-fade` es el fundido de la hora de
  * "Última actualización" en cada refresco. Los trazos dibujados (`ring-draw`, `check-draw`)
  * piden `pathLength="1"` y `[stroke-dasharray:1]` en el SVG; sin movimiento quedan dibujados
  * desde el principio. */
@@ -11,17 +12,23 @@
   --animate-step-in: step-in 450ms ease-out both;
   --animate-dot-pulse: dot-pulse 600ms ease-in-out 2;
   --animate-status-halo: status-halo 700ms ease-out 1;
-  --animate-next-shimmer: next-shimmer 2.4s ease-in-out infinite;
+  --animate-current-ring: current-ring 1.8s ease-out infinite;
+  --animate-current-shimmer: current-shimmer 2.2s ease-in-out infinite;
   --animate-time-fade: time-fade 500ms ease-out both;
   --animate-moment-in: moment-in 450ms ease-out both;
   --animate-ring-draw: stroke-draw 650ms cubic-bezier(0.65, 0, 0.35, 1) 100ms both;
   --animate-check-draw: stroke-draw 500ms cubic-bezier(0.65, 0, 0.35, 1) 650ms both;
   --animate-moment-halo: moment-halo 900ms ease-out 1000ms both;
 
+  /* Anillo del paso actual: crece desde el punto y se desvanece; descansa antes de repetirse. */
+  @keyframes current-ring {
+    0% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--pwa-accent) 60%, transparent); }
+    70%, 100% { box-shadow: 0 0 0 10px color-mix(in srgb, var(--pwa-accent) 0%, transparent); }
+  }
   /* La franja entra por la izquierda, sale por la derecha y descansa un momento antes de volver. */
-  @keyframes next-shimmer {
+  @keyframes current-shimmer {
     0% { background-position: 100% 0; }
-    80%, 100% { background-position: 0% 0; }
+    75%, 100% { background-position: 0% 0; }
   }
   @keyframes time-fade {
     0% { opacity: 0; }

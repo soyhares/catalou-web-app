@@ -55,12 +55,29 @@ describe('paso siguiente vivo', () => {
     expect(step?.getAttribute('aria-current')).toBeNull();
   });
 
-  it('el brillo es decorativo y solo corre con movimiento permitido', () => {
+  it('se anima el paso actual, no el siguiente; decorativo y solo con movimiento permitido', () => {
     render(ui(ready(tracking('CONFIRMED'))));
-    const shimmer = screen.getByTestId('next-step-shimmer');
-    expect(shimmer.className).toContain('motion-safe:animate-next-shimmer');
+    const current = document.querySelector('li[aria-current="step"]');
+    expect(current?.textContent).toContain('Confirmado');
+
+    const shimmer = screen.getByTestId('current-step-shimmer');
+    expect(current?.contains(shimmer)).toBe(true);
+    expect(shimmer.className).toContain('motion-safe:animate-current-shimmer');
     expect(shimmer.className).toContain('motion-reduce:hidden');
-    expect(shimmer.closest('[aria-hidden="true"]')).not.toBeNull();
+    expect(shimmer.getAttribute('aria-hidden')).toBe('true');
+
+    const ring = screen.getByTestId('current-step-ring');
+    expect(current?.contains(ring)).toBe(true);
+    expect(ring.className).toContain('motion-safe:animate-current-ring');
+    expect(ring.className).toContain('motion-reduce:hidden');
+
+    expect(nextStep()?.querySelector('[class*="animate-"]')).toBeNull();
+  });
+
+  it.each(['COMPLETED', 'CANCELLED'])('con el pedido cerrado (%s) el paso actual no se anima', (status) => {
+    render(ui(ready(tracking(status))));
+    expect(screen.queryByTestId('current-step-shimmer')).toBeNull();
+    expect(screen.queryByTestId('current-step-ring')).toBeNull();
   });
 
   it('en Enviado con envío el próximo es Entregado, pendiente de entrega', () => {
