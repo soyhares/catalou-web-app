@@ -2,6 +2,14 @@ import { emitErrorReportEvent } from './error-report-store';
 
 const API_URL = import.meta.env.VITE_API_URL as string;
 
+/**
+ * URL absoluta de la API para una ruta. Para navegar el documento a un recurso de la API
+ * (la factura en PDF, SPEC-023 FR-031a), donde `publicFetch` no sirve.
+ */
+export function apiUrl(path: string): string {
+  return `${API_URL}${path}`;
+}
+
 export class ApiError extends Error {
   constructor(
     public status: number,
@@ -13,8 +21,13 @@ export class ApiError extends Error {
   }
 }
 
-export async function publicFetch<T>(path: string, options: RequestInit = {}): Promise<T> {
-  const res = await fetch(`${API_URL}${path}`, {
+export async function publicFetch<T>(
+  path: string,
+  options: RequestInit = {},
+  /** `false` en consultas de fondo que ya muestran su propio estado (p. ej. el refresco del seguimiento). */
+  { reportServerErrors = true }: { reportServerErrors?: boolean } = {},
+): Promise<T> {
+  const res = await fetch(apiUrl(path), {
     ...options,
     headers: { 'Content-Type': 'application/json', ...options.headers },
   });
@@ -25,7 +38,7 @@ export async function publicFetch<T>(path: string, options: RequestInit = {}): P
     const message = (body['error'] as string | undefined) ?? `Request failed: ${res.status}`;
     // Un 4xx es una respuesta esperada del sistema y la resuelve quien llama. Un 5xx no
     // debería existir: ese sí abre el modal de reporte.
-    if (res.status >= 500) {
+    if (res.status >= 500 && reportServerErrors) {
       emitErrorReportEvent({ message, context: `${options.method ?? 'GET'} ${path}` });
     }
     throw new ApiError(res.status, message, body['code'] as string | undefined);

@@ -64,7 +64,24 @@ export function buildMerchantNoticeMessage(notice: MerchantNotice): string {
   }
   details.push(payment);
 
-  return `${greeting}\n\n${details.join('\n')}`;
+  const items = itemLines(notice.items ?? []);
+  return items
+    ? `${greeting}\n\n${items}\n\n${details.join('\n')}`
+    : `${greeting}\n\n${details.join('\n')}`;
+}
+
+/** Ítems que entran en el mensaje: los enlaces wa.me muy largos fallan en algunos celulares. */
+export const MAX_NOTICE_ITEMS = 10;
+
+/** "2 x Camisa (Talla: M): https://…/products/…", uno por línea; "y N más" pasado el tope. */
+function itemLines(items: MerchantNotice['items']): string {
+  const lines = items.slice(0, MAX_NOTICE_ITEMS).map((item) => {
+    const name = item.variantLabel ? `${item.productName} (${item.variantLabel})` : item.productName;
+    return item.productUrl ? `${item.quantity} x ${name}: ${item.productUrl}` : `${item.quantity} x ${name}`;
+  });
+  const rest = items.length - MAX_NOTICE_ITEMS;
+  if (rest > 0) lines.push(`y ${rest} más`);
+  return lines.join('\n');
 }
 
 /**

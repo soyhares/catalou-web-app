@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { buildTrackingTimeline } from './timeline';
+import { buildTrackingTimeline, nextStepNote } from './timeline';
 
 const at = (status: string, iso = '2026-11-12T15:42:00.000Z') => ({ status, at: iso });
 
@@ -47,5 +47,30 @@ describe('buildTrackingTimeline', () => {
     const steps = buildTrackingTimeline('ON_HOLD', [], 'DELIVERY');
     expect(steps).toHaveLength(1);
     expect(steps[0].label).toBe('En proceso');
+  });
+
+  it('marca como paso siguiente solo al que viene después del actual', () => {
+    const steps = buildTrackingTimeline('CONFIRMED', [at('PENDING'), at('CONFIRMED')], 'DELIVERY');
+    expect(steps.map((s) => [s.status, s.nextNote ?? null])).toEqual([
+      ['PENDING', null],
+      ['CONFIRMED', null],
+      ['PREPARING', 'Esperando al negocio'],
+      ['SHIPPED', null],
+      ['COMPLETED', null],
+    ]);
+  });
+
+  it('en Enviado el paso siguiente es Entregado, pendiente de entrega o de retiro', () => {
+    const delivery = buildTrackingTimeline('SHIPPED', [at('PENDING'), at('SHIPPED')], 'DELIVERY');
+    expect(delivery.find((s) => s.nextNote)?.status).toBe('COMPLETED');
+    expect(delivery.find((s) => s.nextNote)?.nextNote).toBe('Pendiente de entrega');
+    const pickup = buildTrackingTimeline('SHIPPED', [at('PENDING'), at('SHIPPED')], 'PICKUP');
+    expect(pickup.find((s) => s.nextNote)?.nextNote).toBe('Pendiente de retiro');
+  });
+
+  it.each(['COMPLETED', 'CANCELLED', 'ON_HOLD'])('sin paso siguiente en %s', (status) => {
+    const steps = buildTrackingTimeline(status, [at('PENDING'), at(status)], 'DELIVERY');
+    expect(steps.some((s) => s.nextNote)).toBe(false);
+    expect(nextStepNote(status, 'DELIVERY')).toBeNull();
   });
 });

@@ -9,14 +9,17 @@ import {
   buildWaLink,
 } from '@shared/lib/whatsapp-link';
 import { orderStatusLabel } from '@entities/order/status-labels';
-import type { OrderTrackingLoad } from './useOrderTracking';
+import { isFinalOrderStatus, type OrderTrackingLoad, type TrackingFreshness } from './useOrderTracking';
 import { buildTrackingTimeline } from './timeline';
-import { TrackingTimeline } from './TrackingTimeline';
+import { LastUpdated, TrackingTimeline } from './TrackingTimeline';
 import { PaymentCard } from './PaymentCard';
 import { PaymentInstructionsBlock } from './PaymentInstructionsBlock';
 import { OrderItemsList } from './OrderItemsList';
 import { IconMessage } from './icons';
+import { useTrackingChange, type TrackingChange } from './useTrackingChange';
 import { fulfillmentLabel, landingTotal } from './payment';
+import { useConfirmationCelebration } from './useConfirmationCelebration';
+import { CancelledHeader, CompletedHeader, ConfirmedMoment } from './OrderMoments';
 
 /**
  * SPEC-023 (T076): la página del pedido en `/pedido/:token`.
@@ -25,6 +28,10 @@ import { fulfillmentLabel, landingTotal } from './payment';
  * de WhatsApp y muestra el botón de aviso, que abre WhatsApp solo con el toque de la persona
  * (FR-017). Después es el seguimiento: línea de tiempo y tarjeta de pago separadas (FR-031).
  * Nunca muestra el aviso de modelo Asociado: los pedidos con seguimiento son Directos (FR-047).
+ *
+ * Mientras el pedido está abierto, la línea de tiempo muestra el paso siguiente "vivo" y debajo
+ * "Última actualización" con la hora del último refresco bueno; la primera vez que se ve
+ * Confirmado hay un momento breve; Entregado y Cancelado tienen su cierre.
  */
 
 interface OrderTrackingScreenProps {
@@ -32,6 +39,8 @@ interface OrderTrackingScreenProps {
   onRetry: () => void;
   /** Ruta de la valoración de este pedido. */
   reviewPath: string;
+  /** Frescura del refresco silencioso (`useOrderTracking`). Sin ella no se muestra "Última actualización". */
+  freshness?: TrackingFreshness;
 }
 
 const page = 'min-h-screen bg-[var(--pwa-bg)] px-6 pb-28 pt-8 font-[family-name:var(--pwa-font-body)] text-[var(--pwa-text)]';
@@ -44,17 +53,30 @@ const outlineButton =
 const accentButton =
   'flex min-h-[46px] w-full items-center justify-center gap-2 rounded-[var(--pwa-radius-button)] bg-[var(--pwa-accent)] px-4 py-3 text-sm font-bold text-[var(--pwa-on-accent)] no-underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--pwa-text)]';
 
-export function OrderTrackingScreen({ load, onRetry, reviewPath }: OrderTrackingScreenProps) {
+export function OrderTrackingScreen({ load, onRetry, reviewPath, freshness }: OrderTrackingScreenProps) {
+  const data = load.kind === 'ready' ? load.data : null;
+  const change = useTrackingChange(data);
+  const celebrate = useConfirmationCelebration(data);
   return (
     <main className={page}>
       {/* FR-035: la página del pedido no se indexa. React 19 lo sube al <head>. */}
       <meta name="robots" content="noindex, nofollow" />
-      <div className={column}>{renderLoad(load, onRetry, reviewPath)}</div>
+      <div role="status" aria-live="polite" className="sr-only">
+        {change.announcement}
+      </div>
+      <div className={column}>{renderLoad(load, onRetry, { reviewPath, change, freshness, celebrate })}</div>
     </main>
   );
 }
 
-function renderLoad(load: OrderTrackingLoad, onRetry: () => void, reviewPath: string): ReactNode {
+interface DetailContext {
+  reviewPath: string;
+  change: TrackingChange;
+  freshness: TrackingFreshness | undefined;
+  celebrate: boolean;
+}
+
+function renderLoad(load: OrderTrackingLoad, onRetry: () => void, ctx: DetailContext): ReactNode {
   switch (load.kind) {
     case 'loading':
       return (
@@ -89,9 +111,9 @@ function renderLoad(load: OrderTrackingLoad, onRetry: () => void, reviewPath: st
       );
     case 'ready':
       return load.data.status === 'PENDING' ? (
-        <ReceivedLanding tracking={load.data} />
+        <ReceivedLanding tracking={load.data} freshness={ctx.freshness} />
       ) : (
-        <TrackingDetail tracking={load.data} reviewPath={reviewPath} />
+        <TrackingDetail tracking={load.data} {...ctx} />
       );
   }
 }
@@ -113,8 +135,12 @@ function currencyOf(tracking: OrderTracking): 'USD' | 'CRC' {
   return (tracking.amounts?.currency ?? tracking.noticeData?.currency) === 'USD' ? 'USD' : 'CRC';
 }
 
+function merchantPhone(tracking: OrderTracking): string | null {
+  return tracking.merchantWhatsappE164 ?? tracking.noticeData?.merchantWhatsappE164 ?? null;
+}
+
 function ContactBusiness({ tracking }: { tracking: OrderTracking }) {
-  const phone = tracking.merchantWhatsappE164 ?? tracking.noticeData?.merchantWhatsappE164 ?? null;
+  const phone = merchantPhone(tracking);
   if (!phone) return null;
   const href = buildWaLink(phone, buildOrderInquiryMessage(tracking.businessName, tracking.reference));
   return (
@@ -132,13 +158,16 @@ function ContactBusiness({ tracking }: { tracking: OrderTracking }) {
 }
 
 /** Recibido: aterrizaje tras el pedido (mockup 2). */
-function ReceivedLanding({ tracking }: { tracking: OrderTracking }) {
+function ReceivedLanding({ tracking, freshness }: { tracking: OrderTracking; freshness?: TrackingFreshness }) {
   const total = landingTotal(tracking.amounts);
   const instructions = tracking.payment.status === 'PENDING' ? tracking.payment.instructions : null;
   const notice = tracking.noticeData ?? null;
   // Se arma al renderizar, nunca después de un await (iOS bloquea esa navegación).
   const noticeHref = notice ? buildMerchantNoticeLink(notice, tracking.merchantWhatsappE164) : null;
   const asksForReceipt = tracking.payment.timing === 'UPFRONT' && tracking.payment.method !== 'CASH';
+  // Versión corta de la línea de tiempo: Recibido y el paso siguiente vivo (Confirmado).
+  const steps = buildTrackingTimeline(tracking.status, tracking.timeline, tracking.fulfillmentType).slice(0, 2);
+  const lastUpdatedAt = freshness?.lastUpdatedAt ?? null;
 
   return (
     <>
@@ -149,7 +178,6 @@ function ReceivedLanding({ tracking }: { tracking: OrderTracking }) {
       <p className={`${muted} mb-3 mt-0.5 text-center text-xs`}>
         Referencia <span className="font-bold text-[var(--pwa-text)]">{tracking.reference}</span> · {tracking.businessName}
       </p>
-
       {(total || instructions) && (
         <div className={card}>
           {total && (
@@ -186,39 +214,94 @@ function ReceivedLanding({ tracking }: { tracking: OrderTracking }) {
         <p className={`${muted} m-0 text-center text-xs`}>Guardá esta página: acá vas a ver cómo avanza tu pedido.</p>
       </div>
 
+      <div className="mt-5">
+        <TrackingTimeline steps={steps} />
+        {lastUpdatedAt !== null && <LastUpdated at={lastUpdatedAt} />}
+      </div>
+
       <OrderItemsList items={tracking.items} currency={currencyOf(tracking)} />
     </>
   );
 }
 
-/** Seguimiento después de Recibido (mockup 4). */
-function TrackingDetail({ tracking, reviewPath }: { tracking: OrderTracking; reviewPath: string }) {
+/** Seguimiento después de Recibido (mockup 4), con su cierre en Entregado y Cancelado. */
+function TrackingDetail({
+  tracking,
+  reviewPath,
+  change,
+  freshness,
+  celebrate,
+}: { tracking: OrderTracking } & DetailContext) {
   const steps = buildTrackingTimeline(tracking.status, tracking.timeline, tracking.fulfillmentType);
+  const meta = `Pedido ${tracking.reference} · ${tracking.businessName}`;
+  const reviewCta = tracking.reviewable ? (
+    <Link to={reviewPath} className={accentButton}>
+      Valorar tu pedido
+    </Link>
+  ) : null;
+  const reviewedNote = tracking.reviewed ? (
+    <p className={`${muted} m-0 text-center text-xs`}>Gracias por tu valoración.</p>
+  ) : null;
+
+  // Entregado y Cancelado ya no cambian: sin paso siguiente ni "Última actualización" (la página
+  // dejó de consultar).
+  const lastUpdatedAt = isFinalOrderStatus(tracking.status) ? null : (freshness?.lastUpdatedAt ?? null);
+  let header: ReactNode;
+  if (tracking.status === 'COMPLETED') {
+    header = (
+      <CompletedHeader meta={meta} pickup={tracking.fulfillmentType === 'PICKUP'}>
+        {reviewCta}
+        {reviewedNote}
+      </CompletedHeader>
+    );
+  } else if (tracking.status === 'CANCELLED') {
+    header = (
+      <CancelledHeader
+        meta={meta}
+        body={
+          merchantPhone(tracking)
+            ? 'Este pedido ya no sigue en curso. Si tenés alguna duda, escribile al negocio.'
+            : `Este pedido ya no sigue en curso. Si tenés alguna duda, comunicate con ${tracking.businessName}.`
+        }
+      >
+        <ContactBusiness tracking={tracking} />
+      </CancelledHeader>
+    );
+  } else {
+    header = (
+      <>
+        {celebrate && <ConfirmedMoment />}
+        <p className={`${muted} m-0 text-xs`}>Pedido {tracking.reference}</p>
+        <p className={`${muted} m-0 text-xs`}>
+          {tracking.businessName} · {fulfillmentLabel(tracking.fulfillmentType)}
+        </p>
+        <h1
+          key={change.statusChangeId}
+          className={`${heading} mb-5 mt-0.5 w-fit rounded-[var(--pwa-radius-sm)] text-[1.6rem] ${change.statusChangeId > 0 ? 'motion-safe:animate-status-halo' : ''}`}
+        >
+          {orderStatusLabel(tracking.status, tracking.fulfillmentType)}
+        </h1>
+      </>
+    );
+  }
+
   return (
     <>
-      <p className={`${muted} m-0 text-xs`}>Pedido {tracking.reference}</p>
-      <p className={`${muted} m-0 text-xs`}>
-        {tracking.businessName} · {fulfillmentLabel(tracking.fulfillmentType)}
-      </p>
-      <h1 className={`${heading} mb-2.5 mt-0.5 text-[1.6rem]`}>
-        {orderStatusLabel(tracking.status, tracking.fulfillmentType)}
-      </h1>
+      {header}
 
-      <TrackingTimeline steps={steps} />
-      <PaymentCard tracking={tracking} />
+      <div className="mb-3">
+        <TrackingTimeline steps={steps} changeId={change.statusChangeId} />
+        {lastUpdatedAt !== null && <LastUpdated at={lastUpdatedAt} />}
+      </div>
+      <PaymentCard tracking={tracking} changeId={change.paymentChangeId} />
       <OrderItemsList items={tracking.items} currency={currencyOf(tracking)} />
 
-      <div className="mt-4 flex flex-col gap-2">
-        {tracking.reviewable && (
-          <Link to={reviewPath} className={accentButton}>
-            Valorar tu pedido
-          </Link>
-        )}
-        {tracking.reviewed && (
-          <p className={`${muted} m-0 text-center text-xs`}>Gracias por tu valoración.</p>
-        )}
-        <ContactBusiness tracking={tracking} />
-      </div>
+      {/* En Cancelado el contacto ya está arriba, como única salida. */}
+      {tracking.status !== 'CANCELLED' && (
+        <div className="mt-4 flex flex-col gap-2">
+          <ContactBusiness tracking={tracking} />
+        </div>
+      )}
     </>
   );
 }

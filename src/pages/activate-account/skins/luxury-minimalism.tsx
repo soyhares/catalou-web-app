@@ -68,6 +68,7 @@ const LuxuryMinimalismActivateAccountSkin: React.FC<ActivateAccountPageProps> = 
   onSubmit,
   onCancel,
   onDone,
+  doneLabel,
   isExpiredSession,
 }) => linkedOrderCount === null && step === 'email' ? (
   /* Paso 1 — reingreso: solo el correo. Quien viene de un pedido o del enlace del correo
@@ -147,7 +148,7 @@ const LuxuryMinimalismActivateAccountSkin: React.FC<ActivateAccountPageProps> = 
             : `Tus ${linkedOrderCount} pedidos ya quedaron en tu historial`}
       </p>
       <button type="button" onClick={onDone} style={primaryButton}>
-        Seguir explorando
+        {doneLabel}
       </button>
     </div>
   </div>
